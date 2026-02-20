@@ -36,11 +36,11 @@ header .navbar-default {
 }
 
 .navbar-default {
-  min-height: 70px;
+  min-height: 94px;
 }
 
 .navbar-default .navbar-nav > li > a {
-  line-height: 60px;
+  line-height: 84px;
   padding-top: 0;
   padding-bottom: 0;
 }
