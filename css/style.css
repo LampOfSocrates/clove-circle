@@ -323,6 +323,8 @@ border-radius:0;
 	background: #fff; 
 	position: relative; 
 	zoom: 1;
+	max-height: 300px;
+	overflow: hidden;
 }
 .slides li:nth-child(1){
 background:#c22731;
@@ -353,7 +355,7 @@ left:0px;
 right:0px;
 }
 .flex-caption {zoom: 1;
-bottom: 110px; background-color:transparent; color: #fff; margin: 0; padding: 25px 25px 25px 30px; position: absolute; left: 0; }
+bottom: 88px; background-color:transparent; color: #fff; margin: 0; padding: 25px 25px 25px 30px; position: absolute; left: 0; }
 .flex-caption h3 {color: #FFF; font-size: 38px; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
 .flex-caption p {margin: 0 0 15px; color: #FFF;font-size:18px!important;line-height: 28px;}
 .skill-home{
