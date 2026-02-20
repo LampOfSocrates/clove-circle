@@ -32,6 +32,17 @@ header .navbar-default {
 
 .navbar-default .navbar-brand {
   color: var(--cc-green-darkest) !important;
+  padding: 5px 15px;
+}
+
+.navbar-default {
+  min-height: 70px;
+}
+
+.navbar-default .navbar-nav > li > a {
+  line-height: 60px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* Bigger, bolder nav links */
