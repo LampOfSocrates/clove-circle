@@ -1,0 +1,610 @@
+/* =============================================================
+   Eco Theme — Clove Circle Consulting
+   Overrides for a professional, environmentally-focused design
+   ============================================================= */
+
+:root {
+  --cc-green-darkest: #1b4332;
+  --cc-green-dark:    #2d6a4f;
+  --cc-green-mid:     #40916c;
+  --cc-green-light:   #74c69d;
+  --cc-green-pale:    #d8f3dc;
+  --cc-green-xlight:  #f0faf4;
+  --cc-shadow:        0 4px 18px rgba(27, 67, 50, 0.13);
+}
+
+/* ---- Base ---- */
+body {
+  font-family: 'Inter', 'Open Sans', Arial, sans-serif;
+  color: #3a4f44;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #1b4332;
+}
+
+/* ---- Navbar ---- */
+header .navbar-default {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(27, 67, 50, 0.1);
+  border-bottom: 2px solid var(--cc-green-pale);
+}
+
+.navbar-default .navbar-brand {
+  color: var(--cc-green-darkest) !important;
+  padding: 5px 15px;
+}
+
+.navbar-default {
+  min-height: 128px;
+}
+
+.navbar-default .navbar-nav > li > a {
+  line-height: 118px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Bigger, bolder nav links */
+header ul.nav li a {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+  color: #2e3d35;
+  text-transform: uppercase;
+}
+
+header ul.nav li ul li a {
+  font-size: 13px !important;
+}
+
+.navbar .nav > li > a {
+  color: #2e3d35;
+}
+
+.navbar .nav a:hover {
+  color: var(--cc-green-mid) !important;
+  background: none;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: var(--cc-green-dark) !important;
+  background-color: transparent;
+}
+
+/* ---- Slider — reduced height 300px → 240px ---- */
+#featured .flexslider {
+  max-height: 240px;
+}
+
+/* ---- Slider background colors — replace red/blue/yellow with greens ---- */
+.slides li:nth-child(1) {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%) !important;
+}
+.slides li:nth-child(2) {
+  background: linear-gradient(135deg, #144228 0%, #2d5a3f 100%) !important;
+}
+.slides li:nth-child(3) {
+  background: linear-gradient(135deg, #1a3d2a 0%, #3a7a55 100%) !important;
+}
+
+/* ---- Page Banner (#inner-headline) ---- */
+#inner-headline {
+  background: linear-gradient(135deg, var(--cc-green-darkest) 0%, var(--cc-green-mid) 100%) !important;
+}
+
+.pageTitle {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* ---- Callaction Section ---- */
+section.callaction {
+  background: var(--cc-green-xlight);
+  padding: 60px 0;
+  border-bottom: 3px solid var(--cc-green-pale);
+}
+
+section.callaction h1,
+section.callaction h2,
+section.callaction h3 {
+  color: var(--cc-green-darkest);
+}
+
+/* ---- Block Headings ---- */
+.block-heading-two {
+  margin-bottom: 20px;
+}
+
+.block-heading-two h1 > span,
+.block-heading-two h2 > span,
+.block-heading-two h3 > span {
+  color: var(--cc-green-darkest);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px;
+}
+
+.block-heading-two h1 > span::after,
+.block-heading-two h2 > span::after,
+.block-heading-two h3 > span::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  background: var(--cc-green-light);
+  margin-top: 8px;
+}
+
+.block-heading-six {
+  margin-bottom: 20px;
+}
+
+.block-heading-six h4.bg-color {
+  background: var(--cc-green-dark);
+  color: #ffffff;
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+/* ---- .color class (used in about.html) ---- */
+.color {
+  color: var(--cc-green-mid);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  background: var(--cc-green-mid);
+  color: #ffffff;
+  border-radius: 5px;
+  border: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover,
+.btn:focus {
+  background: var(--cc-green-darkest);
+  color: #ffffff;
+}
+
+.btn-color {
+  background: var(--cc-green-mid);
+  color: #ffffff;
+}
+
+.btn-color:hover {
+  background: var(--cc-green-darkest);
+  color: #ffffff;
+}
+
+/* ---- Panels (Accordion) ---- */
+.panel {
+  background-color: var(--cc-green-xlight);
+  border: 1px solid var(--cc-green-pale);
+}
+
+#accordion-alt3 .panel-heading h4 a i {
+  color: var(--cc-green-mid);
+}
+
+/* ---- Progress Bars ---- */
+.progress {
+  background-color: var(--cc-green-pale);
+}
+
+.progress-bar.progress-bar-green {
+  background: var(--cc-green-mid) !important;
+}
+
+.progress-bar.progress-bar-blue {
+  background: var(--cc-green-light) !important;
+}
+
+.progress-bar.progress-bar-yellow {
+  background: #52b788 !important;
+}
+
+/* ---- Info Blocks ---- */
+.info-blocks i.icon-info-blocks {
+  color: var(--cc-green-mid) !important;
+  background-color: var(--cc-green-pale);
+}
+
+/* ---- Team Thumbnail ---- */
+.thumbnail {
+  border: none;
+  box-shadow: var(--cc-shadow);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.thumbnail .caption {
+  background-color: var(--cc-green-xlight);
+  padding: 16px;
+}
+
+.thumbnail .caption h4 {
+  color: var(--cc-green-darkest);
+  margin-bottom: 8px;
+}
+
+/* ============================================================
+   Feature Cards  (new component, index.html)
+   ============================================================ */
+.eco-feature-cards {
+  padding: 65px 0 45px;
+  background: #ffffff;
+}
+
+.eco-section-intro {
+  max-width: 620px;
+  margin: 0 auto 40px;
+  text-align: center;
+  color: #5a7068;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.eco-card {
+  text-align: center;
+  padding: 38px 28px;
+  border-radius: 10px;
+  border: 1px solid var(--cc-green-pale);
+  background: #ffffff;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  margin-bottom: 24px;
+}
+
+.eco-card:hover {
+  box-shadow: var(--cc-shadow);
+  transform: translateY(-5px);
+}
+
+.eco-card-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--cc-green-pale);
+  display: block;
+  margin: 0 auto 22px;
+  line-height: 76px;
+  text-align: center;
+  font-size: 30px;
+  color: var(--cc-green-dark);
+}
+
+.eco-card h4 {
+  color: var(--cc-green-darkest);
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+
+.eco-card p {
+  color: #5a7068;
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   Stats Bar  (new section, index.html)
+   ============================================================ */
+.eco-stats {
+  background: var(--cc-green-darkest);
+  padding: 60px 0;
+  text-align: center;
+}
+
+.eco-stat-item {
+  padding: 10px 0;
+}
+
+.eco-stat-number {
+  display: block;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--cc-green-light);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.eco-stat-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+}
+
+/* ============================================================
+   Footer  (both pages)
+   ============================================================ */
+footer.eco-footer {
+  background: var(--cc-green-darkest);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 55px 0 0;
+}
+
+footer.eco-footer .widgetheading {
+  color: var(--cc-green-light);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  border-bottom: 1px solid rgba(116, 198, 157, 0.25);
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+footer.eco-footer ul.link-list li a {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+  line-height: 2;
+}
+
+footer.eco-footer ul.link-list li a:hover {
+  color: var(--cc-green-light);
+  text-decoration: none;
+}
+
+footer.eco-footer address {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+footer.eco-footer p {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+}
+
+footer.eco-footer ul.social-network {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+footer.eco-footer ul.social-network li {
+  display: inline;
+  margin: 0 6px;
+}
+
+footer.eco-footer ul.social-network li a {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 19px;
+  transition: color 0.2s;
+}
+
+footer.eco-footer ul.social-network li a:hover {
+  color: var(--cc-green-light);
+  text-decoration: none;
+}
+
+/* Sub-footer bar */
+.eco-sub-footer {
+  background: rgba(0, 0, 0, 0.28);
+  padding: 18px 0;
+  margin-top: 40px;
+}
+
+.eco-sub-footer .copyright p {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+  margin: 0;
+  padding: 4px 0;
+}
+
+/* ---- Scroll-to-top button ---- */
+.scrollup {
+  background: var(--cc-green-mid);
+}
+
+/* ============================================================
+   Smooth Scroll
+   ============================================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================================
+   Hero Section  (replaces carousel on single-page layout)
+   ============================================================ */
+.hero-section {
+  background: linear-gradient(160deg, #f0faf4 0%, #d8f3dc 65%, #b7e4c7 100%);
+  padding: 20px 0 36px;
+}
+
+.hero-section .row {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.hero-photo {
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(27, 67, 50, 0.22);
+  width: 100%;
+  max-width: 320px;
+  display: block;
+}
+
+.hero-eyebrow {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--cc-green-mid);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.hero-tagline {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1b4332;
+  line-height: 1.25;
+  margin: 0 0 18px;
+}
+
+.hero-sub {
+  font-size: 16px;
+  color: #4a6357;
+  line-height: 1.82;
+  margin-bottom: 20px;
+  max-width: 540px;
+}
+
+.hero-founder-block {
+  border-left: 3px solid var(--cc-green-light);
+  padding: 4px 0 4px 16px;
+  margin: 22px 0 28px;
+}
+
+.hero-founder-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cc-green-dark);
+  margin: 0 0 4px;
+}
+
+.hero-founder-title {
+  font-size: 13px;
+  color: #6a8f7e;
+  margin: 0;
+}
+
+.btn-outline-green {
+  display: inline-block;
+  background: transparent;
+  color: var(--cc-green-dark);
+  border: 2px solid var(--cc-green-mid);
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-left: 12px;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+}
+
+.btn-outline-green:hover {
+  background: var(--cc-green-dark);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* ============================================================
+   Service Image Blocks
+   ============================================================ */
+.service-block {
+  margin-bottom: 30px;
+}
+
+.service-block img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(27, 67, 50, 0.1);
+  display: block;
+}
+
+.service-block h3 {
+  color: var(--cc-green-darkest);
+  font-size: 19px;
+  margin-bottom: 12px;
+}
+
+.service-block p {
+  color: #5a7068;
+  font-size: 14px;
+  line-height: 1.82;
+}
+
+/* ============================================================
+   Contact Section
+   ============================================================ */
+.eco-contact {
+  padding: 20px 0 55px;
+}
+
+.contact-info-item {
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.contact-info-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--cc-green-pale);
+  display: block;
+  float: left;
+  text-align: center;
+  line-height: 50px;
+  font-size: 20px;
+  color: var(--cc-green-dark);
+  margin-right: 18px;
+}
+
+.contact-info-text {
+  overflow: hidden;
+  padding-top: 4px;
+}
+
+.contact-info-text strong {
+  display: block;
+  color: var(--cc-green-darkest);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.contact-info-text a,
+.contact-info-text p {
+  color: var(--cc-green-mid);
+  font-size: 15px;
+  margin: 0;
+}
+
+.contact-info-text a:hover {
+  color: var(--cc-green-darkest);
+}
+
+/* ---- Responsive tweaks ---- */
+@media (max-width: 767px) {
+  .eco-stat-number {
+    font-size: 36px;
+  }
+  .eco-feature-cards {
+    padding: 40px 0 20px;
+  }
+  .eco-stats {
+    padding: 40px 0;
+  }
+  footer.eco-footer {
+    padding: 40px 0 0;
+  }
+  .hero-section {
+    padding: 28px 0 24px;
+  }
+  .hero-photo {
+    max-width: 220px;
+    margin: 0 auto 30px;
+  }
+  .hero-tagline {
+    font-size: 26px;
+  }
+  .btn-outline-green {
+    margin-left: 0;
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+  }
+}
