@@ -556,6 +556,286 @@ img { max-width: 100%; height: auto; }
   margin-bottom: 0;
 }
 
+/* =============================================================
+   Case Study — TEA / LCA Interactive Page
+   ============================================================= */
+
+/* ---- Case Study Card (resources.html) ---- */
+.cc-case-card { padding: 32px; }
+.cc-case-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.cc-case-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--cc-text-muted);
+  background: var(--cc-green-xlight);
+  border: 1px solid var(--cc-green-pale);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+.cc-case-card--placeholder { opacity: 0.65; }
+
+/* ---- KPI strip (page header) ---- */
+.cc-kpi-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+.cc-kpi {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(116,198,157,0.4);
+  border-radius: 8px;
+  padding: 14px 20px;
+  min-width: 150px;
+}
+.cc-kpi-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--cc-green-light);
+  margin-bottom: 4px;
+}
+.cc-kpi-value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---- Accordion overrides ---- */
+.cc-accordion-item {
+  border: 1px solid var(--cc-green-pale) !important;
+  border-radius: var(--cc-radius) !important;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.cc-accordion-btn {
+  background: #fff !important;
+  color: var(--cc-green-darkest) !important;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cc-accordion-btn:not(.collapsed) {
+  background: var(--cc-green-xlight) !important;
+  color: var(--cc-green-dark) !important;
+  box-shadow: none !important;
+}
+.cc-accordion-btn:focus { box-shadow: none !important; }
+.cc-accordion-body { background: #fff; padding: 28px 28px 32px; }
+.cc-pane-badge {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--cc-green-pale);
+  color: var(--cc-green-dark);
+  border-radius: 20px;
+  padding: 3px 10px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.cc-pane-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--cc-green-mid);
+  margin-bottom: 14px;
+}
+.cc-pane-desc {
+  font-size: 13px;
+  color: var(--cc-text-muted);
+  margin-bottom: 16px;
+}
+.cc-pane-divider {
+  border-color: var(--cc-green-pale);
+  margin: 32px 0;
+}
+.cc-page-header-cite {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+/* ---- Calculation input tables ---- */
+.cc-calc-table { font-size: 13px; margin-bottom: 0; }
+.cc-calc-table td,
+.cc-calc-table th { vertical-align: middle; padding: 6px 8px; }
+.cc-table-group-header td {
+  background: var(--cc-green-xlight);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--cc-green-dark);
+  padding: 6px 8px;
+  border-bottom: none;
+}
+.cc-unit {
+  font-size: 11px;
+  color: var(--cc-text-muted);
+  white-space: nowrap;
+}
+.cc-result-col { background: var(--cc-green-xlight); font-weight: 600; }
+
+/* ---- Number inputs inside tables ---- */
+.cc-input {
+  width: 90px;
+  padding: 4px 7px;
+  border: 1px solid var(--cc-green-pale);
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--cc-text);
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -moz-appearance: textfield;
+}
+.cc-input:focus {
+  outline: none;
+  border-color: var(--cc-green-mid);
+  box-shadow: 0 0 0 3px rgba(64,145,108,0.12);
+}
+.cc-input::-webkit-outer-spin-button,
+.cc-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cc-input--inline { width: 80px; }
+.cc-input--wide { width: 110px; }
+
+/* ---- Results / output tables ---- */
+.cc-results-table { font-size: 13px; margin-bottom: 0; }
+.cc-results-table td { padding: 7px 10px; vertical-align: middle; }
+.cc-result-val {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.cc-result-highlight { background: var(--cc-green-xlight); }
+.cc-result-highlight td { color: var(--cc-green-darkest); font-weight: 700; }
+
+/* ---- Mass flow diagram ---- */
+.cc-flow {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 12px 0 16px;
+  gap: 0;
+}
+.cc-flow-node {
+  background: var(--cc-green-xlight);
+  border: 1px solid var(--cc-green-pale);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 88px;
+  max-width: 120px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.cc-flow-node--output { border-color: var(--cc-green-light); }
+.cc-flow-node--highlight {
+  background: var(--cc-green-pale);
+  border-color: var(--cc-green-mid);
+}
+.cc-flow-node--split { min-width: 110px; max-width: 140px; }
+.cc-flow-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--cc-text-muted);
+  margin-bottom: 5px;
+}
+.cc-flow-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cc-green-darkest);
+  line-height: 1.2;
+}
+.cc-flow-sub {
+  font-size: 10px;
+  color: var(--cc-text);
+  line-height: 1.7;
+}
+.cc-flow-unit {
+  font-size: 9px;
+  color: var(--cc-text-muted);
+  margin-top: 3px;
+}
+.cc-flow-arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  color: var(--cc-green-light);
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 32px;
+}
+
+/* ---- Chart containers ---- */
+.cc-chart-wrap {
+  background: #fff;
+  border: 1px solid var(--cc-green-pale);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+/* ---- GWP result highlight box ---- */
+.cc-result-box {
+  background: var(--cc-green-pale);
+  border-radius: 8px;
+  padding: 24px 20px;
+  text-align: center;
+}
+.cc-result-box-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--cc-green-dark);
+  margin-bottom: 8px;
+}
+.cc-result-box-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--cc-green-darkest);
+  line-height: 1;
+}
+.cc-result-box-unit {
+  font-size: 12px;
+  color: var(--cc-text-muted);
+  margin-top: 6px;
+}
+
+/* ---- Equipment / GWP table tweaks ---- */
+.cc-equip-table input.cc-input,
+.cc-gwp-table input.cc-input { width: 78px; }
+.cc-gwp-table .cc-result-val { min-width: 70px; }
+
+/* ---- Case study responsive ---- */
+@media (max-width: 767px) {
+  .cc-flow { flex-direction: column; align-items: center; }
+  .cc-flow-arrow { transform: rotate(90deg); margin: 4px 0; }
+  .cc-flow-node { max-width: 180px; min-width: 140px; }
+  .cc-accordion-body { padding: 18px 14px 22px; }
+  .cc-kpi-row { gap: 10px; }
+  .cc-kpi { min-width: 120px; padding: 10px 14px; }
+  .cc-kpi-value { font-size: 1rem; }
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 991px) {
   .cc-hero {

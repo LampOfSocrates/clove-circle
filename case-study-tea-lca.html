@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive techno-economic and life cycle assessment for a PHA biocomposite biorefinery. Adjust inputs and explore mass balance, NPV, and global warming potential live.">
+  <title>Clove Circle | Biorefinery TEA + LCA Case Study</title>
+  <link rel="icon" href="img/favicon.ico">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Site theme -->
+  <link href="css/eco-theme.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar navbar-expand-lg cc-navbar sticky-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <img src="img/logo_transparent.png" alt="Clove Circle" height="56">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+        <li class="nav-item"><a class="nav-link active" href="resources.html">Resources</a></li>
+        <li class="nav-item"><a class="nav-link cc-nav-cta" href="index.html#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="cc-page-header">
+  <div class="container">
+    <span class="cc-eyebrow cc-eyebrow-light">
+      <a href="resources.html#case-studies" style="color:inherit;text-decoration:none;">
+        <i class="fa-solid fa-arrow-left me-1"></i>Case Studies
+      </a>
+    </span>
+    <h1>Biorefinery TEA + LCA</h1>
+    <p>PHA Biocomposite from Lignocellulosic Biomass — Interactive Assessment</p>
+    <p class="cc-page-header-cite">
+      Based on: Sadhukhan J, Ng KS, Martinez-Hernandez E (2014).
+      <em>Biorefineries and Chemical Processes</em>. Wiley-Blackwell.
+    </p>
+    <!-- Live KPI badges -->
+    <div class="cc-kpi-row">
+      <div class="cc-kpi">
+        <span class="cc-kpi-label">Total CapEx</span>
+        <span class="cc-kpi-value" id="kpi-capex">—</span>
+      </div>
+      <div class="cc-kpi">
+        <span class="cc-kpi-label">Annual Cash Flow</span>
+        <span class="cc-kpi-value" id="kpi-cf">—</span>
+      </div>
+      <div class="cc-kpi">
+        <span class="cc-kpi-label">NPV (Year 10)</span>
+        <span class="cc-kpi-value" id="kpi-npv">—</span>
+      </div>
+      <div class="cc-kpi">
+        <span class="cc-kpi-label">Total GWP</span>
+        <span class="cc-kpi-value" id="kpi-gwp">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INTRO ===== -->
+<section class="cc-section cc-section-white" style="padding-bottom:0">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <p style="font-size:15px; color:var(--cc-text-muted);">
+          This interactive tool replicates a full Techno-Economic Assessment (TEA) and Life Cycle Assessment (LCA)
+          for a biorefinery converting lignocellulosic biomass into PHA (polyhydroxyalkanoate) biocomposites.
+          Edit any input field below and all downstream calculations update instantly — from mass balance through
+          capital costs, discounted cash flow, and greenhouse gas emissions.
+        </p>
+      </div>
+      <div class="col-lg-4">
+        <div class="cc-result-box">
+          <div class="cc-result-box-label">Biocomposite Output</div>
+          <div class="cc-result-box-value" id="intro-biocomposite">—</div>
+          <div class="cc-result-box-unit">tonnes / year</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ACCORDION PANES ===== -->
+<section class="cc-section cc-section-light">
+  <div class="container">
+    <div class="accordion" id="csAccordion">
+
+      <!-- ============================================================
+           PANE 1 — MASS BALANCE (Sheet: Balance)
+           ============================================================ -->
+      <div class="accordion-item cc-accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button cc-accordion-btn" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapseBalance"
+                  aria-expanded="true" aria-controls="collapseBalance">
+            <i class="fa-solid fa-scale-balanced"></i>
+            Sheet 1 — Mass Balance
+            <span class="cc-pane-badge" id="badge-biocomposite">~1,000 t/y biocomposite</span>
+          </button>
+        </h2>
+        <div id="collapseBalance" class="accordion-collapse collapse show" data-bs-parent="#csAccordion">
+          <div class="accordion-body cc-accordion-body">
+            <div class="row g-4">
+
+              <!-- Inputs column -->
+              <div class="col-lg-4">
+                <p class="cc-pane-subtitle">Inputs</p>
+                <table class="table cc-calc-table">
+                  <tbody>
+                    <tr>
+                      <td>Total biomass input</td>
+                      <td><input type="number" id="b-biomass" class="cc-input" value="3500" min="100" max="500000" step="100"></td>
+                      <td class="cc-unit">dry t/y</td>
+                    </tr>
+                    <tr class="cc-table-group-header"><td colspan="3">Biomass Composition (%)</td></tr>
+                    <tr>
+                      <td>Hemicellulose</td>
+                      <td><input type="number" id="b-hemi-pct" class="cc-input" value="30" min="0" max="100" step="0.1"></td>
+                      <td class="cc-unit">%</td>
+                    </tr>
+                    <tr>
+                      <td>Cellulose</td>
+                      <td><input type="number" id="b-cell-pct" class="cc-input" value="46" min="0" max="100" step="0.1"></td>
+                      <td class="cc-unit">%</td>
+                    </tr>
+                    <tr>
+                      <td>Lignin</td>
+                      <td><input type="number" id="b-lign-pct" class="cc-input" value="20" min="0" max="100" step="0.1"></td>
+                      <td class="cc-unit">%</td>
+                    </tr>
+                    <tr>
+                      <td>Ash</td>
+                      <td><input type="number" id="b-ash-pct" class="cc-input" value="4" min="0" max="100" step="0.1"></td>
+                      <td class="cc-unit">%</td>
+                    </tr>
+                    <tr class="cc-table-group-header"><td colspan="3">Recovery Rates (fraction)</td></tr>
+                    <tr>
+                      <td>Hemicellulose</td>
+                      <td><input type="number" id="b-hemi-rec" class="cc-input" value="0.95" min="0" max="1" step="0.01"></td>
+                      <td class="cc-unit">—</td>
+                    </tr>
+                    <tr>
+                      <td>Cellulose</td>
+                      <td><input type="number" id="b-cell-rec" class="cc-input" value="0.87" min="0" max="1" step="0.01"></td>
+                      <td class="cc-unit">—</td>
+                    </tr>
+                    <tr>
+                      <td>Lignin</td>
+                      <td><input type="number" id="b-lign-rec" class="cc-input" value="0.79" min="0" max="1" step="0.01"></td>
+                      <td class="cc-unit">—</td>
+                    </tr>
+                    <tr class="cc-table-group-header"><td colspan="3">Process Parameters</td></tr>
+                    <tr>
+                      <td>CHP conv. efficiency</td>
+                      <td><input type="number" id="b-chp-eff" class="cc-input" value="0.35" min="0" max="1" step="0.01"></td>
+                      <td class="cc-unit">fraction</td>
+                    </tr>
+                    <tr>
+                      <td>Biocomposite recovery</td>
+                      <td><input type="number" id="b-biocomp-rate" class="cc-input cc-input--wide" value="95.358" min="0" max="100" step="0.001"></td>
+                      <td class="cc-unit">%</td>
+                    </tr>
+                    <tr>
+                      <td>Analysis period</td>
+                      <td><input type="number" id="b-years" class="cc-input" value="20" min="1" max="50"></td>
+                      <td class="cc-unit">yr</td>
+                    </tr>
+                    <tr>
+                      <td>Final conversion</td>
+                      <td><input type="number" id="b-final-conv" class="cc-input" value="0.35" min="0" max="1" step="0.01"></td>
+                      <td class="cc-unit">fraction</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Results column -->
+              <div class="col-lg-8">
+                <p class="cc-pane-subtitle">Mass Flow</p>
+                <!-- Flow diagram -->
+                <div class="cc-flow mb-3">
+                  <div class="cc-flow-node">
+                    <div class="cc-flow-label">Biomass In</div>
+                    <div class="cc-flow-value" id="f-biomass">3,500</div>
+                    <div class="cc-flow-unit">t/y dry</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node cc-flow-node--split">
+                    <div class="cc-flow-label">Components</div>
+                    <div class="cc-flow-sub">
+                      Hemi: <b id="f-hemi-mass">1,050</b><br>
+                      Cell: <b id="f-cell-mass">1,610</b><br>
+                      Lign: <b id="f-lign-mass">700</b>
+                    </div>
+                    <div class="cc-flow-unit">t/y</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node cc-flow-node--split">
+                    <div class="cc-flow-label">Recovered</div>
+                    <div class="cc-flow-sub">
+                      Hemi: <b id="f-hemi-rec">997.5</b><br>
+                      Cell: <b id="f-cell-rec">1,400.7</b><br>
+                      Lign: <b id="f-lign-rec">553</b>
+                    </div>
+                    <div class="cc-flow-unit">t/y</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node">
+                    <div class="cc-flow-label">CHP Feed</div>
+                    <div class="cc-flow-value" id="f-chp">839</div>
+                    <div class="cc-flow-unit">t/y</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node cc-flow-node--output">
+                    <div class="cc-flow-label">Fermenter Out</div>
+                    <div class="cc-flow-value" id="f-fermenter">2,050</div>
+                    <div class="cc-flow-unit">t/y</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node cc-flow-node--highlight">
+                    <div class="cc-flow-label">Biocomposite</div>
+                    <div class="cc-flow-value" id="f-biocomposite">1,000</div>
+                    <div class="cc-flow-unit">t/y</div>
+                  </div>
+                </div>
+
+                <!-- Summary results table -->
+                <p class="cc-pane-subtitle mt-2">Stream Summary</p>
+                <table class="table cc-results-table">
+                  <thead>
+                    <tr>
+                      <th>Stream</th>
+                      <th style="text-align:right">Mass (t/y)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Hemicellulose component</td>
+                      <td class="cc-result-val" id="r-hemi-mass">1,050.0</td>
+                    </tr>
+                    <tr>
+                      <td>Cellulose component</td>
+                      <td class="cc-result-val" id="r-cell-mass">1,610.0</td>
+                    </tr>
+                    <tr>
+                      <td>Lignin component</td>
+                      <td class="cc-result-val" id="r-lign-mass">700.0</td>
+                    </tr>
+                    <tr>
+                      <td>Ash component</td>
+                      <td class="cc-result-val" id="r-ash-mass">140.0</td>
+                    </tr>
+                    <tr>
+                      <td>Cellulose losses (diverted from fermenter)</td>
+                      <td class="cc-result-val" id="r-cell-loss">209.3</td>
+                    </tr>
+                    <tr>
+                      <td>CHP feedstock</td>
+                      <td class="cc-result-val" id="r-chp">839.4</td>
+                    </tr>
+                    <tr>
+                      <td>Fermenter output</td>
+                      <td class="cc-result-val" id="r-fermenter">2,049.5</td>
+                    </tr>
+                    <tr class="cc-result-highlight">
+                      <td>Final biocomposite</td>
+                      <td class="cc-result-val" id="r-biocomposite">1,000.0</td>
+                    </tr>
+                    <tr>
+                      <td>Electricity generation</td>
+                      <td class="cc-result-val" id="r-energy">14,347 GJ</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div><!-- /.row -->
+          </div><!-- /.accordion-body -->
+        </div>
+      </div><!-- /pane 1 -->
+
+      <!-- ============================================================
+           PANE 2 — TEA (Sheet: TEA)
+           ============================================================ -->
+      <div class="accordion-item cc-accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button cc-accordion-btn collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapseTEA"
+                  aria-expanded="false" aria-controls="collapseTEA">
+            <i class="fa-solid fa-chart-line"></i>
+            Sheet 2 — Techno-Economic Assessment (TEA)
+            <span class="cc-pane-badge" id="badge-tci">CapEx: $16.18M</span>
+          </button>
+        </h2>
+        <div id="collapseTEA" class="accordion-collapse collapse" data-bs-parent="#csAccordion">
+          <div class="accordion-body cc-accordion-body">
+
+            <!-- Sub-section A: Capital Costs -->
+            <p class="cc-pane-subtitle">A — Capital Cost Estimation (Power-Law Scaling)</p>
+            <p class="cc-pane-desc">
+              Current CEPCI:&nbsp;
+              <input type="number" id="t-cepci" class="cc-input cc-input--inline" value="820" min="100" max="2000">
+              &nbsp;&nbsp;Operating days/year:&nbsp;
+              <input type="number" id="t-opdays" class="cc-input cc-input--inline" value="290" min="50" max="365">
+              &nbsp;&nbsp;TCI multiplier (×DCE):&nbsp;
+              <input type="number" id="t-tci-mult" class="cc-input cc-input--inline" value="3" min="1" max="10" step="0.1">
+            </p>
+            <p class="cc-pane-desc" style="margin-top:-8px">
+              Formula: Cost&nbsp;=&nbsp;Base&nbsp;&times;&nbsp;(Current&nbsp;Size&nbsp;/&nbsp;Base&nbsp;Size)<sup>Scale</sup>&nbsp;&times;&nbsp;CEPCI<sub>current</sub>&nbsp;/&nbsp;CEPCI<sub>base</sub>
+            </p>
+
+            <div class="table-responsive">
+              <table class="table cc-calc-table cc-equip-table">
+                <thead>
+                  <tr>
+                    <th>Equipment</th>
+                    <th>Base Cost ($M)</th>
+                    <th>Scale Factor</th>
+                    <th>Base Size</th>
+                    <th>Base CEPCI</th>
+                    <th>Size Unit</th>
+                    <th style="background:var(--cc-green-xlight);font-weight:700">Current Size</th>
+                    <th style="background:var(--cc-green-xlight);font-weight:700">Cost ($M)</th>
+                  </tr>
+                </thead>
+                <tbody id="equip-tbody">
+                  <!-- Rows rendered by JS -->
+                </tbody>
+                <tfoot>
+                  <tr class="cc-result-highlight">
+                    <td colspan="7">Delivered Cost of Equipment (DCE)</td>
+                    <td class="cc-result-val" id="t-dce">$5.39M</td>
+                  </tr>
+                  <tr class="cc-result-highlight">
+                    <td colspan="6">Total Capital Investment (TCI = DCE &times; <span id="t-tci-mult-disp">3</span>)</td>
+                    <td colspan="2" class="cc-result-val" id="t-tci">$16.18M</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <hr class="cc-pane-divider">
+
+            <!-- Sub-section B: Operating Economics + DCF -->
+            <p class="cc-pane-subtitle">B — Operating Economics &amp; Discounted Cash Flow</p>
+            <div class="row g-4">
+
+              <!-- OpEx inputs + summary -->
+              <div class="col-lg-5">
+                <table class="table cc-calc-table">
+                  <tbody>
+                    <tr class="cc-table-group-header"><td colspan="3">Revenue</td></tr>
+                    <tr>
+                      <td>Product price</td>
+                      <td><input type="number" id="t-prod-price" class="cc-input" value="7000" min="0" step="100"></td>
+                      <td class="cc-unit">$/t</td>
+                    </tr>
+                    <tr class="cc-table-group-header"><td colspan="3">Variable OpEx</td></tr>
+                    <tr>
+                      <td>Feedstock price</td>
+                      <td><input type="number" id="t-feed-price" class="cc-input" value="100" min="0" step="5"></td>
+                      <td class="cc-unit">$/t</td>
+                    </tr>
+                    <tr>
+                      <td>Reagent cost</td>
+                      <td><input type="number" id="t-reagent" class="cc-input" value="0.26" min="0" step="0.01"></td>
+                      <td class="cc-unit">$/kg</td>
+                    </tr>
+                    <tr>
+                      <td>Electricity factor</td>
+                      <td><input type="number" id="t-elec" class="cc-input" value="1.232" min="0" step="0.01"></td>
+                      <td class="cc-unit">$/MJ</td>
+                    </tr>
+                    <tr>
+                      <td>Heat factor</td>
+                      <td><input type="number" id="t-heat" class="cc-input" value="0.294" min="0" step="0.001"></td>
+                      <td class="cc-unit">$/MJ</td>
+                    </tr>
+                    <tr class="cc-table-group-header"><td colspan="3">Fixed OpEx</td></tr>
+                    <tr>
+                      <td>Indirect cost rate</td>
+                      <td><input type="number" id="t-indirect-rate" class="cc-input" value="0.06" min="0" max="1" step="0.01"></td>
+                      <td class="cc-unit">&times; TCI/y</td>
+                    </tr>
+                    <tr>
+                      <td>Labor cost</td>
+                      <td><input type="number" id="t-labor" class="cc-input cc-input--wide" value="85000" min="0" step="1000"></td>
+                      <td class="cc-unit">$/FTE/y</td>
+                    </tr>
+                    <tr>
+                      <td>No. of FTEs</td>
+                      <td><input type="number" id="t-jobs" class="cc-input" value="23" min="0" step="1"></td>
+                      <td class="cc-unit">FTEs</td>
+                    </tr>
+                    <tr class="cc-table-group-header"><td colspan="3">DCF Parameters</td></tr>
+                    <tr>
+                      <td>Discount rate</td>
+                      <td><input type="number" id="t-discount" class="cc-input" value="0.10" min="0" max="1" step="0.01"></td>
+                      <td class="cc-unit">fraction</td>
+                    </tr>
+                    <tr>
+                      <td>Analysis period</td>
+                      <td><input type="number" id="t-period" class="cc-input" value="10" min="1" max="50"></td>
+                      <td class="cc-unit">yr</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <p class="cc-pane-subtitle mt-2">Results Summary</p>
+                <table class="table cc-results-table">
+                  <tbody>
+                    <tr><td>Annual Revenue</td><td class="cc-result-val" id="t-revenue">$7.00M/y</td></tr>
+                    <tr><td>Feedstock Cost</td><td class="cc-result-val" id="t-feed-cost">$0.35M/y</td></tr>
+                    <tr><td>Reagent OpEx</td><td class="cc-result-val" id="t-reagent-opex">$0.32M/y</td></tr>
+                    <tr><td>Electricity OpEx (net)</td><td class="cc-result-val" id="t-elec-opex">−$5.58M/y</td></tr>
+                    <tr><td>Heat OpEx</td><td class="cc-result-val" id="t-heat-opex">$0.65M/y</td></tr>
+                    <tr><td>Indirect OpEx</td><td class="cc-result-val" id="t-fix-opex">$0.97M/y</td></tr>
+                    <tr><td>Labor OpEx</td><td class="cc-result-val" id="t-labor-opex">$1.96M/y</td></tr>
+                    <tr><td>Total OpEx</td><td class="cc-result-val" id="t-total-opex">$0.59M/y</td></tr>
+                    <tr class="cc-result-highlight"><td>Annual Cash Flow</td><td class="cc-result-val" id="t-annual-cf">$4.41M/y</td></tr>
+                    <tr class="cc-result-highlight"><td>NPV at Year <span id="t-period-disp">10</span></td><td class="cc-result-val" id="t-npv">$10.90M</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- NPV Chart + DCF table -->
+              <div class="col-lg-7">
+                <p class="cc-pane-subtitle">Cumulative NPV Over Project Life</p>
+                <div class="cc-chart-wrap">
+                  <canvas id="npvChart"></canvas>
+                </div>
+                <button class="btn btn-sm cc-btn-outline mt-2" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#dcfTable" style="font-size:12px">
+                  <i class="fa-solid fa-table me-1"></i>Show year-by-year DCF table
+                </button>
+                <div class="collapse mt-2" id="dcfTable">
+                  <div class="table-responsive">
+                    <table class="table cc-results-table" style="font-size:12px">
+                      <thead>
+                        <tr>
+                          <th>Year</th>
+                          <th style="text-align:right">Discounted CF ($M)</th>
+                          <th style="text-align:right">Cumulative NPV ($M)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="dcf-tbody">
+                        <!-- Filled by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /.row -->
+          </div><!-- /.accordion-body -->
+        </div>
+      </div><!-- /pane 2 -->
+
+      <!-- ============================================================
+           PANE 3 — GWP / LCA (Sheet: GWP)
+           ============================================================ -->
+      <div class="accordion-item cc-accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button cc-accordion-btn collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapseGWP"
+                  aria-expanded="false" aria-controls="collapseGWP">
+            <i class="fa-solid fa-leaf"></i>
+            Sheet 3 — Life Cycle Assessment (GWP)
+            <span class="cc-pane-badge" id="badge-gwp">1.511 kg CO&#x2082;e/kg</span>
+          </button>
+        </h2>
+        <div id="collapseGWP" class="accordion-collapse collapse" data-bs-parent="#csAccordion">
+          <div class="accordion-body cc-accordion-body">
+            <div class="row g-4">
+
+              <!-- GWP table -->
+              <div class="col-lg-7">
+                <p class="cc-pane-subtitle">Life Cycle Inventory — Emission Factors</p>
+                <p class="cc-pane-desc">
+                  Edit quantities (flow per kg biocomposite) or GWP factors to see the total GWP update.
+                  All values are per kg of final biocomposite product.
+                </p>
+                <div class="table-responsive">
+                  <table class="table cc-calc-table cc-gwp-table">
+                    <thead>
+                      <tr>
+                        <th>Material / Input</th>
+                        <th>Qty per kg product</th>
+                        <th>Unit</th>
+                        <th>GWP Factor</th>
+                        <th>Unit</th>
+                        <th style="background:var(--cc-green-xlight);font-weight:700">GWP (kg CO&#x2082;e/kg)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="gwp-tbody">
+                      <!-- Rows rendered by JS -->
+                    </tbody>
+                    <tfoot>
+                      <tr class="cc-result-highlight">
+                        <td colspan="5">Total GWP</td>
+                        <td class="cc-result-val" id="gwp-total">1.511</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              <!-- GWP chart + result box -->
+              <div class="col-lg-5">
+                <p class="cc-pane-subtitle">GWP Breakdown by Material</p>
+                <div class="cc-chart-wrap">
+                  <canvas id="gwpChart"></canvas>
+                </div>
+                <div class="cc-result-box mt-3">
+                  <div class="cc-result-box-label">Total GWP</div>
+                  <div class="cc-result-box-value" id="gwp-total-big">1.511</div>
+                  <div class="cc-result-box-unit">kg CO&#x2082;e per kg biocomposite</div>
+                </div>
+              </div>
+
+            </div><!-- /.row -->
+          </div><!-- /.accordion-body -->
+        </div>
+      </div><!-- /pane 3 -->
+
+    </div><!-- /#csAccordion -->
+  </div><!-- /.container -->
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="cc-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <img src="img/logo_transparent.png" alt="Clove Circle" height="52" class="mb-3 cc-footer-logo">
+        <p>A specialist consulting firm delivering net zero, life cycle assessment, and sustainability solutions. Founded by Professor Jhuma Sadhukhan.</p>
+        <a href="mailto:jhuma@clovecircle.com" class="cc-footer-email">
+          <i class="fa-solid fa-envelope me-2"></i>jhuma@clovecircle.com
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <h6>Navigate</h6>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="index.html#about">About Us</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+          <li><a href="resources.html">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <h6>Expertise</h6>
+        <ul>
+          <li><a href="index.html#services">Net Zero Strategies</a></li>
+          <li><a href="index.html#services">Life Cycle Assessment</a></li>
+          <li><a href="index.html#services">Sustainability Consulting</a></li>
+          <li><a href="index.html#services">Carbon Reporting</a></li>
+          <li><a href="index.html#services">Circular Economy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cc-footer-bottom">
+      <span>&copy; Clove Circle 2026. All rights reserved.</span>
+      <div class="cc-footer-social">
+        <a href="https://www.linkedin.com/in/professor-jhuma-sadhukhan-1b5600b9/" target="_blank" rel="noopener" title="LinkedIn">
+          <i class="fa-brands fa-linkedin"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to top -->
+<button class="cc-scroll-top" id="scrollTop" aria-label="Scroll to top">
+  <i class="fa-solid fa-angle-up"></i>
+</button>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="js/site.js"></script>
+<script src="js/tea-lca.js"></script>
+</body>
+</html>
