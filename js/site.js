@@ -14,6 +14,20 @@ if (scrollBtn) {
   });
 }
 
+// Scroll-reveal: fade sections up on first scroll into view
+const revealEls = document.querySelectorAll('.cc-reveal');
+if (revealEls.length) {
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => revealObserver.observe(el));
+}
+
 // Active nav link on scroll via IntersectionObserver
 const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.cc-navbar .nav-link');

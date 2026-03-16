@@ -9,7 +9,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome 6 -->
@@ -46,16 +46,9 @@
     <span class="cc-eyebrow cc-eyebrow-light">Knowledge Hub</span>
     <h1>Resources</h1>
     <p>Explore our collection of sustainability insights, research, and reference materials.</p>
-  </div>
-</div>
-
-<!-- ===== RESOURCES TABS ===== -->
-<section class="cc-section cc-section-light">
-  <div class="container">
-
     <!-- Tab navigation -->
     <div class="cc-resources-tabs">
-      <ul class="nav nav-pills cc-tab-nav" id="resourcesTabs" role="tablist">
+      <ul class="nav nav-pills cc-tab-nav justify-content-center" id="resourcesTabs" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="case-studies-tab" data-bs-toggle="pill" data-bs-target="#case-studies" type="button" role="tab" aria-controls="case-studies" aria-selected="true">
             <i class="fa-solid fa-file-lines me-2"></i>Case Studies
@@ -73,6 +66,12 @@
         </li>
       </ul>
     </div>
+  </div>
+</div>
+
+<!-- ===== RESOURCES TABS ===== -->
+<section class="cc-section cc-section-light">
+  <div class="container">
 
     <!-- Tab content -->
     <div class="tab-content cc-tab-content" id="resourcesTabContent">
@@ -131,14 +130,637 @@
 
       <!-- References -->
       <div class="tab-pane fade" id="references" role="tabpanel" aria-labelledby="references-tab">
-        <div class="cc-coming-soon">
-          <div class="cc-coming-soon-icon">
-            <i class="fa-solid fa-book"></i>
-          </div>
-          <h3>References — Coming Soon</h3>
-          <p>A curated library of key publications, standards (ISO 14040, GHG Protocol, IPCC reports), and academic papers referenced in our work is being assembled.</p>
-          <a href="index.html#contact" class="btn cc-btn-primary mt-2">Get Notified</a>
+        <div class="cc-references-header mb-4">
+          <p class="text-muted mb-3">125 peer-reviewed publications by Prof. Jhuma Sadhukhan and collaborators.</p>
+          <input type="text" id="refSearch" class="form-control cc-ref-search" placeholder="&#128269; Filter by author, title, journal, or year…" aria-label="Filter references">
         </div>
+        <ol class="cc-ref-list" id="refList">
+
+          <li class="cc-ref-item" id="ref-1">
+            <span class="cc-ref-text">White M., Trotter C., Lau E., Steele J., Sadhukhan J., Era Y., Law S., Gilman J., Dennis J., Johnson N., Gordon R., Wallace S. 2026. Native H2 Pathways Enable Biocompatible Hydrogenation of Metabolic Alkenes in Bacteria. <em>Nature Chemistry</em>, 18, 535–543.</span>
+            <a href="https://www.nature.com/articles/s41557-025-02052-y" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-2">
+            <span class="cc-ref-text">Sadhukhan J., Ng K.S. and Martinez-Hernandez E. 2014. <em>Biorefineries and Chemical Processes: Design, Integration and Sustainability Analysis.</em> Wiley-Blackwell.</span>
+            <a href="https://onlinelibrary.wiley.com/doi/book/10.1002/9781118698129" class="cc-ref-doi" target="_blank" rel="noopener">Book <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-3">
+            <span class="cc-ref-text">Chalermthai B., Thanahiranya P., Assabumrungrat S., Sadhukhan J. and Charoensuppanimit P. 2026. Life Cycle Assessment of Diethyl Carbonate (DEC) and Glycerol Carbonate (GC) Coproduction from Bioethanol, CO2, and Glycerol. <em>ACS Sustainable Chemistry &amp; Engineering</em>.</span>
+            <a href="https://doi.org/10.1021/acssuschemeng.5c13182" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-4">
+            <span class="cc-ref-text">Hafyan R., Gadkari S. and Sadhukhan J. 2026. Multi-Objective Optimization of Bread Waste Valorization: A Framework for Integrated Food Waste Management. <em>Resources, Conservation &amp; Recycling</em>, 229, 108871.</span>
+            <a href="https://doi.org/10.1016/j.resconrec.2026.108871" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-5">
+            <span class="cc-ref-text">Murali R., Bywater A., Dolat M., Dekhici B., Zarei M., Hilton L., Sadhukhan J., Zhang D. and Short M. 2026. Anaerobic digestion site-wide optimisation and decision-making: An industrial perspective and review. <em>Renewable and Sustainable Energy Reviews</em>, 226, 116402.</span>
+            <a href="https://doi.org/10.1016/j.rser.2025.116402" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-6">
+            <span class="cc-ref-text">Pincam T., Liu Y.Q., Short M., Guo B., Sadhukhan J. and Bywater A. 2025. Challenging conventional temperature ranges in anaerobic digestion: intermediate (45°C) as general optimum with feedstock-dependent performance differences from mesophilic (35°C) and thermophilic (55°C) conditions. <em>Bioresource Technology</em>, 133609.</span>
+            <a href="https://doi.org/10.1016/j.biortech.2025.133609" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-7">
+            <span class="cc-ref-text">McFall F., Guan D., Chenoweth J., Font X., Corduneanu I., Goean E. and Sadhukhan J. 2025. Aviation passenger carbon footprint calculator with comprehensive emissions, life cycle coverage, and historical adjustment. <em>Communications Earth &amp; Environment</em>, 6(1), 855.</span>
+            <a href="https://doi.org/10.1038/s43247-025-02847-4" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-8">
+            <span class="cc-ref-text">Lord J., White R., Murphy R. and Sadhukhan J. 2025. Aligning platinum recycling with hydrogen economy growth: a comparative LCA of hydrometallurgical and pyrometallurgical methods. <em>Green Chemistry</em>.</span>
+            <a href="https://doi.org/10.1039/D5GC02447A" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-9">
+            <span class="cc-ref-text">Heaven S., Kusch-Brandt S., Byfield L., Bywater A., Coulon F., Curtis T., Gutierrez T., Higson A. and Sadhukhan J. 2025. What Is Environmental Biotechnology? Although Widely Applied, a Clear Definition of the Term Is Still Needed. <em>Environments</em>, 12(10), 393.</span>
+            <a href="https://doi.org/10.3390/environments12100393" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-10">
+            <span class="cc-ref-text">Courtat M., Joyce P.J., Sim S. et al. 2025. Ensuring consistent data quality for environmental rating ecolabels with representative secondary datasets. <em>International Journal of Life Cycle Assessment</em>.</span>
+            <a href="https://doi.org/10.1007/s11367-025-02545-5" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-11">
+            <span class="cc-ref-text">Courtat M., Joyce P.J., Sim S., Sadhukhan J., Sheffield D. and Murphy R. 2025. Environmental rating ecolabels: How does product categorization affect product ratings and potential interpretation? <em>Journal of Industrial Ecology</em>, 29(4), 1335–1349.</span>
+            <a href="https://doi.org/10.1111/jiec.70053" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-12">
+            <span class="cc-ref-text">Gray S., Sadhukhan J., Druckman A. and James K. 2025. A comparison of circular business models using life cycle assessment, focusing on clothing retail, distribution and use. <em>International Journal of Life Cycle Assessment</em>, 1–22.</span>
+            <a href="https://doi.org/10.1007/s11367-025-02468-1" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-13">
+            <span class="cc-ref-text">Thanahiranya P., Sadhukhan J., Charoensuppanimit P., Vacharanukrauh T., Chuetor S., Chanthanumataporn M. and Assabumrungrat S. 2025. Design and assessment of biolubricant production processes utilizing various feedstocks in palm oil-based biodiesel industry. <em>Journal of Cleaner Production</em>, 518, 145949.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2025.145949" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-14">
+            <span class="cc-ref-text">Luo H., Yang D., Sadhukhan J., Costica V., Dorey R., Song Q. and Titirici M.M. 2025. Process Integration and Life-cycle Assessment of Moist-solid Hydrolysis of Polylactic Acid with Lactic Acid Recovery via Electrodialysis. <em>ChemSusChem</em>, e202500503.</span>
+            <a href="https://doi.org/10.1002/cssc.202500503" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-15">
+            <span class="cc-ref-text">Wang J., Zhang X., Daniel T., Sadhukhan J. and Liu L. 2025. Environ-economic analysis of hydrogen integration in decarbonizing the UK iron and steel industry: A comparative study of progressive and disruptive technical routes. <em>Applied Energy</em>, 390, 125762.</span>
+            <a href="https://doi.org/10.1016/j.apenergy.2025.125762" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-16">
+            <span class="cc-ref-text">Courtat M., Joyce P.J., Sim S., Sadhukhan J. and Murphy R. 2025. Environmental rating ecolabels: Considerations for establishing a rating scale with categorical performance classes. <em>Journal of Cleaner Production</em>, 503, 145372.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2025.145372" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-17">
+            <span class="cc-ref-text">Hafyan R.H., Sadhukhan J., Kumar V., Maity S.K. and Gadkari S. 2025. A comparative techno-economic feasibility of hydrogen production from sugarcane bagasse and bread waste. <em>Fuel</em>, 388, 134469.</span>
+            <a href="https://doi.org/10.1016/j.fuel.2025.134469" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-18">
+            <span class="cc-ref-text">Sadhukhan J., Fisher O.J., Cummings B. and Xuan J. 2025. Novel comprehensive life cycle assessment (LCA) of sustainable flue gas carbon capture and utilization (CCU) for surfactant and fuel via Fischer-Tropsch synthesis. <em>Journal of CO2 Utilization</em>, 92, 103013.</span>
+            <a href="https://doi.org/10.1016/j.jcou.2024.103013" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-19">
+            <span class="cc-ref-text">Fisher O.J., Sadhukhan J., Daniel T. and Xuan J. 2024. Techno-economic analysis and process simulation of alkoxylated surfactant production in a circular carbon economy framework. <em>Digital Chemical Engineering</em>, 100199.</span>
+            <a href="https://doi.org/10.1016/j.dche.2024.100199" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-20">
+            <span class="cc-ref-text">Dolat M., Murali R., Zarei M., Zhang R., Pincam T., Liu Y.Q., Sadhukhan J., Bywater A. and Short M. 2024. Dynamic feed scheduling for optimised anaerobic digestion: An optimisation approach for better decision-making to enhance revenue and environmental benefits. <em>Digital Chemical Engineering</em>, 13, 100191.</span>
+            <a href="https://doi.org/10.1016/j.dche.2024.100191" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-21">
+            <span class="cc-ref-text">Dolat M., Murali R., Zhang R., Zarei M., Zhang D., Zhang D., Sadhukhan J. and Short M. 2024. Optimal feed scheduling and co-digestion for anaerobic digestion sites with dynamic demands. <em>Computer Aided Chemical Engineering</em>, 53, 1705–1710. Elsevier.</span>
+            <a href="https://doi.org/10.1016/B978-0-443-28824-1.50285-4" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-22">
+            <span class="cc-ref-text">Sadhukhan J., Sen S. and Randriamahefasoa T.M.S. 2024. Framework for optimal energy storage duration for maximum-reliability renewable electricity. <em>Frontiers in Energy Research</em>, 12, 1430413.</span>
+            <a href="https://doi.org/10.3389/fenrg.2024.1430413" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-23">
+            <span class="cc-ref-text">Goean E.R., Font X., Xiong Y., Becken S., Chenoweth J.L., Fioramonti L., Higham J., Jaiswal A.K., Sadhukhan J., Sun Y.Y. and Treiblmaier H. 2024. Using the Blockchain to Reduce Carbon Emissions in the Visitor Economy. <em>Sustainability</em>, 16(10), 4000.</span>
+            <a href="https://doi.org/10.3390/su16104000" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-24">
+            <span class="cc-ref-text">Alabbasi A., Sadhukhan J., Leach M. and Sanduk M. 2024. Accelerating the Transition to Sustainable Energy: An intelligent decision support system for Generation Expansion Planning with renewables. <em>Energy</em>, 304, 131999.</span>
+            <a href="https://doi.org/10.1016/j.energy.2024.131999" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-25">
+            <span class="cc-ref-text">Sadhukhan J. et al. 2024. Strategic navigation of world-leading biorefineries and Mexico&#39;s policy landscape: A gateway to a sustainable circular bioeconomy. <em>Journal of Cleaner Production</em>, 434, 140386.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2023.140386" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-26">
+            <span class="cc-ref-text">Martinez-Hernandez E., Castillo-Landero A., Dominguillo-Ramírez D., Amezcua-Allieri M.A., Morse S., Murphy R., Aburto J. and Sadhukhan J. 2024. Priorities and relevance of bioenergy sustainability indicators: A participatory selection framework applied to community-based forestry in Mexico. <em>Energy Research &amp; Social Science</em>, 109, 103425.</span>
+            <a href="https://doi.org/10.1016/j.erss.2024.103425" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-27">
+            <span class="cc-ref-text">Hafyan R.H., Mohanarajan J., Uppal M., Kumar V., Narisetty V., Maity S.K., Sadhukhan J. and Gadkari S. 2024. Integrated biorefinery for bioethanol and succinic acid co-production from bread waste: Techno-economic feasibility and life cycle assessment. <em>Energy Conversion and Management</em>, 301, 118033.</span>
+            <a href="https://doi.org/10.1016/j.enconman.2023.118033" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-28">
+            <span class="cc-ref-text">Wang S., Li F., Sadhukhan J., Xuan J., Mao X., Xing L., Zhao X. and Wang X. 2024. Revealing the best solution simultaneously for environmental and economic performance using response surface methodology under the perspective of life cycle: A case study of sludge dewatering by the Fenton process. <em>Journal of Cleaner Production</em>, 434, 139846.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2023.139846" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-29">
+            <span class="cc-ref-text">Hafyan R.H., Mohanarajan J., Uppal M., Kumar V., Narisetty V., Maity S.K., Sadhukhan J. and Gadkari S. 2024. Bread waste valorization: a review of sustainability aspects and challenges. <em>Frontiers in Sustainable Food Systems</em>.</span>
+            <a href="https://doi.org/10.3389/fsufs.2024.1334801" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-30">
+            <span class="cc-ref-text">Thanahiranya P., Sadhukhan J., Charoensuppanimit P., Soottitantawat A., Arpornwichanop A., Thongchul N. and Assabumrungrat S. 2023. Sustainability Assessment of Dihydroxyacetone (DHA) Production from Glycerol: A Comparative Study between Biological and Catalytic Oxidation Routes. <em>ACS Sustainable Chemistry &amp; Engineering</em>, 11(49), 17425–17439.</span>
+            <a href="https://doi.org/10.1021/acssuschemeng.3c05354" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-31">
+            <span class="cc-ref-text">Muazu R.I., Sadhukhan J., Mohan S.V. and Gadkari S. 2023. Hexavalent chromium waste removal via bioelectrochemical systems — a life cycle assessment perspective. <em>Environmental Science: Water Research &amp; Technology</em>, 9(10), 2487–2500.</span>
+            <a href="https://doi.org/10.1039/D3EW00344B" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-32">
+            <span class="cc-ref-text">Courtat M., Joyce P.J., Sim S., Sadhukhan J. and Murphy R. 2023. Towards credible, evidence-based environmental rating ecolabels for consumer products: A proposed framework. <em>Journal of Environmental Management</em>, 336, 117684.</span>
+            <a href="https://doi.org/10.1016/j.jenvman.2023.117684" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-33">
+            <span class="cc-ref-text">Wang S., Sadhukhan J., Xuan J., Yu Y., Mao X., Wang M., Chen X., Zhou X., Xing L. and Wang X. 2023. Life Cycle Assessment and Life Cycle Cost of Sludge Dewatering, Conditioned with Fe2+/H2O2, Fe2+/Ca(ClO)2, Fe2+/Na2S2O8, and Fe3+/CaO Based on Pilot-Scale Study Data. <em>ACS Sustainable Chemistry &amp; Engineering</em>, 11(20), 7798–7708.</span>
+            <a href="https://doi.org/10.1021/acssuschemeng.3c00505" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-34">
+            <span class="cc-ref-text">Wu M., Sadhukhan J., Murphy R., Bharadwaj U. and Cui X. 2023. A novel life cycle assessment and life cycle costing framework for carbon fibre-reinforced composite materials in the aviation industry. <em>International Journal of Life Cycle Assessment</em>, 28, 566–589.</span>
+            <a href="https://doi.org/10.1007/s11367-023-02164-y" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-35">
+            <span class="cc-ref-text">Thanahiranya P., Charoensuppanimit P., Sadhukhan J., Soottitantawat A., Arpornwichanop A., Thongchul N. and Assabumrungrat S. 2023. Succinic Acid Production from Glycerol by Actinobacillus succinogenes: Techno-economic, environmental, and exergy analyses. <em>Journal of Cleaner Production</em>, 404, 136927.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2023.136927" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-36">
+            <span class="cc-ref-text">Andries A., Morse S., Murphy R.J., Sadhukhan J., Martinez-Hernandez E., Amezcua-Allieri M.A. and Aburto J. 2023. Potential of Using Night-Time Light to Proxy Social Indicators for Sustainable Development. <em>Remote Sensing</em>, 15(5), 1209.</span>
+            <a href="https://doi.org/10.3390/rs15051209" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-37">
+            <span class="cc-ref-text">Castillo-Landero A., Dominguillo-Ramírez D., Aburto J., Sadhukhan J. and Martinez-Hernandez E. 2023. Improving the Economic, Environmental, and Safety Performance of Bio-Jet Fuel Production through Process Intensification and Integration Using a Modularity Approach. <em>ACS Sustainable Chemistry &amp; Engineering</em>.</span>
+            <a href="https://doi.org/10.1021/acssuschemeng.2c05491" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-38">
+            <span class="cc-ref-text">Castillo-Landero A., Aburto J., Sadhukhan J. and Martinez-Hernandez E. 2022. A process modularity approach for chemical process intensification and inherently safer design. <em>Process Safety and Environmental Protection</em>, 168, 54–66.</span>
+            <a href="https://doi.org/10.1016/j.psep.2022.09.054" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-39">
+            <span class="cc-ref-text">Sadhukhan J. and Sekar K. 2022. Economic Conditions to Circularize Clinical Plastics. <em>Energies</em>, 15(23), 8974.</span>
+            <a href="https://doi.org/10.3390/en15238974" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-40">
+            <span class="cc-ref-text">HM Beigi B., Gadkari S. and Sadhukhan J. 2022. Osmotically assisted reverse osmosis, simulated to achieve high solute concentrations, at low energy consumption. <em>Scientific Reports</em>, 12(1), 1–12.</span>
+            <a href="https://doi.org/10.1038/s41598-022-16974-x" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-41">
+            <span class="cc-ref-text">Sadhukhan J., Pollet B.G. and Seaman M. 2022. Hydrogen Production and Storage: Analysing Integration of Photoelectrolysis, Electron Harvesting Lignocellulose, and Atmospheric Carbon Dioxide-Fixing Biosynthesis. <em>Energies</em>, 15(15), 5486.</span>
+            <a href="https://doi.org/10.3390/en15155486" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-42">
+            <span class="cc-ref-text">Sadhukhan J. 2022. Net-Zero Action Recommendations for Scope 3 Emission Mitigation Using Life Cycle Assessment. <em>Energies</em>, 15(15), 5522.</span>
+            <a href="https://doi.org/10.3390/en15155522" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-43">
+            <span class="cc-ref-text">Sadhukhan J., Sen S., Randriamahefasoa T.M.S. and Gadkari S. 2022. Energy System Optimization for Net-Zero Electricity. <em>Digital Chemical Engineering</em>, 3, 100026.</span>
+            <a href="https://doi.org/10.1016/j.dche.2022.100026" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-44">
+            <span class="cc-ref-text">Martinez-Hernandez E., Sadhukhan J., Aburto J., Amezcua-Allieri M.A., Morse S. and Murphy R. 2022. Modelling to analyse the process and sustainability performance of forestry-based bioenergy systems. <em>Clean Technologies and Environmental Policy</em>, 24(6), 1709–1725.</span>
+            <a href="https://doi.org/10.1007/s10098-022-02278-1" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-45">
+            <span class="cc-ref-text">Alabbasi A., Sadhukhan J., Leach M. and Sanduk M. 2022. Sustainable Indicators for Integrating Renewable Energy in Bahrain&#39;s Power Generation. <em>Sustainability</em>, 14(11), 6535.</span>
+            <a href="https://doi.org/10.3390/su14116535" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-46">
+            <span class="cc-ref-text">Ibrahim Muazu R., Gadkari S. and Sadhukhan J. 2022. Integrated Life Cycle Assessment Modelling of Densified Fuel Production from Various Biomass Species. <em>Energies</em>, 15(11), 3872.</span>
+            <a href="https://doi.org/10.3390/en15113872" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-47">
+            <span class="cc-ref-text">Gray S., Druckman A., Sadhukhan J. and James K. 2022. Reducing the Environmental Impact of Clothing: An Exploration of the Potential of Alternative Business Models. <em>Sustainability</em>, 14(10), 6292.</span>
+            <a href="https://doi.org/10.3390/su14106292" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-48">
+            <span class="cc-ref-text">Sadhukhan J. 2022. Net zero electricity systems in global economies by life cycle assessment (LCA) considering ecosystem, health, monetization, and soil CO2 sequestration impacts. <em>Renewable Energy</em>, 184, 960–974.</span>
+            <a href="https://doi.org/10.1016/j.renene.2021.12.024" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-49">
+            <span class="cc-ref-text">Sadhukhan J. and Sen S. 2021. A novel mathematical modelling platform for evaluation of a novel biorefinery design with green hydrogen recovery to produce renewable aviation fuel. <em>Chemical Engineering Research and Design</em>, 175, 358–379.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2021.09.014" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-50">
+            <span class="cc-ref-text">Sadhukhan J. and Christensen M. 2021. An In-Depth Life Cycle Assessment (LCA) of Lithium-Ion Battery for Climate Impact Mitigation Strategies. <em>Energies</em>, 14(17), 5555.</span>
+            <a href="https://doi.org/10.3390/en14175555" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-51">
+            <span class="cc-ref-text">Black M.J., Roy A., Twinomunuji E., Kemausuor F., Oduro R., Leach M., Sadhukhan J. and Murphy R. 2021. Bottled Biogas — An Opportunity for Clean Cooking in Ghana and Uganda. <em>Energies</em>, 14(13), 3856.</span>
+            <a href="https://doi.org/10.3390/en14133856" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-52">
+            <span class="cc-ref-text">Sadhukhan J., Sen S. and Gadkari S. 2021. The Mathematics of Life Cycle Sustainability Assessment. <em>Journal of Cleaner Production</em>, 309, 127457.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2021.127457" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-53">
+            <span class="cc-ref-text">Gadkari S., Beigi B.H.M., Aryal N. and Sadhukhan J. 2021. Microbial electrosynthesis: is it sustainable for bioproduction of acetic acid? <em>RSC Advances</em>, 11(17), 9921–9932.</span>
+            <a href="https://doi.org/10.1039/D1RA00920F" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-54">
+            <span class="cc-ref-text">Gadkari S. and Sadhukhan J. 2020. A robust correlation based on dimensional analysis to characterize microbial fuel cells. <em>Nature Scientific Reports</em>, 10(1), 1–5.</span>
+            <a href="https://www.nature.com/articles/s41598-020-65375-5" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-55">
+            <span class="cc-ref-text">Gadkari S., Fontmorin J.M., Yu E. and Sadhukhan J. 2020. Influence of temperature and other system parameters on microbial fuel cell performance: Numerical and experimental investigation. <em>Chemical Engineering Journal</em>, 388, 124176.</span>
+            <a href="https://doi.org/10.1016/j.cej.2020.124176" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-56">
+            <span class="cc-ref-text">Sadhukhan J. et al. 2020. Perspectives on "Game Changer" Global Challenges for Sustainable 21st Century: Plant-Based Diet, Unavoidable Food Waste Biorefining, and Circular Economy. <em>Sustainability</em>, 12(5), 1976.</span>
+            <a href="https://doi.org/10.3390/su12051976" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-57">
+            <span class="cc-ref-text">Honorato-Salazar J.A. and Sadhukhan J. 2020. Annual biomass variation of agriculture crops and forestry residues, and seasonality of crop residues for energy production in Mexico. <em>Food and Bioproducts Processing</em>, 119, 1–19.</span>
+            <a href="https://doi.org/10.1016/j.fbp.2019.10.005" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-58">
+            <span class="cc-ref-text">Gadkari S., Gu S. and Sadhukhan J. 2019. Two-dimensional mathematical model of an air-cathode microbial fuel cell with graphite fiber brush anode. <em>Journal of Power Sources</em>, 441, 227145.</span>
+            <a href="https://doi.org/10.1016/j.jpowsour.2019.227145" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-59">
+            <span class="cc-ref-text">Sadhukhan J. et al. 2019. Novel macroalgae (seaweed) biorefinery systems for integrated chemical, protein, salt, nutrient and mineral extractions and environmental protection by green synthesis and life cycle sustainability assessments. <em>Green Chemistry</em>, 21(10), 2635–2655.</span>
+            <a href="https://doi.org/10.1039/C9GC00607A" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-60">
+            <span class="cc-ref-text">Gadkari S., Shemfe M., Modestra J.A., Mohan S.V. and Sadhukhan J. 2019. Understanding the interdependence of operating parameters in microbial electrosynthesis: a numerical investigation. <em>Physical Chemistry Chemical Physics</em>, 21(20), 10761–10772.</span>
+            <a href="https://doi.org/10.1039/C9CP01288E" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-61">
+            <span class="cc-ref-text">Gadkari S., Shemfe M. and Sadhukhan J. 2019. Microbial fuel cells: A fast converging dynamic model for assessing system performance based on bioanode kinetics. <em>International Journal of Hydrogen Energy</em>, 44(29), 15377–15386.</span>
+            <a href="https://doi.org/10.1016/j.ijhydene.2019.04.065" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-62">
+            <span class="cc-ref-text">Kaur A., Boghani H.C., Milner E.M., Kimber R.L., Michie I.S., Daalmans R., Dinsdale R.M., Guwy A.J., Head I.M., Lloyd J.R., Eileen H.Y. and Sadhukhan J. 2019. <em>Journal of Hazardous Materials</em>, 371, 18–26.</span>
+            <a href="https://doi.org/10.1016/j.jhazmat.2019.02.100" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-63">
+            <span class="cc-ref-text">Sadhukhan J., Martinez-Hernandez E., Amezcua-Allieri M.A. and Aburto J. 2019. Economic and environmental impact evaluation of various biomass feedstock for bioethanol production and correlations to lignocellulosic composition. <em>Bioresource Technology Reports</em>, 7, 100230.</span>
+            <a href="https://doi.org/10.1016/j.biteb.2019.100230" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-64">
+            <span class="cc-ref-text">Shemfe M., Gadkari S., Yu E., Rasul S., Scott K., Head I., Gu S. and Sadhukhan J. 2018. Life cycle, techno-economic and dynamic simulation assessment of bioelectrochemical systems: A case of formic acid synthesis. <em>Bioresource Technology</em>, 255, 39–49.</span>
+            <a href="https://doi.org/10.1016/j.biortech.2018.01.071" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-65">
+            <span class="cc-ref-text">Sadhukhan J. et al. 2018. Role of bioenergy, biorefinery and bioeconomy in sustainable development: Strategic pathways for Malaysia. <em>Renewable &amp; Sustainable Energy Reviews</em>, 81(2), 1966–1987.</span>
+            <a href="https://doi.org/10.1016/j.rser.2017.06.007" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-66">
+            <span class="cc-ref-text">Shemfe M., Gadkari S. and Sadhukhan J. 2018. Social Hotspot Analysis and Trade Policy Implications of the Use of Bioelectrochemical Systems for Resource Recovery from Wastewater. <em>Sustainability</em>, 10(9), 3193.</span>
+            <a href="https://doi.org/10.3390/su10093193" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-67">
+            <span class="cc-ref-text">Miah J.H., Griffiths A., McNeill R., Halvorson S., Schenker U., Espinoza-Orias N., Morse S., Yang A. and Sadhukhan J. 2018. A framework for increasing the availability of life cycle inventory data based on the role of multinational companies. <em>International Journal of Life Cycle Assessment</em>, 23(9), 1744–1760.</span>
+            <a href="https://doi.org/10.1007/s11367-017-1391-y" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-68">
+            <span class="cc-ref-text">Gear M., Sadhukhan J., Thorpe R., Clift R., Seville J. and Keast M. 2018. A life cycle assessment data analysis toolkit for the design of novel processes — A case study for a thermal cracking process for mixed plastic waste. <em>Journal of Cleaner Production</em>, 180, 735–747.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2018.01.015" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-69">
+            <span class="cc-ref-text">Miah J.H., Griffiths A., McNeill R., Halvorson S., Schenker U., Espinoza-Orias N.D., Morse S., Yang A. and Sadhukhan J. 2018. Environmental management of confectionery products: Life cycle impacts and improvement strategies. <em>Journal of Cleaner Production</em>, 177, 732–751.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2017.12.073" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-70">
+            <span class="cc-ref-text">Joshi N., Filip J., Coker V., Sadhukhan J., Safarik I., Bagshaw H. and Lloyd J.R. 2018. Microbial reduction of natural Fe(III) minerals; towards the sustainable production of functional magnetic nanoparticles. <em>Frontiers in Environmental Science</em>, 6, 127.</span>
+            <a href="https://doi.org/10.3389/fenvs.2018.00127" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-71">
+            <span class="cc-ref-text">Sadhukhan J. et al. 2017. Life cycle assessment of sustainable raw material acquisition for functional magnetite bionanoparticle production. <em>Journal of Environmental Management</em>, 199, 116–125.</span>
+            <a href="https://doi.org/10.1016/j.jenvman.2017.05.048" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-72">
+            <span class="cc-ref-text">Galano A., Aburto J., Sadhukhan J. and Torres-García E. 2017. A combined theoretical-experimental investigation on the mechanism of lignin pyrolysis: Role of heating rates and residence times. <em>Journal of Analytical and Applied Pyrolysis</em>, 128, 208–216.</span>
+            <a href="https://doi.org/10.1016/j.jaap.2017.10.009" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-73">
+            <span class="cc-ref-text">Pask F., Lake P., Yang A., Tokos H. and Sadhukhan J. 2017. Sustainability indicators for industrial ovens and assessment using Fuzzy set theory and Monte Carlo simulation. <em>Journal of Cleaner Production</em>, 140, 1217–1225.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2016.10.038" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-74">
+            <span class="cc-ref-text">Pask F., Lake P., Yang A., Tokos H. and Sadhukhan J. 2017. Industrial oven improvement for energy reduction and enhanced process performance. <em>Clean Technologies and Environmental Policy</em>, 19(1), 215–224.</span>
+            <a href="https://doi.org/10.1007/s10098-016-1206-z" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-75">
+            <span class="cc-ref-text">Sadhukhan J. and Martinez-Hernandez E. 2017. Material flow and sustainability analyses of biorefining of municipal solid waste. <em>Bioresource Technology</em>, 243, 135–146.</span>
+            <a href="https://doi.org/10.1016/j.biortech.2017.06.078" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-76">
+            <span class="cc-ref-text">Sadhukhan J., Ng K.S. and Martinez-Hernandez E. 2016. Novel integrated mechanical biological chemical treatment (MBCT) systems for the production of levulinic acid from fraction of municipal solid waste: A comprehensive techno-economic analysis. <em>Bioresource Technology</em>, 215, 131–143.</span>
+            <a href="https://doi.org/10.1016/j.biortech.2016.04.030" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-77">
+            <span class="cc-ref-text">Ng K.S., Head I., Premier G.C., Scott K., Yu E., Lloyd J. and Sadhukhan J. 2016. A multilevel sustainability analysis of zinc recovery from wastes. <em>Resources, Conservation and Recycling</em>, 113, 88–105.</span>
+            <a href="https://doi.org/10.1016/j.resconrec.2016.05.013" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-78">
+            <span class="cc-ref-text">Sadhukhan J., Lloyd J.R., Scott K., Premier G.C., Eileen H.Y., Curtis T. and Head I.M. 2016. A critical review of integration analysis of microbial electrosynthesis (MES) systems with waste biorefineries for the production of biofuel and chemical from reuse of CO2. <em>Renewable and Sustainable Energy Reviews</em>, 56, 116–132.</span>
+            <a href="https://doi.org/10.1016/j.rser.2015.11.015" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-79">
+            <span class="cc-ref-text">Sadhukhan J., Martinez-Hernandez E. and Ng K.S. 2016. Biorefinery value chain creation. <em>Chemical Engineering Research and Design</em>, 107, 1–3.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2016.02.026" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-80">
+            <span class="cc-ref-text">Black M.J., Sadhukhan J., Day K., Drage G. and Murphy R.J. 2016. Developing database criteria for the assessment of biomass supply chains for biorefinery development. <em>Chemical Engineering Research and Design</em>, 107, 253–262.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2015.10.046" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-81">
+            <span class="cc-ref-text">Wan Y.K., Sadhukhan J., Ng K.S. and Ng D.K. 2016. Techno-economic evaluations for feasibility of sago-based biorefinery, Part 1: Alternative energy systems. <em>Chemical Engineering Research and Design</em>, 107, 263–279.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2015.11.001" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-82">
+            <span class="cc-ref-text">Wan Y.K., Sadhukhan J. and Ng D.K. 2016. Techno-economic evaluations for feasibility of sago-based biorefinery, Part 2: Integrated bioethanol production and energy systems. <em>Chemical Engineering Research and Design</em>, 107, 102–116.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2015.09.017" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-83">
+            <span class="cc-ref-text">Niekamp S., Bharadwaj U., Sadhukhan J. and Chryssanthopoulos M. 2016. A framework for multi-criteria decision support in sustainable through-life management of industrial assets. <em>InImpact: The Journal of Innovation Impact</em>, 7(2), 444.</span>
+            <a href="https://nimbusvault.net/publications/koala/inimpact/452.html" class="cc-ref-doi" target="_blank" rel="noopener">Link <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-84">
+            <span class="cc-ref-text">Jaye I.F.M., Sadhukhan J. and Murphy R.J. 2016. Renewable, local electricity generation from palm oil mills: a case study from Peninsular Malaysia. <em>International Journal of Smart Grid and Clean Energy</em>, 44, 106–111.</span>
+          </li>
+
+          <li class="cc-ref-item" id="ref-85">
+            <span class="cc-ref-text">Pask F., Lake P., Yang A., Tokos H. and Sadhukhan J. 2016. Generic Approach to Sustainability Improvements in Manufacturing Ovens. In <em>Sustainable Design and Manufacturing 2016</em> (pp. 99–109). Springer International Publishing.</span>
+            <a href="https://doi.org/10.1007/978-3-319-32098-4_9" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-86">
+            <span class="cc-ref-text">Sadhukhan J., Ng K.S. and Martinez-Hernandez E. 2015. Process systems engineering tools for biomass polygeneration systems with carbon capture and reuse. In <em>Process Design Strategies for Biomass Conversion Systems</em>, pp. 215–245.</span>
+          </li>
+
+          <li class="cc-ref-item" id="ref-87">
+            <span class="cc-ref-text">Miah J.H., Griffiths A., McNeill R., Poonaji I., Martin R., Leiser A., Morse S., Yang A. and Sadhukhan J. 2015. Maximising the recovery of low grade heat: An integrated heat integration framework incorporating heat pump intervention for simple and complex factories. <em>Applied Energy</em>, 160, 172–184.</span>
+            <a href="https://doi.org/10.1016/j.apenergy.2015.09.032" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-88">
+            <span class="cc-ref-text">Miah J.H., Griffiths A., McNeill R., Poonaji I., Martin R., Morse S., Yang A. and Sadhukhan J. 2015. A small-scale transdisciplinary process to maximising the energy efficiency of food factories: insights and recommendations from the development of a novel heat integration framework. <em>Sustainability Science</em>, 10, 621–637.</span>
+            <a href="https://doi.org/10.1007/s11625-015-0331-7" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-89">
+            <span class="cc-ref-text">Niekamp S., Bharadwaj U.R., Sadhukhan J. and Chryssanthopoulos M.K. 2015. A multi-criteria decision support framework for sustainable asset management and challenges in its application. <em>Journal of Industrial and Production Engineering</em>, 32(1), 23–36.</span>
+            <a href="https://doi.org/10.1080/21681015.2014.1000401" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-90">
+            <span class="cc-ref-text">Miah J.H., Griffiths A., McNeill R., Poonaji I., Martin R., Morse S., Yang A. and Sadhukhan J. 2015. Creating an environmentally sustainable food factory: A case study of the Lighthouse project at Nestlé. <em>Procedia CIRP</em>, 26, 229–234.</span>
+            <a href="https://doi.org/10.1016/j.procir.2014.07.030" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-91">
+            <span class="cc-ref-text">Pask F., Sadhukhan J., Lake P., McKenna S., Perez E.B. and Yang A. 2014. Systematic approach to industrial oven optimisation for energy saving. <em>Applied Thermal Engineering</em>, 71(1), 72–77.</span>
+            <a href="https://doi.org/10.1016/j.applthermaleng.2014.06.013" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-92">
+            <span class="cc-ref-text">Martinez-Hernandez E., Campbell G.M. and Sadhukhan J. 2014. Economic and environmental impact marginal analysis of biorefinery products for policy targets. <em>Journal of Cleaner Production</em>, 74, 74–85.</span>
+            <a href="https://doi.org/10.1016/j.jclepro.2014.03.051" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-93">
+            <span class="cc-ref-text">Sadhukhan J. 2014. Distributed and micro-generation from biogas and agricultural application of sewage sludge: Comparative environmental performance analysis using life cycle approaches. <em>Applied Energy</em>, 122, 196–206.</span>
+            <a href="https://doi.org/10.1016/j.apenergy.2014.01.051" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-94">
+            <span class="cc-ref-text">Martinez-Hernandez E., Martinez-Herrera J., Campbell G.M. and Sadhukhan J. 2014. Process integration, energy and GHG emission analyses of Jatropha-based biorefinery systems. <em>Biomass Conversion and Biorefinery</em>, 4, 105–124.</span>
+            <a href="https://doi.org/10.1007/s13399-013-0105-3" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-95">
+            <span class="cc-ref-text">Martinez-Hernandez E., Campbell G. and Sadhukhan J. 2013. Economic value and environmental impact (EVEI) analysis of biorefinery systems. <em>Chemical Engineering Research and Design</em>, 91(8), 1418–1426.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2013.02.025" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-96">
+            <span class="cc-ref-text">Martinez-Hernandez E., Sadhukhan J. and Campbell G.M. 2013. Integration of bioethanol as an in-process material in biorefineries using mass pinch analysis. <em>Applied Energy</em>, 104, 517–526.</span>
+            <a href="https://doi.org/10.1016/j.apenergy.2012.11.054" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-97">
+            <span class="cc-ref-text">Ng K.S., Zhang N. and Sadhukhan J. 2013. Techno-economic analysis of polygeneration systems with carbon capture and storage and CO2 reuse. <em>Chemical Engineering Journal</em>, 219, 96–108.</span>
+            <a href="https://doi.org/10.1016/j.cej.2012.12.082" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-98">
+            <span class="cc-ref-text">Martinez-Hernandez E., Ibrahim M.H., Leach M., Sinclair P., Campbell G.M. and Sadhukhan J. 2013. Environmental sustainability analysis of UK whole-wheat bioethanol and CHP systems. <em>Biomass and Bioenergy</em>, 50, 52–64.</span>
+            <a href="https://doi.org/10.1016/j.biombioe.2013.01.001" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-99">
+            <span class="cc-ref-text">Mateos-Salvador F., Sadhukhan J. and Campbell G.M. 2013. Extending the normalised Kumaraswamy breakage function for roller milling of wheat flour stocks to second break. <em>Powder Technology</em>, 237, 107–116.</span>
+            <a href="https://doi.org/10.1016/j.powtec.2013.01.022" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-100">
+            <span class="cc-ref-text">Davison T.J., Okoli C., Wilson K., Lee A.F., Harvey A., Woodford J. and Sadhukhan J. 2013. Multiscale modelling of heterogeneously catalysed transesterification reaction process: an overview. <em>RSC Advances</em>, 3(18), 6226–6240.</span>
+            <a href="https://doi.org/10.1039/C2RA23371A" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-101">
+            <span class="cc-ref-text">Ng K.S., Zhang N. and Sadhukhan J. 2012. A graphical CO2 emission treatment intensity assessment for energy and economic analyses of integrated decarbonised production systems. <em>Computers &amp; Chemical Engineering</em>, 45, 1–14.</span>
+            <a href="https://doi.org/10.1016/j.compchemeng.2012.04.013" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-102">
+            <span class="cc-ref-text">Ng K.S., Zhang N. and Sadhukhan J. 2012. Decarbonised coal energy system advancement through CO2 utilisation and polygeneration. <em>Clean Technologies and Environmental Policy</em>, 14, 443–451.</span>
+            <a href="https://doi.org/10.1007/s10098-011-0437-2" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-103">
+            <span class="cc-ref-text">Zhao Y., Sadhukhan J., Lanzini A., Brandon N. and Shah N. 2011. Optimal integration strategies for a syngas fuelled SOFC and gas turbine hybrid. <em>Journal of Power Sources</em>, 196(22), 9516–9527.</span>
+            <a href="https://doi.org/10.1016/j.jpowsour.2011.07.044" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-104">
+            <span class="cc-ref-text">Ng K.S. and Sadhukhan J. 2011. Techno-economic performance analysis of bio-oil based Fischer-Tropsch and CHP synthesis platform. <em>Biomass and Bioenergy</em>, 35(7), 3218–3234.</span>
+            <a href="https://doi.org/10.1016/j.biombioe.2011.04.037" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-105">
+            <span class="cc-ref-text">Sadhukhan J. and Ng K.S. 2011. Economic and European union environmental sustainability criteria assessment of bio-oil-based biofuel systems: refinery integration cases. <em>Industrial &amp; Engineering Chemistry Research</em>, 50(11), 6794–6808.</span>
+            <a href="https://doi.org/10.1021/ie102339r" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-106">
+            <span class="cc-ref-text">Kapil A., Wilson K., Lee A.F. and Sadhukhan J. 2011. Kinetic modeling studies of heterogeneously catalyzed biodiesel synthesis reactions. <em>Industrial &amp; Engineering Chemistry Research</em>, 50(9), 4818–4830.</span>
+            <a href="https://doi.org/10.1021/ie101403f" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-107">
+            <span class="cc-ref-text">Mateos-Salvador F., Sadhukhan J. and Campbell G.M. 2011. The normalised Kumaraswamy breakage function: A simple model for wheat roller milling. <em>Powder Technology</em>, 208(1), 144–157.</span>
+            <a href="https://doi.org/10.1016/j.powtec.2010.12.013" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-108">
+            <span class="cc-ref-text">Ng K.S. and Sadhukhan J. 2011. Process integration and economic analysis of bio-oil platform for the production of methanol and combined heat and power. <em>Biomass and Bioenergy</em>, 35(3), 1153–1169.</span>
+            <a href="https://doi.org/10.1016/j.biombioe.2010.12.003" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-109">
+            <span class="cc-ref-text">Sadhukhan J., Zhao Y., Leach M., Brandon N.P. and Shah N. 2010. Energy integration and analysis of solid oxide fuel cell based microcombined heat and power systems and other renewable systems using biomass waste derived syngas. <em>Industrial &amp; Engineering Chemistry Research</em>, 49(22), 11506–11516.</span>
+            <a href="https://doi.org/10.1021/ie1011855" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-110">
+            <span class="cc-ref-text">Sadhukhan J., Zhao Y., Shah N. and Brandon N.P. 2010. Performance analysis of integrated biomass gasification fuel cell (BGFC) and biomass gasification combined cycle (BGCC) systems. <em>Chemical Engineering Science</em>, 65(6), 1942–1954.</span>
+            <a href="https://doi.org/10.1016/j.ces.2009.11.022" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-111">
+            <span class="cc-ref-text">Kapil A., Bhat S.A. and Sadhukhan J. 2010. Dynamic simulation of sorption enhanced reaction processes for biodiesel production. <em>Industrial &amp; Engineering Chemistry Research</em>, 49(5), 2326–2335.</span>
+            <a href="https://doi.org/10.1021/ie901225u" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-112">
+            <span class="cc-ref-text">Ng K.S., Lopez Y., Campbell G.M. and Sadhukhan J. 2010. Heat integration and analysis of decarbonised IGCC sites. <em>Chemical Engineering Research and Design</em>, 88(2), 170–188.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2009.08.002" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-113">
+            <span class="cc-ref-text">Sadhukhan J., Ng K.S., Shah N. and Simons H.J. 2009. Heat integration strategy for economic production of combined heat and power from biomass waste. <em>Energy &amp; Fuels</em>, 23(10), 5106–5120.</span>
+            <a href="https://doi.org/10.1021/ef900472s" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-114">
+            <span class="cc-ref-text">Xu M., Bhat S., Smith R., Stephens G. and Sadhukhan J. 2009. Multi-objective optimisation of metabolic productivity and thermodynamic performance. <em>Computers &amp; Chemical Engineering</em>, 33(9), 1438–1450.</span>
+            <a href="https://doi.org/10.1016/j.compchemeng.2009.03.008" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-115">
+            <span class="cc-ref-text">Misailidis N., Campbell G.M., Du C., Sadhukhan J., Mustafa M., Mateos-Salvador F. and Weightman R.M. 2009. Evaluating the feasibility of commercial arabinoxylan production in the context of a wheat biorefinery principally producing ethanol: Part 2. Process simulation and economic analysis. <em>Chemical Engineering Research and Design</em>, 87(9), 1239–1250.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2008.12.028" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-116">
+            <span class="cc-ref-text">Du C., Campbell G.M., Misailidis N., Mateos-Salvador F., Sadhukhan J., Mustafa M. and Weightman R.M. 2009. Evaluating the feasibility of commercial arabinoxylan production in the context of a wheat biorefinery principally producing ethanol. Part 1. Experimental studies of arabinoxylan extraction from wheat bran. <em>Chemical Engineering Research and Design</em>, 87(9), 1232–1238.</span>
+            <a href="https://doi.org/10.1016/j.cherd.2008.12.027" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-117">
+            <span class="cc-ref-text">Bhat S.A. and Sadhukhan J. 2009. Process intensification aspects for steam methane reforming: An overview. <em>AIChE Journal</em>, 55(2), 408–422.</span>
+            <a href="https://doi.org/10.1002/aic.11687" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-118">
+            <span class="cc-ref-text">Xu M., Smith R. and Sadhukhan J. 2008. Optimization of productivity and thermodynamic performance of metabolic pathways. <em>Industrial &amp; Engineering Chemistry Research</em>, 47(15), 5669–5679.</span>
+            <a href="https://doi.org/10.1021/ie070352f" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-119">
+            <span class="cc-ref-text">Kapil A., Bhat S.A. and Sadhukhan J. 2008. Multiscale characterization framework for sorption enhanced reaction processes. <em>AIChE Journal</em>, 54(4), 1025–1036.</span>
+            <a href="https://doi.org/10.1002/aic.11428" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-120">
+            <span class="cc-ref-text">Sadhukhan J., Mustafa M.A., Misailidis N., Mateos-Salvador F., Du C. and Campbell G.M. 2008. Value analysis tool for feasibility studies of biorefineries integrated with value added production. <em>Chemical Engineering Science</em>, 63(2), 503–519.</span>
+            <a href="https://doi.org/10.1016/j.ces.2007.09.039" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-121">
+            <span class="cc-ref-text">Sadhukhan J. and Smith R. 2007. Synthesis of industrial systems based on value analysis. <em>Computers &amp; Chemical Engineering</em>, 31(5–6), 535–551.</span>
+            <a href="https://doi.org/10.1016/j.compchemeng.2006.07.010" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-122">
+            <span class="cc-ref-text">Campbell G.M., Koutinas A.A., Wang R., Sadhukhan J. and Webb C. 2006. Cereal potential. <em>The Chemical Engineer</em>, 781, 26–28.</span>
+            <a href="https://new.millsarchive.org/plus2/uploads/libraryattachments/30.pdf" class="cc-ref-doi" target="_blank" rel="noopener">PDF <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-123">
+            <span class="cc-ref-text">Sadhukhan J., Zhang N. and Zhu X.X. 2004. Analytical optimisation of industrial systems and applications to refineries, petrochemicals. <em>Chemical Engineering Science</em>, 59(20), 4169–4192.</span>
+            <a href="https://doi.org/10.1016/j.ces.2004.06.014" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-124">
+            <span class="cc-ref-text">Sadhukhan J., Zhang N. and Zhu X.X. 2003. Value analysis of complex systems and industrial application to refineries. <em>Industrial &amp; Engineering Chemistry Research</em>, 42(21), 5165–5181.</span>
+            <a href="https://doi.org/10.1021/ie020968z" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+          <li class="cc-ref-item" id="ref-125">
+            <span class="cc-ref-text">Sadhukhan J. and Zhu X.X. 2002. Integration strategy of gasification technology: A gateway to future refining. <em>Industrial &amp; Engineering Chemistry Research</em>, 41(6), 1528–1544.</span>
+            <a href="https://doi.org/10.1021/ie010380c" class="cc-ref-doi" target="_blank" rel="noopener">DOI <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </li>
+
+        </ol>
+        <p class="cc-ref-no-results text-muted mt-3" style="display:none;">No references match your search.</p>
       </div>
 
     </div>
@@ -196,6 +818,21 @@
 <!-- Bootstrap 5 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/site.js"></script>
+
+<!-- Reference filter -->
+<script>
+  document.getElementById('refSearch').addEventListener('input', function () {
+    const q = this.value.toLowerCase();
+    const items = document.querySelectorAll('.cc-ref-item');
+    let visible = 0;
+    items.forEach(function (li) {
+      const match = li.textContent.toLowerCase().includes(q);
+      li.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    document.querySelector('.cc-ref-no-results').style.display = visible === 0 ? '' : 'none';
+  });
+</script>
 
 <!-- Restore active tab from URL hash -->
 <script>
