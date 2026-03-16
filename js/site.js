@@ -1,3 +1,15 @@
+// Last updated — fetch latest commit date from GitHub
+fetch('https://api.github.com/repos/lampofsocrates/clove-circle/commits?per_page=1')
+  .then(r => r.json())
+  .then(data => {
+    const el = document.getElementById('last-updated');
+    if (el && data[0]) {
+      const d = new Date(data[0].commit.author.date);
+      el.textContent = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+  })
+  .catch(() => {});
+
 // Scroll-to-top + navbar scroll effect
 const scrollBtn = document.getElementById('scrollTop');
 const mainNav = document.getElementById('mainNav');
