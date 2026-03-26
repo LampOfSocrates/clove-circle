@@ -16,12 +16,12 @@ assert.equal(
 
 assert.equal(
   getPreferredUrl('https://lampofsocrates.github.io/clove-circle/contact.html?via=gh#form'),
-  'https://clovecircle.com/contact.html?via=gh#form'
+  null
 );
 
 assert.equal(
   getCanonicalUrl('https://lampofsocrates.github.io/clove-circle/'),
-  'https://clovecircle.com/'
+  'https://lampofsocrates.github.io/clove-circle/'
 );
 
 console.log('site domain tests passed');

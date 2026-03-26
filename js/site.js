@@ -35,11 +35,12 @@
   function getCanonicalUrl(input) {
     const url = toUrl(input);
 
-    if (
-      url.hostname !== PREFERRED_HOST &&
-      url.hostname !== 'www.' + PREFERRED_HOST &&
-      url.hostname !== LEGACY_GITHUB_HOST
-    ) {
+    if (url.hostname === LEGACY_GITHUB_HOST) {
+      url.protocol = 'https:';
+      return url.toString();
+    }
+
+    if (url.hostname !== PREFERRED_HOST && url.hostname !== 'www.' + PREFERRED_HOST) {
       return url.toString();
     }
 
