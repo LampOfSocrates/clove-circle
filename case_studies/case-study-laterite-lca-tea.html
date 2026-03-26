@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive Clove Circle case study for Laterite NHM Processing with editable inputs for mass balance, life cycle assessment, and techno-economic analysis.">
+  <meta name="description" content="Interactive techno-economic and life cycle assessment for Laterite NHM Processing. Explore mass balance, GWP, and financial outcomes using source-accurate laterite calculations.">
   <title>Clove Circle | Laterite NHM Processing Case Study</title>
   <link rel="icon" href="../img/favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,205 +12,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <link href="../css/eco-theme.css" rel="stylesheet">
-  <style>
-    .cc-laterite-shell {
-      display: grid;
-      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-      gap: 24px;
-      align-items: start;
-    }
-    .cc-laterite-panel,
-    .cc-laterite-card,
-    .cc-laterite-table-wrap {
-      background: #fff;
-      border: 1px solid rgba(32, 58, 44, 0.08);
-      border-radius: var(--cc-radius);
-      box-shadow: 0 16px 36px rgba(16, 24, 20, 0.06);
-    }
-    .cc-laterite-panel {
-      padding: 24px 22px;
-      position: sticky;
-      top: 98px;
-    }
-    .cc-laterite-controls {
-      display: grid;
-      gap: 14px;
-      margin-top: 18px;
-    }
-    .cc-laterite-field label {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 6px;
-      color: var(--cc-green-dark);
-    }
-    .cc-laterite-field span {
-      color: var(--cc-text-muted);
-      font-weight: 600;
-      text-transform: none;
-      letter-spacing: 0;
-    }
-    .cc-laterite-field input {
-      width: 100%;
-      border: 1px solid rgba(32, 58, 44, 0.14);
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-size: 15px;
-      color: var(--cc-ink);
-      background: rgba(228, 239, 232, 0.55);
-    }
-    .cc-laterite-field input:focus {
-      outline: none;
-      border-color: var(--cc-green-mid);
-      box-shadow: 0 0 0 3px rgba(114, 161, 117, 0.15);
-      background: #fff;
-    }
-    .cc-laterite-note {
-      font-size: 13px;
-      line-height: 1.65;
-      color: var(--cc-text-muted);
-      margin-top: 16px;
-      margin-bottom: 0;
-    }
-    .cc-laterite-main {
-      display: grid;
-      gap: 24px;
-    }
-    .cc-laterite-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 16px;
-    }
-    .cc-laterite-card {
-      padding: 22px 20px;
-      background: linear-gradient(180deg, rgba(228, 239, 232, 0.9), #fff);
-    }
-    .cc-laterite-card span {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--cc-green-dark);
-      margin-bottom: 10px;
-    }
-    .cc-laterite-card strong {
-      display: block;
-      font-family: 'Fraunces', Georgia, serif;
-      font-size: 2rem;
-      line-height: 1.02;
-      color: var(--cc-green-darkest);
-      margin-bottom: 8px;
-    }
-    .cc-laterite-card p {
-      margin: 0;
-      color: var(--cc-text-muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-    .cc-laterite-strip {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      background: linear-gradient(135deg, rgba(8, 20, 15, 0.96), rgba(33, 87, 57, 0.94));
-      border-radius: calc(var(--cc-radius) + 4px);
-      padding: 18px;
-    }
-    .cc-laterite-step {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--cc-radius);
-      padding: 18px 16px;
-    }
-    .cc-laterite-step b {
-      display: block;
-      color: #fff;
-      margin-bottom: 6px;
-      font-size: 15px;
-    }
-    .cc-laterite-step p {
-      margin: 0;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-    .cc-laterite-grid-two {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 24px;
-    }
-    .cc-laterite-table-wrap {
-      padding: 22px 22px 14px;
-    }
-    .cc-laterite-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    .cc-laterite-table th,
-    .cc-laterite-table td {
-      padding: 13px 0;
-      border-bottom: 1px solid rgba(32, 58, 44, 0.08);
-    }
-    .cc-laterite-table th {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--cc-text-muted);
-      font-weight: 700;
-    }
-    .cc-laterite-table td:last-child,
-    .cc-laterite-table th:last-child {
-      text-align: right;
-    }
-    .cc-laterite-method {
-      padding: 22px;
-    }
-    .cc-laterite-method summary {
-      cursor: pointer;
-      list-style: none;
-      font-weight: 700;
-      color: var(--cc-green-darkest);
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(32, 58, 44, 0.08);
-    }
-    .cc-laterite-method summary::-webkit-details-marker {
-      display: none;
-    }
-    .cc-laterite-method details:last-child summary {
-      border-bottom: none;
-    }
-    .cc-laterite-method details[open] summary {
-      padding-bottom: 10px;
-    }
-    .cc-laterite-method details p {
-      color: var(--cc-text-muted);
-      font-size: 14px;
-      line-height: 1.65;
-      margin: 0 0 14px;
-    }
-    .cc-laterite-method details p:last-child {
-      margin-bottom: 12px;
-    }
-    @media (max-width: 1080px) {
-      .cc-laterite-shell,
-      .cc-laterite-grid-two {
-        grid-template-columns: 1fr;
-      }
-      .cc-laterite-panel {
-        position: static;
-      }
-    }
-    @media (max-width: 767px) {
-      .cc-laterite-strip {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
 </head>
 <body>
 
@@ -243,188 +44,374 @@
       </a>
     </span>
     <h1>Laterite NHM Processing</h1>
-    <p>Critical metals recovery through a lightweight interactive LCA and TEA case study.</p>
-    <p class="cc-page-header-cite">
-      Simplified from the public Laterite NHM Processing LCA &amp; TEA dashboard by Jhuma Sadhukhan's group.
-    </p>
+    <p>Critical metals recovery through source-accurate mass balance, life cycle assessment, and techno-economic analysis.</p>
     <div class="cc-kpi-row">
       <div class="cc-kpi">
-        <span class="cc-kpi-label">Mode</span>
-        <span class="cc-kpi-value">Interactive summary</span>
+        <span class="cc-kpi-label">Total CapEx</span>
+        <span class="cc-kpi-value" id="kpi-capex">--</span>
       </div>
       <div class="cc-kpi">
-        <span class="cc-kpi-label">User inputs</span>
-        <span class="cc-kpi-value">8 curated levers</span>
+        <span class="cc-kpi-label">Annual Cash Flow</span>
+        <span class="cc-kpi-value" id="kpi-cf">--</span>
       </div>
       <div class="cc-kpi">
-        <span class="cc-kpi-label">Coverage</span>
-        <span class="cc-kpi-value">Mass + GWP + TEA</span>
+        <span class="cc-kpi-label">NPV (Year 10)</span>
+        <span class="cc-kpi-value" id="kpi-npv">--</span>
+      </div>
+      <div class="cc-kpi">
+        <span class="cc-kpi-label">Total GWP</span>
+        <span class="cc-kpi-value" id="kpi-gwp">--</span>
       </div>
     </div>
   </div>
 </div>
 
-<section class="cc-section cc-section-light">
+<section class="cc-section cc-section-white" style="padding-bottom:0">
   <div class="container">
-    <div class="cc-laterite-shell">
-      <aside class="cc-laterite-panel">
-        <span class="cc-eyebrow">Scenario inputs</span>
-        <h2 style="font-size:1.55rem; margin-top:16px; margin-bottom:8px;">Adjust the main levers</h2>
-        <p style="color:var(--cc-text-muted); margin-bottom:0;">This keeps the original case model's main relationships visible without reproducing the full source dashboard.</p>
-
-        <div class="cc-laterite-controls">
-          <div class="cc-laterite-field">
-            <label for="laterite-feed">Dry feed <span>kg/h</span></label>
-            <input type="number" id="laterite-feed" value="360" min="1" step="1">
-          </div>
-          <div class="cc-laterite-field">
-            <label for="laterite-moisture">Moisture <span>%</span></label>
-            <input type="number" id="laterite-moisture" value="25" min="0" max="95" step="0.1">
-          </div>
-          <div class="cc-laterite-field">
-            <label for="laterite-solids">Solids concentration <span>g/L</span></label>
-            <input type="number" id="laterite-solids" value="50" min="1" step="0.1">
-          </div>
-          <div class="cc-laterite-field">
-            <label for="laterite-feso4">FeSO4 for Mn-ox stream <span>g/L</span></label>
-            <input type="number" id="laterite-feso4" value="25" min="0" step="0.1">
-          </div>
-          <div class="cc-laterite-field">
-            <label for="laterite-reagent-price">Reagent price <span>$/kg</span></label>
-            <input type="number" id="laterite-reagent-price" value="0.26" min="0" step="0.01">
-          </div>
-          <div class="cc-laterite-field">
-            <label for="laterite-electricity-price">Electricity price <span>$/MJ</span></label>
-            <input type="number" id="laterite-electricity-price" value="0.0644" min="0" step="0.001">
-          </div>
-          <div class="cc-laterite-field">
-            <label for="laterite-heat-price">Heat price <span>$/MJ</span></label>
-            <input type="number" id="laterite-heat-price" value="0.03" min="0" step="0.001">
-          </div>
-          <div class="cc-laterite-field">
-            <label for="laterite-metal-price">Critical metals price <span>$/kg</span></label>
-            <input type="number" id="laterite-metal-price" value="18.5" min="0" step="0.1">
-          </div>
-        </div>
-
-        <div class="d-flex gap-2 mt-3">
-          <button class="btn cc-btn-primary" type="button" id="laterite-reset">Reset defaults</button>
-          <a class="btn cc-btn-outline" href="https://github.com/jhumasadhukhan/laterite-lca-tea/blob/main/index.html" target="_blank" rel="noopener">Source model</a>
-        </div>
-
-        <p class="cc-laterite-note">
-          This page is intentionally lighter than the original. It exposes the main process and economic sensitivities while keeping the calculations readable.
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <p style="font-size:15px; color:var(--cc-text-muted);">
+          This interactive laterite case study uses the full-page Clove Circle format for source-accurate laterite
+          calculations. Adjust feed, moisture, bioleaching, and economic assumptions and the mass balance, GWP,
+          allocated burdens, TEA, and discounted NPV will update from the source laterite model.
         </p>
-      </aside>
-
-      <div class="cc-laterite-main">
-        <div class="cc-laterite-cards">
-          <div class="cc-laterite-card">
-            <span>Wet feed</span>
-            <strong id="laterite-wet-feed">480.0 kg/h</strong>
-            <p>Dry feed adjusted for moisture before processing begins.</p>
-          </div>
-          <div class="cc-laterite-card">
-            <span>Mn-ox concentrate</span>
-            <strong id="laterite-mnox">2.40 kg/h</strong>
-            <p>Recovered manganese-rich fraction after coarse-stream separation.</p>
-          </div>
-          <div class="cc-laterite-card">
-            <span>Total GWP</span>
-            <strong id="laterite-gwp">0.0015 kg CO2e/kg NCL</strong>
-            <p>Combined ferrous sulfate, electricity, heating, and nutrient burden.</p>
-          </div>
-          <div class="cc-laterite-card">
-            <span>Net margin</span>
-            <strong id="laterite-net-margin">1.02 M$/y</strong>
-            <p>Revenue from recovered product minus annualized cost in the simplified TEA.</p>
-          </div>
-        </div>
-
-        <div class="cc-laterite-strip">
-          <div class="cc-laterite-step">
-            <b>1. Split the feed</b>
-            <p>Dry laterite is converted to wet feed and partitioned into coarse and fine fractions using source-model split ratios.</p>
-          </div>
-          <div class="cc-laterite-step">
-            <b>2. Form the Mn stream</b>
-            <p>The coarse fraction passes through attrition and separation to isolate a small Mn-ox concentrate.</p>
-          </div>
-          <div class="cc-laterite-step">
-            <b>3. Estimate burdens</b>
-            <p>Slurry volume, FeSO4 demand, electricity, and heat define the main LCA contributors.</p>
-          </div>
-          <div class="cc-laterite-step">
-            <b>4. Annualize economics</b>
-            <p>Capital scaling, utilities, labour, feedstock, and product value roll into opex and margin.</p>
-          </div>
-        </div>
-
-        <div class="cc-laterite-grid-two">
-          <div class="cc-laterite-table-wrap">
-            <span class="cc-eyebrow">Live outputs</span>
-            <h3 style="margin-top:14px; margin-bottom:12px;">Selected mass, LCA, and TEA results</h3>
-            <table class="cc-laterite-table">
-              <thead>
-                <tr>
-                  <th>Metric</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Bulk coarse laterite</td><td id="laterite-bcl">340.0 kg/h</td></tr>
-                <tr><td>Bulk fine laterite</td><td id="laterite-bfl">20.0 kg/h</td></tr>
-                <tr><td>Bioleach volume</td><td id="laterite-bioleach-volume">36.0 L/h</td></tr>
-                <tr><td>FeSO4 use</td><td id="laterite-feso4-use">0.900 kg/h</td></tr>
-                <tr><td>Total capital investment</td><td id="laterite-tci">8.25 M$</td></tr>
-                <tr><td>Total opex</td><td id="laterite-total-opex">1.04 M$/y</td></tr>
-                <tr><td>Product value</td><td id="laterite-product-value">2.89 M$/y</td></tr>
-                <tr><td>Net margin</td><td id="laterite-net-margin-table">1.02 M$/y</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="cc-laterite-table-wrap">
-            <span class="cc-eyebrow">Contributors</span>
-            <h3 style="margin-top:14px; margin-bottom:12px;">Where the burden comes from</h3>
-            <table class="cc-laterite-table">
-              <thead>
-                <tr>
-                  <th>Contributor</th>
-                  <th>Impact</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Ferrous sulfate</td><td id="laterite-gwp-fe">0.1533 kg CO2e/h</td></tr>
-                <tr><td>Electricity</td><td id="laterite-gwp-electricity">0.1188 kg CO2e/h</td></tr>
-                <tr><td>Heating</td><td id="laterite-gwp-heat">0.2301 kg CO2e/h</td></tr>
-                <tr><td>Nutrient medium</td><td id="laterite-gwp-nutrient">0.0378 kg CO2e/h</td></tr>
-                <tr><td>Annual reagent opex</td><td id="laterite-reagent-opex">0.047 M$/y</td></tr>
-                <tr><td>Annual electricity opex</td><td id="laterite-electricity-opex">0.007 M$/y</td></tr>
-                <tr><td>Annual heat opex</td><td id="laterite-heat-opex">0.008 M$/y</td></tr>
-                <tr><td>Annual feedstock opex</td><td id="laterite-feedstock-opex">0.188 M$/y</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="cc-laterite-table-wrap cc-laterite-method">
-          <span class="cc-eyebrow">Compact method</span>
-          <h3 style="margin-top:14px; margin-bottom:8px;">What is simplified and what remains faithful</h3>
-          <details open>
-            <summary>Mass balance</summary>
-            <p>The stream fractions are anchored to the original source model defaults. Feed is split into bulk coarse laterite, bulk fine laterite, attrition feed, fine fraction, heavy fraction, and Mn-ox concentrate using fixed process ratios.</p>
-          </details>
-          <details>
-            <summary>LCA / GWP</summary>
-            <p>The live GWP values are driven by FeSO4 demand, electricity allocation, bioleach heating, and nutrient medium. Emission factors are kept fixed so users can see the effect of operational choices rather than database changes.</p>
-          </details>
-          <details>
-            <summary>Techno-economic analysis</summary>
-            <p>The TEA uses a compact capex scaling model, annual operating hours, labour and feedstock assumptions, and a product-value estimate tied to the recovered laterite-derived product stream. It is an interactive case-study summary, not a bankable financial model.</p>
-          </details>
+      </div>
+      <div class="col-lg-4">
+        <div class="cc-result-box">
+          <div class="cc-result-box-label">Mn-ox Concentrate Output</div>
+          <div class="cc-result-box-value" id="intro-mnox">--</div>
+          <div class="cc-result-box-unit">kg / h</div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="cc-section cc-section-light">
+  <div class="container">
+    <div class="accordion" id="csAccordion">
+
+      <div class="accordion-item cc-accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button cc-accordion-btn" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapseBalance"
+                  aria-expanded="true" aria-controls="collapseBalance">
+            <i class="fa-solid fa-scale-balanced"></i>
+            Sheet 1 - Mass Balance
+            <span class="cc-pane-badge" id="badge-mass">--</span>
+          </button>
+        </h2>
+        <div id="collapseBalance" class="accordion-collapse collapse show" data-bs-parent="#csAccordion">
+          <div class="accordion-body cc-accordion-body">
+            <div class="row g-4">
+              <div class="col-lg-4">
+                <p class="cc-pane-subtitle">Inputs</p>
+                <table class="table cc-calc-table">
+                  <tbody>
+                    <tr>
+                      <td>Dry laterite feed</td>
+                      <td><input type="number" id="laterite-feed" class="cc-input" value="360" min="1" step="1"></td>
+                      <td class="cc-unit">kg/h</td>
+                    </tr>
+                    <tr>
+                      <td>Moisture content</td>
+                      <td><input type="number" id="laterite-moisture" class="cc-input" value="25" min="0" max="99.9" step="0.1"></td>
+                      <td class="cc-unit">%</td>
+                    </tr>
+                    <tr class="cc-table-group-header"><td colspan="3">Bioleaching inventories</td></tr>
+                    <tr>
+                      <td>Solid concentration</td>
+                      <td><input type="number" id="laterite-solids" class="cc-input" value="50" min="0.1" step="0.1"></td>
+                      <td class="cc-unit">g/L</td>
+                    </tr>
+                    <tr>
+                      <td>Na2SO4 - BFL</td>
+                      <td><input type="number" id="laterite-na2so4" class="cc-input" value="60" min="0" step="0.1"></td>
+                      <td class="cc-unit">g/L</td>
+                    </tr>
+                    <tr>
+                      <td>FeSO4 - BFL</td>
+                      <td><input type="number" id="laterite-feso4b" class="cc-input" value="3" min="0" step="0.01"></td>
+                      <td class="cc-unit">g/L</td>
+                    </tr>
+                    <tr>
+                      <td>FeSO4 - Mn ox. concentrate</td>
+                      <td><input type="number" id="laterite-feso4m" class="cc-input" value="25" min="0" step="0.1"></td>
+                      <td class="cc-unit">g/L</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button class="btn cc-btn-outline mt-3" type="button" id="laterite-reset">Reset defaults</button>
+              </div>
+
+              <div class="col-lg-8">
+                <p class="cc-pane-subtitle">Process flow</p>
+                <div class="cc-flow mb-3">
+                  <div class="cc-flow-node">
+                    <div class="cc-flow-label">Wet feed</div>
+                    <div class="cc-flow-value" id="flow-ncl-wet">--</div>
+                    <div class="cc-flow-unit">kg/h</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node cc-flow-node--split">
+                    <div class="cc-flow-label">Split</div>
+                    <div class="cc-flow-sub">
+                      BCL: <b id="flow-bcl">--</b><br>
+                      BFL: <b id="flow-bfl">--</b>
+                    </div>
+                    <div class="cc-flow-unit">kg/h</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node cc-flow-node--split">
+                    <div class="cc-flow-label">Attrition</div>
+                    <div class="cc-flow-value" id="flow-attr">--</div>
+                    <div class="cc-flow-unit">kg/h</div>
+                  </div>
+                  <div class="cc-flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                  <div class="cc-flow-node cc-flow-node--highlight">
+                    <div class="cc-flow-label">Mn-ox concentrate</div>
+                    <div class="cc-flow-value" id="flow-mnox">--</div>
+                    <div class="cc-flow-unit">kg/h</div>
+                  </div>
+                </div>
+
+                <p class="cc-pane-subtitle">Mass results</p>
+                <table class="table cc-results-table">
+                  <tbody>
+                    <tr><td>NCL wet feed</td><td class="cc-result-val" id="mass-ncl-wet">--</td></tr>
+                    <tr><td>Bulk coarse laterite</td><td class="cc-result-val" id="mass-bcl">--</td></tr>
+                    <tr><td>Bulk fine laterite</td><td class="cc-result-val" id="mass-bfl">--</td></tr>
+                    <tr><td>BCL to storage</td><td class="cc-result-val" id="mass-bcl-stor">--</td></tr>
+                    <tr><td>BCL to attrition</td><td class="cc-result-val" id="mass-attr">--</td></tr>
+                    <tr><td>BCL fine fraction</td><td class="cc-result-val" id="mass-bcl-fine">--</td></tr>
+                    <tr><td>BCL to Mozley separation</td><td class="cc-result-val" id="mass-bcl-mozl">--</td></tr>
+                    <tr><td>Heavy and mixed fraction</td><td class="cc-result-val" id="mass-heav">--</td></tr>
+                    <tr class="cc-result-highlight"><td>Mn oxides concentrate</td><td class="cc-result-val" id="mass-mnox">--</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="col-lg-6">
+                <p class="cc-pane-subtitle">Mn oxides concentrate metals</p>
+                <div class="table-responsive">
+                  <table class="table cc-results-table">
+                    <thead>
+                      <tr>
+                        <th>Metal</th>
+                        <th>wt%</th>
+                        <th>Recovery %</th>
+                        <th>kg rec./kg conc.</th>
+                        <th>kg/h recovered</th>
+                      </tr>
+                    </thead>
+                    <tbody id="mnox-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <p class="cc-pane-subtitle">Bulk fine laterite metals</p>
+                <div class="table-responsive">
+                  <table class="table cc-results-table">
+                    <thead>
+                      <tr>
+                        <th>Metal</th>
+                        <th>wt%</th>
+                        <th>Recovery %</th>
+                        <th>kg rec./kg BFL</th>
+                        <th>kg/h recovered</th>
+                      </tr>
+                    </thead>
+                    <tbody id="bfl-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item cc-accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button cc-accordion-btn collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapseTea"
+                  aria-expanded="false" aria-controls="collapseTea">
+            <i class="fa-solid fa-chart-line"></i>
+            Sheet 2 - Techno-Economic Assessment
+            <span class="cc-pane-badge" id="badge-tea">--</span>
+          </button>
+        </h2>
+        <div id="collapseTea" class="accordion-collapse collapse" data-bs-parent="#csAccordion">
+          <div class="accordion-body cc-accordion-body">
+            <div class="row g-4">
+              <div class="col-lg-5">
+                <p class="cc-pane-subtitle">Economic inputs</p>
+                <table class="table cc-calc-table">
+                  <tbody>
+                    <tr>
+                      <td>Annual capital charge</td>
+                      <td><input type="number" id="laterite-acc" class="cc-input" value="0.1" min="0.001" max="1" step="0.01"></td>
+                      <td class="cc-unit">fraction</td>
+                    </tr>
+                    <tr>
+                      <td>Internal rate of return</td>
+                      <td><input type="number" id="laterite-irr" class="cc-input" value="0.1" min="0.001" max="1" step="0.01"></td>
+                      <td class="cc-unit">fraction</td>
+                    </tr>
+                    <tr>
+                      <td>Reagents price</td>
+                      <td><input type="number" id="laterite-reagent-price" class="cc-input" value="0.26" min="0" step="0.01"></td>
+                      <td class="cc-unit">$/kg</td>
+                    </tr>
+                    <tr>
+                      <td>Electricity price</td>
+                      <td><input type="number" id="laterite-electricity-price" class="cc-input" value="0.0644" min="0" step="0.001"></td>
+                      <td class="cc-unit">$/MJ</td>
+                    </tr>
+                    <tr>
+                      <td>Heat price</td>
+                      <td><input type="number" id="laterite-heat-price" class="cc-input" value="0.03" min="0" step="0.001"></td>
+                      <td class="cc-unit">$/MJ</td>
+                    </tr>
+                    <tr>
+                      <td>Critical metals price</td>
+                      <td><input type="number" id="laterite-metal-price" class="cc-input" value="18.5" min="0" step="0.1"></td>
+                      <td class="cc-unit">$/kg</td>
+                    </tr>
+                    <tr>
+                      <td>Raw laterite price</td>
+                      <td><input type="number" id="laterite-laterite-price" class="cc-input" value="75" min="0" step="1"></td>
+                      <td class="cc-unit">$/dry t</td>
+                    </tr>
+                    <tr>
+                      <td>Labour cost</td>
+                      <td><input type="number" id="laterite-labour-cost" class="cc-input" value="85000" min="0" step="1000"></td>
+                      <td class="cc-unit">$/person/y</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <p class="cc-pane-subtitle mt-3">Results summary</p>
+                <table class="table cc-results-table">
+                  <tbody>
+                    <tr><td>Product value</td><td class="cc-result-val" id="tea-revenue">--</td></tr>
+                    <tr><td>Feedstock cost</td><td class="cc-result-val" id="tea-feed-cost">--</td></tr>
+                    <tr><td>Reagent opex</td><td class="cc-result-val" id="tea-reagent-opex">--</td></tr>
+                    <tr><td>Electricity opex</td><td class="cc-result-val" id="tea-electricity-opex">--</td></tr>
+                    <tr><td>Heat opex</td><td class="cc-result-val" id="tea-heat-opex">--</td></tr>
+                    <tr><td>Indirect opex</td><td class="cc-result-val" id="tea-indirect-opex">--</td></tr>
+                    <tr><td>Labour opex</td><td class="cc-result-val" id="tea-labour-opex">--</td></tr>
+                    <tr><td>Total opex</td><td class="cc-result-val" id="tea-total-opex">--</td></tr>
+                    <tr><td>Total capital investment</td><td class="cc-result-val" id="tea-tci">--</td></tr>
+                    <tr><td>Total annual cost</td><td class="cc-result-val" id="tea-total-cost">--</td></tr>
+                    <tr class="cc-result-highlight"><td>Net margin</td><td class="cc-result-val" id="laterite-net-margin">--</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="col-lg-7">
+                <p class="cc-pane-subtitle">Capital cost estimation</p>
+                <div class="table-responsive mb-3">
+                  <table class="table cc-calc-table">
+                    <thead>
+                      <tr>
+                        <th>Unit</th>
+                        <th>Base cost M$</th>
+                        <th>Scale n</th>
+                        <th>Current size</th>
+                        <th>Cost M$</th>
+                      </tr>
+                    </thead>
+                    <tbody id="capex-tbody"></tbody>
+                  </table>
+                </div>
+
+                <p class="cc-pane-subtitle">Cumulative NPV over project life</p>
+                <div class="cc-chart-wrap">
+                  <canvas id="npvChart"></canvas>
+                </div>
+                <div class="table-responsive mt-3">
+                  <table class="table cc-results-table">
+                    <thead>
+                      <tr>
+                        <th>Year</th>
+                        <th style="text-align:right">Discounted CF</th>
+                        <th style="text-align:right">Cumulative NPV</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dcf-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item cc-accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button cc-accordion-btn collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapseGWP"
+                  aria-expanded="false" aria-controls="collapseGWP">
+            <i class="fa-solid fa-leaf"></i>
+            Sheet 3 - Life Cycle Assessment (GWP)
+            <span class="cc-pane-badge" id="badge-gwp">--</span>
+          </button>
+        </h2>
+        <div id="collapseGWP" class="accordion-collapse collapse" data-bs-parent="#csAccordion">
+          <div class="accordion-body cc-accordion-body">
+            <div class="row g-4">
+              <div class="col-lg-7">
+                <p class="cc-pane-subtitle">GWP contributors</p>
+                <div class="table-responsive mb-3">
+                  <table class="table cc-calc-table">
+                    <thead>
+                      <tr>
+                        <th>Contributor</th>
+                        <th style="text-align:right">kg CO2e/h</th>
+                      </tr>
+                    </thead>
+                    <tbody id="gwp-tbody"></tbody>
+                    <tfoot>
+                      <tr class="cc-result-highlight">
+                        <td>Total GWP per kg NCL</td>
+                        <td class="cc-result-val" id="gwp-total">--</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <p class="cc-pane-subtitle">Allocated GWP by recovered metal</p>
+                <table class="table cc-results-table">
+                  <tbody>
+                    <tr><td>Mn allocation</td><td class="cc-result-val" id="alloc-mn">--</td></tr>
+                    <tr><td>Ni allocation</td><td class="cc-result-val" id="alloc-ni">--</td></tr>
+                    <tr><td>Co allocation</td><td class="cc-result-val" id="alloc-co">--</td></tr>
+                    <tr><td>Mn recovered</td><td class="cc-result-val" id="rec-mn">--</td></tr>
+                    <tr><td>Ni recovered</td><td class="cc-result-val" id="rec-ni">--</td></tr>
+                    <tr><td>Co recovered</td><td class="cc-result-val" id="rec-co">--</td></tr>
+                    <tr><td>Al recovered</td><td class="cc-result-val" id="rec-al">--</td></tr>
+                    <tr class="cc-result-highlight"><td>Total recovered metals</td><td class="cc-result-val" id="rec-total">--</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="col-lg-5">
+                <p class="cc-pane-subtitle">GWP breakdown</p>
+                <div class="cc-chart-wrap">
+                  <canvas id="gwpChart"></canvas>
+                </div>
+                <div class="cc-result-box mt-3">
+                  <div class="cc-result-box-label">Total GWP</div>
+                  <div class="cc-result-box-value" id="gwp-total-big">--</div>
+                  <div class="cc-result-box-unit">kg CO2e per kg NCL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -461,7 +448,7 @@
       </div>
     </div>
     <div class="cc-footer-bottom">
-      <span>&copy; Clove Circle 2026. All rights reserved. &middot; Last updated: <span id="last-updated">&mdash;</span></span>
+      <span>&copy; Clove Circle 2026. All rights reserved. &nbsp;&middot;&nbsp; Last updated: <span id="last-updated">&mdash;</span></span>
       <div class="cc-footer-social">
         <a href="https://www.linkedin.com/in/professor-jhuma-sadhukhan-1b5600b9/" target="_blank" rel="noopener" title="LinkedIn">
           <i class="fa-brands fa-linkedin"></i>
@@ -476,6 +463,7 @@
 </button>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="../js/site.js"></script>
 <script src="laterite-case-study.js"></script>
 </body>
