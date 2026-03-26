@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Selected extracted figures from recent Clove Circle paper PDFs, with figure metadata shown alongside each image.">
+  <title>Clove Circle | Infographics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="../css/eco-theme.css" rel="stylesheet">
+  <style>
+    :root {
+      --ig-paper: #f7f3e9;
+      --ig-ink: #153322;
+      --ig-muted: #5d6e64;
+      --ig-line: #d8ddd2;
+      --ig-card: #ffffff;
+      --ig-shadow: 0 18px 42px rgba(21, 51, 34, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      color: var(--ig-ink);
+      background:
+        radial-gradient(circle at top left, rgba(196, 168, 104, 0.18), transparent 28%),
+        linear-gradient(180deg, #faf6ef 0%, #f2f5ed 48%, #eef3ec 100%);
+    }
+
+    .ig-shell {
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 52px 0 72px;
+    }
+
+    .ig-hero {
+      display: grid;
+      gap: 18px;
+      padding: 32px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(216, 221, 210, 0.9);
+      border-radius: 28px;
+      box-shadow: var(--ig-shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .ig-kicker {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ig-muted);
+      font-weight: 700;
+    }
+
+    .ig-title {
+      margin: 0;
+      font-family: "Fraunces", serif;
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      line-height: 0.96;
+      max-width: 11ch;
+    }
+
+    .ig-intro {
+      margin: 0;
+      max-width: 70ch;
+      color: var(--ig-muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .ig-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 30px;
+    }
+
+    .ig-card {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      background: var(--ig-card);
+      border: 1px solid var(--ig-line);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--ig-shadow);
+    }
+
+    .ig-media {
+      background: linear-gradient(180deg, #f6f9f3 0%, #eef4ea 100%);
+      border-bottom: 1px solid var(--ig-line);
+      aspect-ratio: 4 / 3;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .ig-media img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(21, 51, 34, 0.12);
+      background: white;
+    }
+
+    .ig-copy {
+      padding: 20px 22px 0;
+    }
+
+    .ig-copy h2 {
+      margin: 0 0 10px;
+      font-family: "Fraunces", serif;
+      font-size: 1.3rem;
+      line-height: 1.15;
+    }
+
+    .ig-copy p {
+      margin: 0;
+      color: var(--ig-muted);
+      line-height: 1.65;
+      font-size: 0.96rem;
+    }
+
+    .ig-json-label {
+      padding: 16px 22px 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ig-muted);
+      font-weight: 700;
+    }
+
+    .ig-json {
+      margin: 0 22px 22px;
+      padding: 16px;
+      min-height: 220px;
+      border-radius: 18px;
+      background: var(--ig-paper);
+      border: 1px solid var(--ig-line);
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font: 0.82rem/1.6 "Consolas", "Courier New", monospace;
+      color: #243c2f;
+    }
+
+    .ig-footer {
+      margin-top: 26px;
+      color: var(--ig-muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 720px) {
+      .ig-shell { width: min(100% - 24px, 1200px); padding-top: 24px; }
+      .ig-hero { padding: 24px; border-radius: 22px; }
+      .ig-card { border-radius: 20px; }
+      .ig-json { min-height: 180px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="ig-shell">
+    <section class="ig-hero">
+      <div class="ig-kicker">Extracted Paper Visuals</div>
+      <h1 class="ig-title">Research Figure Gallery</h1>
+      <p class="ig-intro">
+        A curated selection of figures pulled from PDFs in this folder. Each panel pairs the extracted image with its matching
+        figure JSON so the source PDF, page number, and extraction metadata stay visible beside the visual.
+      </p>
+    </section>
+
+    <section class="ig-grid">
+      <article class="ig-card">
+        <div class="ig-media">
+          <img src="figures/life-cycle-assessment-of-diethyl-carbonate-(dec)-and-glycerol-carbonate-(gc)-coproduction-from-bioethanol-co2-and_figure_01.png" alt="DEC and GC lifecycle figure">
+        </div>
+        <div class="ig-copy">
+          <h2>DEC/GC Lifecycle Setup</h2>
+          <p>Opening figure from the DEC and glycerol carbonate LCA paper, useful as a clean process overview for infographic work.</p>
+        </div>
+        <div class="ig-json-label">Figure metadata</div>
+        <pre class="ig-json" data-json="figures/life-cycle-assessment-of-diethyl-carbonate-(dec)-and-glycerol-carbonate-(gc)-coproduction-from-bioethanol-co2-and_figure_01.json">Loading figure metadata...</pre>
+      </article>
+
+      <article class="ig-card">
+        <div class="ig-media">
+          <img src="figures/life-cycle-assessment-of-diethyl-carbonate-(dec)-and-glycerol-carbonate-(gc)-coproduction-from-bioethanol-co2-and_figure_06.png" alt="DEC and GC lifecycle assessment figure">
+        </div>
+        <div class="ig-copy">
+          <h2>Integrated Impact View</h2>
+          <p>A later chart from the same paper that looks suitable for summarising environmental hotspots and scenario comparison.</p>
+        </div>
+        <div class="ig-json-label">Figure metadata</div>
+        <pre class="ig-json" data-json="figures/life-cycle-assessment-of-diethyl-carbonate-(dec)-and-glycerol-carbonate-(gc)-coproduction-from-bioethanol-co2-and_figure_06.json">Loading figure metadata...</pre>
+      </article>
+
+      <article class="ig-card">
+        <div class="ig-media">
+          <img src="figures/Manuscript_RCR_accepted_figure_01.png" alt="Bread waste valorization figure">
+        </div>
+        <div class="ig-copy">
+          <h2>Bread Waste Valorization Layout</h2>
+          <p>The accepted manuscript provides a wide systems graphic that reads well as a banner-style explanatory figure.</p>
+        </div>
+        <div class="ig-json-label">Figure metadata</div>
+        <pre class="ig-json" data-json="figures/Manuscript_RCR_accepted_figure_01.json">Loading figure metadata...</pre>
+      </article>
+
+      <article class="ig-card">
+        <div class="ig-media">
+          <img src="figures/paper01_native_h2_pathways_figure_01.png" alt="Native H2 pathways figure">
+        </div>
+        <div class="ig-copy">
+          <h2>Native H2 Pathways Detail</h2>
+          <p>A smaller extracted figure from the Nature paper, included as a compact example of how figure metadata stays attached to the image.</p>
+        </div>
+        <div class="ig-json-label">Figure metadata</div>
+        <pre class="ig-json" data-json="figures/paper01_native_h2_pathways_figure_01.json">Loading figure metadata...</pre>
+      </article>
+    </section>
+
+    <p class="ig-footer">
+      This page is intentionally file-local: every image and JSON path resolves relative to the
+      <code>infographics/</code> folder so it can be opened directly from the repository workspace.
+    </p>
+  </main>
+
+  <script>
+    async function loadFigureMetadata() {
+      const blocks = document.querySelectorAll('[data-json]');
+      for (const block of blocks) {
+        const jsonPath = block.getAttribute('data-json');
+        try {
+          const response = await fetch(jsonPath);
+          if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+          }
+          const data = await response.json();
+          block.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          block.textContent = 'Unable to load metadata from ' + jsonPath + '\n' + String(error);
+        }
+      }
+    }
+
+    loadFigureMetadata();
+  </script>
+</body>
+</html>
