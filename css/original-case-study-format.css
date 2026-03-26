@@ -1,0 +1,46 @@
+/* Original wrapper styling kept for quick rollback/toggling. */
+
+.cc-case-study-section {
+  background: var(--cc-green-xlight);
+}
+
+.cc-case-study-shell {
+  padding: 18px;
+}
+
+.cc-case-study-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cc-case-study-title {
+  margin: 6px 0 0;
+}
+
+.cc-case-study-frame {
+  width: 100%;
+  min-height: 1600px;
+  border: 0;
+  border-radius: 20px;
+  background: #101514;
+}
+
+@media (max-width: 991.98px) {
+  .cc-case-study-frame {
+    min-height: 1200px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .cc-case-study-shell {
+    padding: 16px;
+  }
+
+  .cc-case-study-frame {
+    min-height: 900px;
+  }
+}
