@@ -37,8 +37,13 @@ assert.doesNotMatch(
 );
 assert.match(
   resourcesHtml,
-  /case_studies\/case-study-jhuma-original\.html/,
+  /case_studies\/original-laterite-lca-tea\.html/,
   'resources page should link to the original Jhuma case study'
+);
+assert.match(
+  resourcesHtml,
+  /case_studies\/case-study-jhuma-pha-original\.html/,
+  'resources page should link to the original Jhuma PHA case study'
 );
 assert.doesNotMatch(
   resourcesHtml,
@@ -77,7 +82,7 @@ const jhumaCaseStudyPath = path.join(
   __dirname,
   '..',
   'case_studies',
-  'case-study-jhuma-original.html'
+  'original-laterite-lca-tea.html'
 );
 assert.ok(
   fs.existsSync(jhumaCaseStudyPath),
@@ -104,6 +109,34 @@ assert.match(
   jhumaCaseStudyHtml,
   /cc-page-header/,
   'original Jhuma wrapper should use the site page header shell'
+);
+
+const jhumaPhaCaseStudyPath = path.join(
+  __dirname,
+  '..',
+  'case_studies',
+  'case-study-jhuma-pha-original.html'
+);
+assert.ok(
+  fs.existsSync(jhumaPhaCaseStudyPath),
+  'original Jhuma PHA wrapper page should exist'
+);
+
+const jhumaPhaCaseStudyHtml = fs.readFileSync(jhumaPhaCaseStudyPath, 'utf8');
+assert.match(
+  jhumaPhaCaseStudyHtml,
+  /Clove Circle \| PHA from Lignocellulose/i,
+  'original Jhuma PHA wrapper should use a case-study page title'
+);
+assert.match(
+  jhumaPhaCaseStudyHtml,
+  /href="\.\.\/resources\.html"/,
+  'original Jhuma PHA wrapper should link back to resources'
+);
+assert.match(
+  jhumaPhaCaseStudyHtml,
+  /jhuma_data\/PHA-from-lignocellulose-lca-tea\.html/,
+  'original Jhuma PHA wrapper should embed or reference the source model'
 );
 
 console.log('site domain tests passed');
