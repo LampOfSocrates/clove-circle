@@ -9,6 +9,11 @@ assert 'id="refSearch"' in references_html
 assert 'id="refList"' in references_html
 assert "125 peer-reviewed publications" in references_html
 assert "Native H2 Pathways Enable Biocompatible Hydrogenation of Metabolic Alkenes in Bacteria" in references_html
-assert 'href="resources.html"' in references_html
+assert 'href="resources.html#case-studies"' in references_html
+assert 'href="infographics/infographics.html"' in references_html
+assert 'href="references.html"' in references_html
+assert 'id="case-studies-link"' in references_html
+assert 'id="infographics-link"' in references_html
+assert 'id="references-link"' in references_html
 
 print("references page test passed")
