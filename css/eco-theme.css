@@ -779,6 +779,19 @@ img { max-width: 100%; height: auto; }
   outline: none;
 }
 .cc-case-card { padding: 32px; }
+.cc-case-card-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.cc-case-card-head h4 {
+  margin: 0;
+}
+.cc-case-card-head .cc-card-icon {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
 .cc-case-meta {
   display: flex;
   flex-wrap: wrap;

@@ -14,7 +14,9 @@ assert "PHA Analytics Case Study" not in resources_html
 assert 'href="infographics/infographics.html"' in resources_html
 assert 'href="references.html"' in resources_html
 assert 'id="infographics-link"' in resources_html
-assert "Open Original" in resources_html
+assert "Original Tool" not in resources_html
+assert "Launch Case Study" in resources_html
+assert 'class="cc-case-card-head"' in resources_html
 assert 'id="refList"' not in resources_html
 assert 'id="refSearch"' not in resources_html
 assert "Browse Our Full References Library" not in resources_html
