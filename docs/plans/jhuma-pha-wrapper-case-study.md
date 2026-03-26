@@ -1,12 +1,12 @@
 ## Feature
 
-Add a new case study that wraps the original [PHA-from-lignocellulose-lca-tea.html](D:\S\Code\2026\clove-circle\jhuma_data\PHA-from-lignocellulose-lca-tea.html) model inside the Clove Circle site shell, matching the existing Jhuma laterite case-study pattern.
+Add a new case study that wraps the original [PHA-from-lignocellulose-lca-tea.html](D:\S\Code\2026\clove-circle\standalone\PHA-from-lignocellulose-lca-tea.html) model inside the Clove Circle site shell, matching the existing Jhuma laterite case-study pattern.
 
 ## What It Does
 
 - Adds a second Jhuma-origin case study to `resources.html`.
 - Creates a new wrapper page under `case_studies/` for the original PHA from lignocellulose model.
-- Keeps the original model page in `jhuma_data/` as the source experience.
+- Keeps the original model page in `standalone/` as the source experience.
 - Presents the model with the same Clove Circle navigation, banner, and footer treatment used by the laterite wrapper page.
 
 ## Files To Change Or Create
@@ -26,7 +26,7 @@ Optional, only if needed:
    - `resources.html` includes a new case-study entry linking to the new wrapper page.
    - `case_studies/case-study-jhuma-pha-original.html` exists.
    - The wrapper page uses the standard Clove Circle case-study shell.
-   - The wrapper page references or embeds `jhuma_data/PHA-from-lignocellulose-lca-tea.html`.
+   - The wrapper page references or embeds `standalone/PHA-from-lignocellulose-lca-tea.html`.
 2. Run the tests and confirm they fail before implementation.
 3. Create `case_studies/case-study-jhuma-pha-original.html` based on the structure of `case_studies/case-study-jhuma-original.html`.
 4. Update the page copy, title, heading, and iframe metadata so they describe the PHA-from-lignocellulose model accurately.

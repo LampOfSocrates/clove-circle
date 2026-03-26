@@ -102,7 +102,7 @@ assert.match(
 );
 assert.match(
   jhumaCaseStudyHtml,
-  /jhuma_data\/laterite-lca-tea\.html/,
+  /standalone\/laterite-lca-tea\.html/,
   'original Jhuma wrapper should embed or reference the source model'
 );
 assert.match(
@@ -135,7 +135,7 @@ assert.match(
 );
 assert.match(
   jhumaPhaCaseStudyHtml,
-  /jhuma_data\/PHA-from-lignocellulose-lca-tea\.html/,
+  /standalone\/PHA-from-lignocellulose-lca-tea\.html/,
   'original Jhuma PHA wrapper should embed or reference the source model'
 );
 
