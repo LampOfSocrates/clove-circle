@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biorefinery TEA &amp; LCA — PHA Biocomposite</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px}
+body{background:#0b0f19;color:#e2e8f0;font-family:'Syne',sans-serif;min-height:100vh}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#141a27}
+::-webkit-scrollbar-thumb{background:#2a3450;border-radius:3px}
+
+/* Layout */
+.grid2{display:grid;gap:18px}
+.g-bal{grid-template-columns:300px 1fr}
+.g-tea{grid-template-columns:285px 1fr}
+.g-gwp{grid-template-columns:1fr 300px}
+.g-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g-kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g-kpi4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.col{display:flex;flex-direction:column;gap:14px}
+
+/* Header */
+#hdr{background:#080c14;border-bottom:1px solid #2a3450;padding:14px 24px}
+#hdr-inner{max-width:1300px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.hdr-label{font-size:10px;color:#34d399;letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px}
+.hdr-title{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.hdr-sub{font-size:11px;color:#64748b;margin-top:3px}
+.hdr-sub .hl{color:#fbbf24}
+#resetBtn{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.4);color:#f87171;
+  border-radius:7px;padding:8px 18px;font-size:11px;cursor:pointer;font-family:'Syne',sans-serif;
+  font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;transition:all .15s}
+#resetBtn:hover{background:rgba(248,113,113,.2);border-color:rgba(248,113,113,.7)}
+
+/* Tabs */
+#tabbar{background:#080c14;border-bottom:1px solid #2a3450;padding:0 24px}
+#tabbar-inner{max-width:1300px;margin:0 auto;display:flex}
+.tbtn{padding:11px 24px;background:transparent;border:none;border-bottom:2px solid transparent;
+  color:#64748b;font-size:13px;cursor:pointer;font-weight:400;font-family:'Syne',sans-serif;transition:color .15s}
+.tbtn.active{color:#e2e8f0;border-bottom-color:#34d399;font-weight:700}
+
+/* Content */
+#content{padding:20px 24px;max-width:1300px;margin:0 auto}
+.panel{display:none}
+.panel.active{display:block}
+
+/* Card */
+.card{background:#141a27;border:1px solid #2a3450;border-radius:10px;padding:16px}
+.card-title{font-size:10px;color:#34d399;text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px;font-weight:700}
+
+/* KPI */
+.kpi{background:#141a27;border:1px solid #2a3450;border-radius:10px;padding:16px}
+.kpi-lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.kpi-val{font-size:22px;font-family:'JetBrains Mono',monospace;font-weight:700;line-height:1}
+.kpi-unit{font-size:11px;color:#64748b;margin-top:4px}
+.kpi-sub{font-size:10px;margin-top:2px}
+
+/* Input pair */
+.pair{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #2a3450}
+.pair-lbl{font-size:12px;color:#64748b}
+.pair-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.pair-unit{font-size:10px;color:#64748b;min-width:72px}
+.inp{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);border-radius:4px;
+  color:#fde68a;padding:3px 7px;font-size:12px;font-family:'JetBrains Mono',monospace;
+  outline:none;text-align:right;transition:border-color .15s}
+.inp:focus{border-color:rgba(251,191,36,.9)}
+.w85{width:85px}.w70{width:70px}.w52{width:52px}.w95{width:95px}
+
+/* Tables */
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.06em;
+  padding:8px 10px;border-bottom:1px solid #2a3450;background:#1a2235;
+  font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap}
+td{padding:5px 10px;font-size:12px;font-family:'JetBrains Mono',monospace;
+  color:#e2e8f0;border-bottom:1px solid rgba(42,52,80,.45)}
+td.lbl{font-family:'Syne',sans-serif;color:#64748b;font-size:12px}
+.tr-tot{background:#1a2235}
+.scroll-x{overflow-x:auto}
+.scroll-y{overflow-y:auto;max-height:300px}
+
+/* Utility */
+.mono{font-family:'JetBrains Mono',monospace}
+.muted{color:#64748b}
+.green{color:#34d399}.amber{color:#fbbf24}.red{color:#f87171}.blue{color:#60a5fa}
+.tr{text-align:right}.tc{text-align:center}.tl{text-align:left}
+.fw7{font-weight:700}
+.divider{height:1px;background:#2a3450;margin:6px 0}
+.note{font-size:11px;color:#64748b;margin-top:6px}
+
+/* Cost row */
+.crow{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #2a3450}
+.crow .cl{font-size:12px;color:#64748b}
+.crow .cv{font-size:12px;font-family:'JetBrains Mono',monospace}
+.cnet{display:flex;justify-content:space-between;align-items:center;padding:7px 0 0}
+.cnet .cl{font-size:12px;font-weight:700}
+.cnet .cv{font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700}
+
+/* Dist bar */
+#dist-bar{display:flex;gap:3px;height:34px;border-radius:6px;overflow:hidden;margin-bottom:10px}
+.dseg{display:flex;align-items:center;justify-content:center;min-width:2px}
+.dseg span{font-size:10px;color:#fff;font-weight:700;pointer-events:none}
+.dist-legend{display:flex;gap:16px;flex-wrap:wrap}
+.dleg{display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b}
+.dleg-dot{width:10px;height:10px;border-radius:2px}
+
+/* GWP inline bar */
+.gwp-inline{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.gwp-ibar{width:60px;height:5px;background:#1a2235;border-radius:3px;overflow:hidden}
+.gwp-ifill{height:100%;border-radius:3px}
+
+/* Ranking */
+.rank-row{margin-bottom:12px}
+.rank-top{display:flex;justify-content:space-between;margin-bottom:3px}
+.rank-name{font-size:10px;color:#64748b}
+.rank-pct{font-size:10px;font-family:'JetBrains Mono',monospace}
+.rbar-wrap{height:5px;background:#1a2235;border-radius:3px}
+.rbar-fill{height:100%;border-radius:3px}
+
+/* Footer */
+#footer{border-top:1px solid #2a3450;padding:12px 24px;font-size:10px;color:#64748b;text-align:center;margin-top:20px}
+
+@media(max-width:900px){
+  .g-bal,.g-tea,.g-gwp{grid-template-columns:1fr}
+  .g-kpi4{grid-template-columns:repeat(2,1fr)}
+  .g-2col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div id="hdr-inner">
+    <div>
+      <div class="hdr-label">Biorefinery Process Analysis</div>
+      <div class="hdr-title">TEA &amp; LCA &#8212; PHA Biocomposite from Lignocellulose</div>
+      <div class="hdr-sub">Techno-Economic Analysis &middot; Mass Balance &middot; Life Cycle Assessment
+        &nbsp;&middot;&nbsp;<span class="hl">amber inputs are user-defined &mdash; all outputs update live</span></div>
+    </div>
+    <button id="resetBtn">&#8635; Reset to Defaults</button>
+  </div>
+</div>
+
+<div id="tabbar">
+  <div id="tabbar-inner">
+    <button class="tbtn active" data-t="0">&#9878; Mass Balance</button>
+    <button class="tbtn"        data-t="1">&#128176; TEA</button>
+    <button class="tbtn"        data-t="2">&#127757; LCA / GWP</button>
+  </div>
+</div>
+
+<div id="content">
+  <div id="p0" class="panel active"></div>
+  <div id="p1" class="panel"></div>
+  <div id="p2" class="panel"></div>
+</div>
+
+<div id="footer">
+  &copy; Sadhukhan J, Ng KS, Martinez-Hernandez E. (2014).
+  <em>Biorefineries and Chemical Processes: Design, Integration and Sustainability Analysis.</em> Wiley.
+</div>
+
+<script>
+"use strict";
+
+/* ── Defaults ─────────────────────────────────────────── */
+var D = {
+  basisTpa:3500,hemiPct:30,cellPct:46,lignPct:20,ashPct:4,moisture:76,
+  recHemi:0.95,recCell:0.87,recLign:0.79,recPHA:0.35,biocompRec:95.358,
+  calorific:20,elecEff:0.35,elecConsump:2.6,
+  opDays:290,cepci:820,tciRatio:3,indFactor:0.06,laborOH:1.9,
+  annCC:0.1,irr:0.1,laborCost:85000,jobsPerKt:23,
+  biomassP:100,biocompP:10,reagentP:0.26,elecP:0.4,heatP:0.01
+};
+
+var DEF_EQ = [
+  ["Inoculation",         0.26,       0.6,  3.53,   "tph",            402  ],
+  ["Fermenters",          0.67,       0.8,  1.04,   "tph",            402  ],
+  ["Centrifugation",      2.92,       0.7,  18.466, "tph",            402  ],
+  ["Solvent extraction",  2.96,       0.7,  18.466, "tph",            402  ],
+  ["Washing",             0.41,       1.0,  33.5,   "tph",            394.3],
+  ["Drying",              7.6,        0.8,  33.5,   "tph",            394.3],
+  ["Anaerobic digestion", 1.54,       0.6,  43.0,   "tph wastewater", 402  ],
+  ["CHP",                 1.0,        1.0,  5.0,    "GWh",            null ],
+  ["Biomass handling",    14.1,       0.78, 83.3,   "tph wet",        402  ],
+  ["Biomass pretreatment",5.62,       0.78, 83.3,   "tph dry",        402  ],
+  ["Twin-screw extrusion",0.07792208, 1.0,  1.0,    "tph",            null ],
+  ["Injection moulding",  0.10389610, 1.0,  1.0,    "tph",            null ],
+  ["3D printing",         0.07792208, 1.0,  1.0,    "tph",            null ]
+];
+
+var DEF_GW = [
+  ["Sodium hydroxide",       0.4,      "kg",   1.3132269,     "per kg"  ],
+  ["Sodium phosphate",       0.145,    "kg",   2.8194834,     "per kg"  ],
+  ["Process steam",          2.2,      "MJ",   0.07121196,    "per MJ"  ],
+  ["Monoammonium phosphate", 0.115,    "kg",   0.9197997,     "per kg"  ],
+  ["Solvent",                0.1,      "kg",   0.85517497,    "per kg"  ],
+  ["Ammonium chloride",      0.05,     "kg",   1.60147896,    "per kg"  ],
+  ["Transport",              100,      "ktkm", 0.00054090589, "per ktkm"],
+  ["Magnesium sulphate",     0.025,    "kg",   1.35399832,    "per kg"  ],
+  ["Sulfuric acid",          0.2,      "kg",   0.167097855,   "per kg"  ],
+  ["Citric acid",            0.0025,   "kg",   6.1545092,     "per kg"  ],
+  ["Lime",                   0.01,     "kg",   0.92369312,    "per kg"  ],
+  ["Manganese",              0.00025,  "kg",   5.5776652,     "per kg"  ],
+  ["Chemical (generic)",     0.000526, "kg",   2.059101141,   "per kg"  ],
+  ["Calcium chloride",       0.0005,   "kg",   0.82054810,    "per kg"  ],
+  ["Water",                  0.11,     "kg",   0.0004875577,  "per kg"  ]
+];
+
+/* ── State ────────────────────────────────────────────── */
+var S = Object.assign({}, D);
+var EQ, GW, npvChart, builtTab;
+
+function copyDefaults() {
+  S = Object.assign({}, D);
+  EQ = DEF_EQ.map(function(r){ return r.slice(); });
+  GW = DEF_GW.map(function(r){ return r.slice(); });
+}
+copyDefaults();
+builtTab = [false, false, false];
+
+/* ── Utils ────────────────────────────────────────────── */
+function fmt(v, d) {
+  d = (d === undefined) ? 2 : d;
+  return (typeof v === 'number' && isFinite(v)) ? v.toFixed(d) : '—';
+}
+function el(id) { return document.getElementById(id); }
+function setTxt(id, v) { var e = el(id); if (e) e.textContent = v; }
+function setHTML(id, v) { var e = el(id); if (e) e.innerHTML = v; }
+function setColor(id, c) { var e = el(id); if (e) e.style.color = c; }
+function setWidth(id, w) { var e = el(id); if (e) e.style.width = w; }
+
+/* ── HTML builders ────────────────────────────────────── */
+function inpHtml(id, val, step, cls) {
+  cls = cls || 'inp w85';
+  return '<input type="number" id="' + id + '" class="inp ' + cls + '" value="' + val + '" step="' + step + '">';
+}
+
+function pairHtml(label, id, val, step, unit, cls) {
+  return '<div class="pair">' +
+    '<span class="pair-lbl">' + label + '</span>' +
+    '<div class="pair-r">' +
+      inpHtml(id, val, step, cls || 'w85') +
+      (unit ? '<span class="pair-unit">' + unit + '</span>' : '') +
+    '</div></div>';
+}
+
+function cardHtml(title, inner) {
+  return '<div class="card">' +
+    (title ? '<div class="card-title">' + title + '</div>' : '') +
+    inner + '</div>';
+}
+
+function kpiHtml(id, label) {
+  return '<div class="kpi"><div class="kpi-lbl">' + label + '</div>' +
+    '<div class="kpi-val" id="' + id + '">—</div>' +
+    '<div class="kpi-sub" id="' + id + '-sub"></div></div>';
+}
+
+function crowHtml(id, label) {
+  return '<div class="crow"><span class="cl">' + label + '</span>' +
+    '<span class="cv" id="' + id + '">—</span></div>';
+}
+
+/* ── Calculations ─────────────────────────────────────── */
+function calcAll() {
+  /* Balance */
+  var E5  = S.hemiPct / 100 * S.basisTpa;
+  var E6  = S.cellPct / 100 * S.basisTpa;
+  var E7  = S.lignPct / 100 * S.basisTpa;
+  var E8  = S.ashPct  / 100 * S.basisTpa;
+  var F5  = E5 * S.recHemi;
+  var F6  = E6 * S.recCell;
+  var F7  = E7 * S.recLign;
+  var G6  = E6 - F6;
+  var H10 = (F5 + F6) * S.recPHA;
+  var I12 = E7 + F5 + F6 - G6 - H10;
+  var J14 = (H10 + G6) * S.biocompRec / 100;
+  var E14 = E5 + E6 + E7;
+  var F14 = F5 + F6 + F7;
+  var E17 = I12 * S.calorific * S.elecEff;
+  var wet = S.basisTpa / ((100 - S.moisture) / 100);
+  var bal = {E5:E5,E6:E6,E7:E7,E8:E8,F5:F5,F6:F6,F7:F7,G6:G6,
+             H10:H10,I12:I12,J14:J14,E14:E14,F14:F14,E17:E17,wet:wet};
+
+  /* TEA */
+  var G4    = (F14 + E8) / S.opDays / 24;
+  var G10   = S.basisTpa / ((100 - S.moisture) / 100) * (S.moisture / 100) / S.opDays / 24 + I12 / S.opDays / 24;
+  var G11   = E17 / 1000 / 3.6;
+  var G12   = S.basisTpa / ((100 - S.moisture) / 100) / S.opDays / 24;
+  var G13   = (E14 + E8) / S.opDays / 24;
+  var G14eq = (G6 + H10) / S.opDays / 24;
+  var sizes = [G4,G4,G4,G4,G4,G4,G10,G11,G12,G13,G14eq,G14eq,G14eq];
+
+  var costs = EQ.map(function(row, i) {
+    var base = row[1], sf = row[2], size = row[3], cb = row[5];
+    var cb2 = (cb !== null) ? cb : S.cepci;
+    var c = base * Math.pow(Math.abs(sizes[i]) / size, sf) * S.cepci / cb2;
+    return isFinite(c) ? c : 0;
+  });
+  var H17 = costs.reduce(function(a,b){ return a+b; }, 0);
+  var H18 = S.tciRatio * H17;
+
+  var reagIdx = [0,1,3,4,5,7,8,9,10,11,12,13,14];
+  var reagSum = reagIdx.reduce(function(s,i){ return s + GW[i][1]; }, 0);
+  var B21 = reagSum * (G6 + H10);
+  var F21 = B21 * S.reagentP / 1000;
+  var B22 = -E17 / 1000 + S.elecConsump * (G6 + H10) * 3.6 / 1000;
+  var F22 = B22 * S.elecP;
+  var B23 = GW[2][1] * J14 / 1000;
+  var F23 = B23 * S.heatP;
+  var F28 = S.basisTpa * S.biomassP / 1e6;
+  var G29 = J14 * S.biocompP / 1000;
+  var B32 = H18 * S.annCC;
+  var B33 = B32 * S.indFactor;
+  var B34 = S.jobsPerKt * J14 / 1000 * S.laborCost / 1e6 * S.laborOH;
+  var B35 = F21 + F22 + F23;
+  var B36 = F28;
+  var B37 = 0.3 * (B33 + B34 + F21 + F23);
+  var B38 = B33 + B34 + B35 + B36 + B37;
+  var B39 = B32 + B38;
+  var B40 = G29;
+  var B41 = B40 - B39;
+
+  var dcf = [], npv = -H18;
+  dcf.push({year:0, cf:-H18, npv:npv});
+  for (var y = 1; y <= 10; y++) {
+    var cf = B41 / Math.pow(1 + S.irr, y);
+    npv += cf;
+    dcf.push({year:y, cf:cf, npv:npv});
+  }
+  var tea = {sizes:sizes,costs:costs,H17:H17,H18:H18,
+             F21:F21,B22:B22,F22:F22,B23:B23,F23:F23,F28:F28,G29:G29,
+             B32:B32,B33:B33,B34:B34,B35:B35,B36:B36,B37:B37,B38:B38,B39:B39,B40:B40,B41:B41,dcf:dcf};
+
+  /* GWP */
+  var items = GW.map(function(row){
+    return {name:row[0], flow:row[1], unit:row[2], factor:row[3], funit:row[4], val:row[1]*row[3]};
+  });
+  var total = items.reduce(function(s,g){ return s + g.val; }, 0);
+  var gwp = {items:items, total:total};
+
+  return {bal:bal, tea:tea, gwp:gwp};
+}
+
+/* ── Build Tab 0 ──────────────────────────────────────── */
+function buildTab0() {
+  var leftCol =
+    cardHtml('Feedstock Basis',
+      pairHtml('Dry biomass',      'i-basisTpa',   S.basisTpa,   100,  'tpa') +
+      pairHtml('Moisture content', 'i-moisture',   S.moisture,   1,    'mass % wet') +
+      '<div class="note">Wet input: <span class="mono blue" id="o-wet">—</span> tpa</div>') +
+    cardHtml('Dry Composition',
+      pairHtml('Hemicellulose', 'i-hemiPct', S.hemiPct, 1, 'mass %') +
+      pairHtml('Cellulose',     'i-cellPct', S.cellPct, 1, 'mass %') +
+      pairHtml('Lignin',        'i-lignPct', S.lignPct, 1, 'mass %') +
+      pairHtml('Ash',           'i-ashPct',  S.ashPct,  1, 'mass %') +
+      '<div class="pair" style="padding:6px 0 0"><span class="pair-lbl muted">Sum</span>' +
+      '<span id="o-compSum" class="mono"></span></div>') +
+    cardHtml('Recovery Rates',
+      pairHtml('Hemicellulose &rarr; fermenter', 'i-recHemi',    S.recHemi,    0.01, 'fraction') +
+      pairHtml('Cellulose &rarr; fermenter',     'i-recCell',    S.recCell,    0.01, 'fraction') +
+      pairHtml('Lignin &rarr; fermenter',        'i-recLign',    S.recLign,    0.01, 'fraction') +
+      pairHtml('PHA copolymer yield',            'i-recPHA',     S.recPHA,     0.01, 'fraction') +
+      pairHtml('Biocomposite recovery',          'i-biocompRec', S.biocompRec, 0.1,  '%')) +
+    cardHtml('Energy',
+      pairHtml('Calorific value',         'i-calorific',   S.calorific,   1,    'GJ / t') +
+      pairHtml('Electrical efficiency',   'i-elecEff',     S.elecEff,     0.01, 'fraction') +
+      pairHtml('Elec. consumption',       'i-elecConsump', S.elecConsump, 0.1,  'MWh / t'));
+
+  var rightCol =
+    '<div class="g-kpi3">' +
+      kpiHtml('o-k-biocomp', 'PHA Biocomposite Output (tpa)') +
+      kpiHtml('o-k-elec',    'Electricity Generated (GJ/y)') +
+      kpiHtml('o-k-wet',     'Wet Biomass Input (tpa)') +
+    '</div>' +
+    cardHtml('Mass Balance &mdash; all values in tpa',
+      '<div class="scroll-x"><table>' +
+      '<thead><tr>' +
+        '<th class="tl">Component</th>' +
+        '<th class="tr">Dry Biomass</th>' +
+        '<th class="tr">Fermenter Feed</th>' +
+        '<th class="tr">Biofillers</th>' +
+        '<th class="tr">PHA Copolymers</th>' +
+        '<th class="tr">CHP Feedstock</th>' +
+        '<th class="tr">Biocomposite</th>' +
+      '</tr></thead><tbody>' +
+      '<tr><td class="lbl">Hemicellulose</td><td class="tr" id="bE5">—</td><td class="tr" id="bF5">—</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td></tr>' +
+      '<tr><td class="lbl">Cellulose</td>    <td class="tr" id="bE6">—</td><td class="tr" id="bF6">—</td><td class="tr blue" id="bG6">—</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td></tr>' +
+      '<tr><td class="lbl">Lignin</td>       <td class="tr" id="bE7">—</td><td class="tr" id="bF7">—</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td></tr>' +
+      '<tr><td class="lbl">Ash</td>          <td class="tr" id="bE8">—</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td></tr>' +
+      '<tr><td class="lbl">PHA copolymers</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr amber" id="bH14">—</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td></tr>' +
+      '<tr><td class="lbl">CHP feedstock</td> <td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr amber" id="bI14">—</td><td class="tr muted">&#183;</td></tr>' +
+      '<tr><td class="lbl">Biocomposite</td>  <td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr muted">&#183;</td><td class="tr green fw7" id="bJ14">—</td></tr>' +
+      '<tr class="tr-tot">' +
+        '<td class="lbl fw7">Totals</td>' +
+        '<td class="tr amber" id="bE14">—</td><td class="tr amber" id="bF14">—</td>' +
+        '<td class="tr amber" id="bG14t">—</td><td class="tr amber" id="bH14t">—</td>' +
+        '<td class="tr amber" id="bI14t">—</td><td class="tr green fw7" id="bJ14t">—</td>' +
+      '</tr>' +
+      '</tbody></table></div>') +
+    cardHtml('Product Distribution (% of dry biomass)',
+      '<div id="dist-bar">' +
+        '<div class="dseg" id="ds0" style="background:#3b82f6"><span id="dsl0"></span></div>' +
+        '<div class="dseg" id="ds1" style="background:#a78bfa"><span id="dsl1"></span></div>' +
+        '<div class="dseg" id="ds2" style="background:#f59e0b"><span id="dsl2"></span></div>' +
+        '<div class="dseg" id="ds3" style="background:#64748b"><span></span></div>' +
+        '<div class="dseg" id="ds4" style="background:#374151"><span></span></div>' +
+      '</div>' +
+      '<div class="dist-legend">' +
+        '<div class="dleg"><div class="dleg-dot" style="background:#3b82f6"></div>Biofillers</div>' +
+        '<div class="dleg"><div class="dleg-dot" style="background:#a78bfa"></div>PHA copoly.</div>' +
+        '<div class="dleg"><div class="dleg-dot" style="background:#f59e0b"></div>CHP feed</div>' +
+        '<div class="dleg"><div class="dleg-dot" style="background:#64748b"></div>Ash</div>' +
+        '<div class="dleg"><div class="dleg-dot" style="background:#374151"></div>Losses</div>' +
+      '</div>');
+
+  el('p0').innerHTML = '<div class="grid2 g-bal"><div class="col">' + leftCol + '</div><div class="col">' + rightCol + '</div></div>';
+
+  var balKeys = ['basisTpa','hemiPct','cellPct','lignPct','ashPct','moisture',
+                 'recHemi','recCell','recLign','recPHA','biocompRec','calorific','elecEff','elecConsump'];
+  balKeys.forEach(function(k) {
+    var inp = el('i-' + k);
+    if (inp) inp.addEventListener('input', function(e) {
+      var v = parseFloat(e.target.value);
+      if (!isNaN(v)) { S[k] = v; updateAll(); }
+    });
+  });
+}
+
+/* ── Build Tab 1 ──────────────────────────────────────── */
+function buildTab1() {
+  var eqRows = '';
+  EQ.forEach(function(row, i) {
+    eqRows += '<tr>' +
+      '<td class="lbl">' + row[0] + '</td>' +
+      '<td class="tr">' + inpHtml('eq-b-'+i, row[1], 0.01, 'w70') + '</td>' +
+      '<td class="tr">' + inpHtml('eq-s-'+i, row[2], 0.01, 'w52') + '</td>' +
+      '<td class="tr muted">' + row[3].toFixed(3) + '</td>' +
+      '<td style="font-size:10px;color:#64748b">' + row[4] + '</td>' +
+      '<td class="tr blue" id="eq-sz-'+i+'">—</td>' +
+      '<td class="tr fw7" id="eq-c-'+i+'">—</td>' +
+    '</tr>';
+  });
+
+  var leftCol =
+    cardHtml('Process',
+      pairHtml('Operating days',  'i-opDays',   S.opDays,   1,   'days / y') +
+      pairHtml('Current CEPCI',   'i-cepci',    S.cepci,    10,  'index') +
+      pairHtml('TCI / DCE ratio', 'i-tciRatio', S.tciRatio, 0.1, '&#8212;')) +
+    cardHtml('Commodity Prices',
+      pairHtml('Dry biomass',      'i-biomassP', S.biomassP, 10,    '$ / dry t') +
+      pairHtml('PHA biocomposite', 'i-biocompP', S.biocompP, 0.5,   '$ / kg') +
+      pairHtml('Reagents (avg)',   'i-reagentP', S.reagentP, 0.01,  '$ / kg') +
+      pairHtml('Electricity',      'i-elecP',    S.elecP,    0.01,  '$ / MJ') +
+      pairHtml('Heat / steam',     'i-heatP',    S.heatP,    0.001, '$ / MJ')) +
+    cardHtml('Financial',
+      pairHtml('Annual capital charge',   'i-annCC',     S.annCC,     0.01, 'fraction') +
+      pairHtml('Internal rate of return', 'i-irr',       S.irr,       0.01, 'fraction') +
+      pairHtml('Indirect cost factor',    'i-indFactor', S.indFactor, 0.01, 'of capex') +
+      pairHtml('Labour overhead',         'i-laborOH',   S.laborOH,   0.1,  'multiplier')) +
+    cardHtml('Labour',
+      pairHtml('Cost per job',        'i-laborCost', S.laborCost, 5000, '$ / y') +
+      pairHtml('Jobs per kt product', 'i-jobsPerKt', S.jobsPerKt, 1,    'jobs / kt'));
+
+  var rightCol =
+    '<div class="g-kpi4">' +
+      kpiHtml('o-k-tci',   'Total Capital Investment') +
+      kpiHtml('o-k-tcost', 'Total Annual Cost') +
+      kpiHtml('o-k-rev',   'Product Revenue') +
+      kpiHtml('o-k-net',   'Net Annual Profit') +
+    '</div>' +
+    cardHtml('Capital Cost Estimation &#8212; Six-Tenths Scaling',
+      '<div class="scroll-x"><table>' +
+      '<thead><tr><th class="tl">Unit</th><th class="tr">Base Cost ($M)</th><th class="tr">Scale n</th>' +
+      '<th class="tr">Base Size</th><th>Unit</th><th class="tr">Curr. Size</th><th class="tr">Cost ($M)</th></tr></thead>' +
+      '<tbody id="eq-tbody">' + eqRows + '</tbody>' +
+      '<tfoot>' +
+        '<tr class="tr-tot"><td colspan="6" class="lbl fw7">Delivered Cost of Equipment (DCE)</td>' +
+          '<td class="tr amber fw7" id="o-H17">—</td></tr>' +
+        '<tr class="tr-tot"><td colspan="6" class="lbl fw7">Total Capital Investment <span id="o-tciLbl" class="muted" style="font-weight:400"></span></td>' +
+          '<td class="tr amber fw7" id="o-H18" style="font-size:14px">—</td></tr>' +
+      '</tfoot></table></div>') +
+    '<div class="g-2col">' +
+      cardHtml('Annual Cost Breakdown (M$ / y)',
+        crowHtml('o-B32', 'Capital charge') +
+        crowHtml('o-B33', 'Indirect fixed Opex') +
+        crowHtml('o-B34', 'Labour') +
+        crowHtml('o-F21', 'Reagents') +
+        crowHtml('o-F22', 'Electricity (net)') +
+        crowHtml('o-F23', 'Heat / steam') +
+        crowHtml('o-B36', 'Feedstock') +
+        crowHtml('o-B37', 'Miscellaneous Opex') +
+        '<div class="divider"></div>' +
+        crowHtml('o-B39', 'Total Cost') +
+        crowHtml('o-B40', 'Revenue') +
+        '<div class="cnet"><span class="cl">Net (Revenue &#8722; Cost)</span><span class="cv fw7" id="o-B41">—</span></div>') +
+      cardHtml('Discounted Cash Flow (M$)',
+        '<div class="scroll-y"><table>' +
+        '<thead><tr><th class="tc">Year</th><th class="tr">Disc. CF</th><th class="tr">Cumul. NPV</th></tr></thead>' +
+        '<tbody id="dcf-tbody"></tbody></table></div>') +
+    '</div>' +
+    cardHtml('Cumulative Net Present Value',
+      '<canvas id="npvCanvas" style="max-height:200px"></canvas>');
+
+  el('p1').innerHTML = '<div class="grid2 g-tea"><div class="col">' + leftCol + '</div><div class="col">' + rightCol + '</div></div>';
+
+  var teaKeys = ['opDays','cepci','tciRatio','biomassP','biocompP','reagentP',
+                 'elecP','heatP','annCC','irr','indFactor','laborOH','laborCost','jobsPerKt'];
+  teaKeys.forEach(function(k) {
+    var inp = el('i-' + k);
+    if (inp) inp.addEventListener('input', function(e) {
+      var v = parseFloat(e.target.value);
+      if (!isNaN(v)) { S[k] = v; updateAll(); }
+    });
+  });
+  for (var i = 0; i < EQ.length; i++) {
+    (function(idx) {
+      var eb = el('eq-b-' + idx);
+      var es = el('eq-s-' + idx);
+      if (eb) eb.addEventListener('input', function(e) {
+        var v = parseFloat(e.target.value); if (!isNaN(v)) { EQ[idx][1] = v; updateAll(); }
+      });
+      if (es) es.addEventListener('input', function(e) {
+        var v = parseFloat(e.target.value); if (!isNaN(v)) { EQ[idx][2] = v; updateAll(); }
+      });
+    })(i);
+  }
+}
+
+/* ── Build Tab 2 ──────────────────────────────────────── */
+function buildTab2() {
+  var rows = '';
+  GW.forEach(function(row, i) {
+    rows += '<tr>' +
+      '<td class="lbl" style="font-size:11px">' + row[0] + '</td>' +
+      '<td class="tr">' + inpHtml('gw-f-'+i, row[1], 0.001, 'w70') + '</td>' +
+      '<td style="font-size:10px;color:#64748b">' + row[2] + '</td>' +
+      '<td class="tr">' + inpHtml('gw-k-'+i, row[3], 0.0001, 'w95') + '</td>' +
+      '<td style="font-size:10px;color:#64748b">' + row[4] + '</td>' +
+      '<td class="tr" id="gw-v-'+i+'">' +
+        '<div class="gwp-inline">' +
+          '<div class="gwp-ibar"><div class="gwp-ifill" id="gw-bar-'+i+'" style="width:0%"></div></div>' +
+          '<span id="gw-n-'+i+'">—</span>' +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  });
+
+  var leftCol = cardHtml('Life Cycle Inventory &amp; GWP Characterisation',
+    '<div class="scroll-x"><table>' +
+    '<thead><tr>' +
+      '<th class="tl">Inventory Item</th>' +
+      '<th class="tr">Flow / kg biocomp.</th>' +
+      '<th>Unit</th>' +
+      '<th class="tr">GWP Factor</th>' +
+      '<th>Factor Unit</th>' +
+      '<th class="tr">kg CO&#8322;e / kg</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody>' +
+    '<tfoot><tr class="tr-tot"><td colspan="5" class="lbl fw7">Total GWP</td>' +
+      '<td class="tr amber fw7" id="o-gwpTot" style="font-size:15px">—</td></tr></tfoot>' +
+    '</table></div>');
+
+  var rightCol =
+    cardHtml('',
+      '<div style="text-align:center;padding:10px 0 14px">' +
+        '<div class="kpi-lbl">Total GWP</div>' +
+        '<div class="mono fw7 amber" id="o-gwpBig" style="font-size:42px;line-height:1">—</div>' +
+        '<div class="muted" style="font-size:12px;margin-top:6px">kg CO&#8322;e / kg biocomposite</div>' +
+      '</div>' +
+      '<div style="border-top:1px solid #2a3450;padding-top:12px">' +
+        '<div class="muted" style="font-size:11px;margin-bottom:4px">Annual plant GWP burden</div>' +
+        '<div class="mono fw7" id="o-gwpAnn" style="font-size:22px">—</div>' +
+        '<div class="muted" style="font-size:11px;margin-top:2px" id="o-gwpAnnSub"></div>' +
+      '</div>') +
+    cardHtml('Contribution Ranking', '<div id="gwp-rank"></div>');
+
+  el('p2').innerHTML = '<div class="grid2 g-gwp"><div class="col">' + leftCol + '</div><div class="col">' + rightCol + '</div></div>';
+
+  for (var i = 0; i < GW.length; i++) {
+    (function(idx) {
+      var ef = el('gw-f-' + idx);
+      var ek = el('gw-k-' + idx);
+      if (ef) ef.addEventListener('input', function(e) {
+        var v = parseFloat(e.target.value); if (!isNaN(v)) { GW[idx][1] = v; updateAll(); }
+      });
+      if (ek) ek.addEventListener('input', function(e) {
+        var v = parseFloat(e.target.value); if (!isNaN(v)) { GW[idx][3] = v; updateAll(); }
+      });
+    })(i);
+  }
+}
+
+/* ── Update outputs ───────────────────────────────────── */
+function updateAll() {
+  var res = calcAll();
+  if (builtTab[0]) updateBal(res.bal);
+  if (builtTab[1]) updateTEA(res.tea, res.bal);
+  if (builtTab[2]) updateGWP(res.gwp, res.bal);
+}
+
+function updateBal(b) {
+  setTxt('o-wet', fmt(b.wet, 0));
+  var sum = S.hemiPct + S.cellPct + S.lignPct + S.ashPct;
+  var cs = el('o-compSum');
+  if (cs) { cs.textContent = sum.toFixed(1) + '%'; cs.className = 'mono ' + (Math.abs(sum-100) > 0.05 ? 'red' : 'green'); }
+
+  var kv0 = el('o-k-biocomp'); if(kv0){kv0.textContent=fmt(b.J14,0);kv0.style.color='#34d399';}
+  var kv1 = el('o-k-elec');    if(kv1){kv1.textContent=fmt(b.E17);  kv1.style.color='#60a5fa';}
+  var kv2 = el('o-k-wet');     if(kv2){kv2.textContent=fmt(b.wet,0);kv2.style.color='#fbbf24';}
+
+  setTxt('bE5',  fmt(b.E5));  setTxt('bF5',  fmt(b.F5));
+  setTxt('bE6',  fmt(b.E6));  setTxt('bF6',  fmt(b.F6)); setTxt('bG6', fmt(b.G6));
+  setTxt('bE7',  fmt(b.E7));  setTxt('bF7',  fmt(b.F7));
+  setTxt('bE8',  fmt(b.E8));
+  setTxt('bH14', fmt(b.H10)); setTxt('bI14', fmt(b.I12)); setTxt('bJ14', fmt(b.J14));
+  setTxt('bE14', fmt(b.E14)); setTxt('bF14', fmt(b.F14));
+  setTxt('bG14t',fmt(b.G6));  setTxt('bH14t',fmt(b.H10));
+  setTxt('bI14t',fmt(b.I12)); setTxt('bJ14t',fmt(b.J14));
+
+  var tot = b.E14;
+  if (tot > 0) {
+    var vals = [b.G6, b.H10, b.I12, b.E8, Math.max(0, tot-b.G6-b.H10-b.I12)];
+    for (var i = 0; i < 5; i++) {
+      var pct = vals[i] / tot * 100;
+      var seg = el('ds' + i);
+      if (seg) seg.style.flexBasis = pct + '%';
+      var lbl = el('dsl' + i);
+      if (lbl) lbl.textContent = (pct > 6) ? pct.toFixed(0) + '%' : '';
+    }
+  }
+}
+
+function updateTEA(t, b) {
+  var net = t.B41;
+  var netCol = net >= 0 ? '#34d399' : '#f87171';
+
+  var kTCI = el('o-k-tci');   if(kTCI){ kTCI.textContent = '$'+fmt(t.H18)+'M';   kTCI.style.color='#fbbf24'; }
+  var kTC  = el('o-k-tcost'); if(kTC){  kTC.textContent  = '$'+fmt(t.B39)+'M/y'; kTC.style.color='#f87171'; }
+  var kRev = el('o-k-rev');   if(kRev){ kRev.textContent = '$'+fmt(t.B40)+'M/y'; kRev.style.color='#34d399'; }
+  var kNet = el('o-k-net');   if(kNet){ kNet.textContent = '$'+fmt(net)+'M/y';   kNet.style.color=netCol; }
+  var kSub = el('o-k-net-sub'); if(kSub){ kSub.textContent=net>=0?'✓ Profitable':'✗ Loss-making'; kSub.style.color=netCol; }
+
+  t.sizes.forEach(function(sz, i) { setTxt('eq-sz-'+i, sz.toFixed(4)); });
+  t.costs.forEach(function(c,  i) { setTxt('eq-c-'+i,  fmt(c, 3)); });
+  setTxt('o-H17', fmt(t.H17, 3));
+  setTxt('o-H18', '$' + fmt(t.H18, 3) + 'M');
+  setTxt('o-tciLbl', '(DCE \xD7 ' + S.tciRatio + ')');
+
+  var crowData = [
+    ['o-B32',t.B32,false],['o-B33',t.B33,false],['o-B34',t.B34,false],
+    ['o-F21',t.F21,false],['o-F22',t.F22,false],['o-F23',t.F23,false],
+    ['o-B36',t.B36,false],['o-B37',t.B37,false],
+    ['o-B39',t.B39,true], ['o-B40',t.B40,false]
+  ];
+  crowData.forEach(function(row) {
+    var e = el(row[0]);
+    if (!e) return;
+    e.textContent = fmt(row[1], 3);
+    e.style.color = row[2] ? '#fbbf24' : (row[1] < 0 ? '#34d399' : '#e2e8f0');
+  });
+  var nb = el('o-B41');
+  if (nb) { nb.textContent = fmt(net, 3); nb.style.color = netCol; }
+
+  /* DCF table */
+  var dcfHtml = '';
+  t.dcf.forEach(function(row) {
+    dcfHtml += '<tr style="background:' + (row.npv > 0 ? 'rgba(52,211,153,.04)' : 'transparent') + '">' +
+      '<td class="tc muted">' + row.year + '</td>' +
+      '<td class="tr" style="color:' + (row.cf < 0 ? '#f87171' : '#e2e8f0') + '">' + fmt(row.cf) + '</td>' +
+      '<td class="tr fw7" style="color:' + (row.npv >= 0 ? '#34d399' : '#f87171') + '">' + fmt(row.npv) + '</td>' +
+    '</tr>';
+  });
+  setHTML('dcf-tbody', dcfHtml);
+
+  /* NPV Chart */
+  var canvas = el('npvCanvas');
+  if (!canvas) return;
+  var labels   = t.dcf.map(function(d){ return d.year; });
+  var npvVals  = t.dcf.map(function(d){ return d.npv; });
+  var ptColors = npvVals.map(function(v){ return v >= 0 ? '#34d399' : '#f87171'; });
+  var zeroline = labels.map(function(){ return 0; });
+
+  if (npvChart) {
+    npvChart.data.labels = labels;
+    npvChart.data.datasets[0].data = npvVals;
+    npvChart.data.datasets[0].pointBackgroundColor = ptColors;
+    npvChart.update('none');
+  } else {
+    npvChart = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'NPV',
+            data: npvVals,
+            borderColor: '#34d399', borderWidth: 2.5,
+            pointBackgroundColor: ptColors, pointBorderColor: '#0b0f19',
+            pointRadius: 5, pointBorderWidth: 2, tension: 0.1, fill: false
+          },
+          {
+            label: 'Break-even',
+            data: zeroline,
+            borderColor: 'rgba(251,191,36,0.5)', borderWidth: 1.5,
+            borderDash: [5,3], pointRadius: 0, fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1a2235', borderColor: '#2a3450', borderWidth: 1,
+            titleColor: '#64748b', bodyColor: '#e2e8f0',
+            filter: function(item){ return item.datasetIndex === 0; },
+            callbacks: { label: function(ctx){ return '$' + ctx.parsed.y.toFixed(2) + 'M'; } }
+          }
+        },
+        scales: {
+          x: { ticks:{color:'#64748b',font:{size:11}}, grid:{color:'#1a2235'},
+               title:{display:true,text:'Year',color:'#64748b',font:{size:11}} },
+          y: { ticks:{color:'#64748b',font:{size:11},callback:function(v){ return '$'+v.toFixed(0)+'M'; }},
+               grid:{color:'#1a2235'} }
+        }
+      }
+    });
+  }
+}
+
+function updateGWP(g, b) {
+  var total = g.total;
+  g.items.forEach(function(item, i) {
+    var pct = total > 0 ? (item.val / total * 100) : 0;
+    setTxt('gw-n-' + i, item.val.toFixed(4));
+    var bar = el('gw-bar-' + i);
+    if (bar) {
+      bar.style.width = Math.min(pct, 100).toFixed(1) + '%';
+      bar.style.background = 'hsl(' + (140 - pct * 1.2) + ',70%,50%)';
+    }
+  });
+  setTxt('o-gwpTot', total.toFixed(4));
+  setTxt('o-gwpBig', total.toFixed(3));
+  setTxt('o-gwpAnn', fmt(total * b.J14 / 1000, 0));
+  setTxt('o-gwpAnnSub', 't CO\u2082e / y \u00B7 ' + fmt(b.J14, 0) + ' tpa product');
+
+  var sorted = g.items.slice().sort(function(a,b){ return b.val - a.val; });
+  var html = '';
+  sorted.forEach(function(item) {
+    var pct = total > 0 ? (item.val / total * 100) : 0;
+    html += '<div class="rank-row">' +
+      '<div class="rank-top">' +
+        '<span class="rank-name">' + item.name + '</span>' +
+        '<span class="rank-pct">' + pct.toFixed(1) + '%</span>' +
+      '</div>' +
+      '<div class="rbar-wrap"><div class="rbar-fill" style="width:' + pct.toFixed(1) + '%;background:hsl(' + (140-pct*1.4) + ',70%,50%)"></div></div>' +
+    '</div>';
+  });
+  setHTML('gwp-rank', html);
+}
+
+/* ── Tab switching ────────────────────────────────────── */
+function showTab(n) {
+  document.querySelectorAll('.panel').forEach(function(p, i) {
+    p.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.tbtn').forEach(function(b) {
+    b.classList.toggle('active', parseInt(b.dataset.t) === n);
+  });
+  if (!builtTab[n]) {
+    if (n === 0) buildTab0();
+    if (n === 1) buildTab1();
+    if (n === 2) buildTab2();
+    builtTab[n] = true;
+  }
+  updateAll();
+}
+
+/* ── Reset ────────────────────────────────────────────── */
+function resetAll() {
+  if (npvChart) { npvChart.destroy(); npvChart = null; }
+  copyDefaults();
+  builtTab = [false, false, false];
+  el('p0').innerHTML = '';
+  el('p1').innerHTML = '';
+  el('p2').innerHTML = '';
+  var activeIdx = 0;
+  document.querySelectorAll('.tbtn').forEach(function(b, i) {
+    if (b.classList.contains('active')) activeIdx = i;
+  });
+  showTab(activeIdx);
+}
+
+/* ── Init ─────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.tbtn').forEach(function(btn) {
+    btn.addEventListener('click', function() { showTab(parseInt(btn.dataset.t)); });
+  });
+  el('resetBtn').addEventListener('click', resetAll);
+  showTab(0);
+});
+</script>
+</body>
+</html>
