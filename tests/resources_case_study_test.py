@@ -15,5 +15,7 @@ assert 'id="infographics-link"' in resources_html
 assert "Open Original" in resources_html
 assert 'id="refList"' not in resources_html
 assert 'id="refSearch"' not in resources_html
+assert "Browse Our Full References Library" not in resources_html
+assert "<span class=\"cc-eyebrow\">Publications</span>" not in resources_html
 
 print("resources case study link test passed")
