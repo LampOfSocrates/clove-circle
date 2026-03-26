@@ -264,9 +264,6 @@
         block.appendChild(buildMetaRow('Source PDF', data.source_pdf, true));
         block.appendChild(buildMetaRow('Figure file', data.figure_file, true));
         block.appendChild(buildMetaRow('Page number', String(data.page_number), false));
-        block.appendChild(buildMetaRow('Dimensions', data.width + ' × ' + data.height + ' px', false));
-        block.appendChild(buildMetaRow('Format', String(data.format).toUpperCase(), false));
-        block.appendChild(buildMetaRow('JSON file', jsonPath.split('/').pop(), true));
       } catch (error) {
         block.textContent = 'Unable to load metadata from ' + jsonPath + ': ' + String(error);
       }
