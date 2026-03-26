@@ -1,0 +1,83 @@
+{
+  "papers": [
+    {
+      "paper_slug": "paper01_native_h2_pathways",
+      "title": "Native H2 Pathways Enable Biocompatible Hydrogenation of Metabolic Alkenes in Bacteria",
+      "year": 2026,
+      "doi": "10.1038/s41557-025-02052-y",
+      "landing_url": "https://www.nature.com/articles/s41557-025-02052-y",
+      "pdf_path": "paper01_native_h2_pathways.pdf",
+      "download_status": "downloaded_pdf",
+      "download_notes": [],
+      "image_count": 8,
+      "images": [
+        "paper01_native_h2_pathways_p01_img01.png",
+        "paper01_native_h2_pathways_p02_img02.jpeg",
+        "paper01_native_h2_pathways_p03_img03.png",
+        "paper01_native_h2_pathways_p03_img04.png",
+        "paper01_native_h2_pathways_p04_img05.jpeg",
+        "paper01_native_h2_pathways_p04_img06.jpeg",
+        "paper01_native_h2_pathways_p04_img07.jpeg",
+        "paper01_native_h2_pathways_p13_img08.jpeg"
+      ],
+      "pdf_source_url": "https://www.nature.com/articles/s41557-025-02052-y.pdf"
+    },
+    {
+      "paper_slug": "paper02_diethyl_carb_glycerol_carb_lca",
+      "title": "Life Cycle Assessment of Diethyl Carbonate (DEC) and Glycerol Carbonate (GC) Coproduction from Bioethanol, CO2, and Glycerol",
+      "year": 2026,
+      "doi": "10.1021/acssuschemeng.5c13182",
+      "landing_url": "https://doi.org/10.1021/acssuschemeng.5c13182",
+      "pdf_path": null,
+      "download_status": "unavailable_or_restricted",
+      "download_notes": [
+        {
+          "url": "https://pubs.acs.org/doi/pdf/10.1021/acssuschemeng.5c13182",
+          "error": "non-pdf response (403, text/html; charset=utf-8)"
+        }
+      ],
+      "image_count": 0,
+      "images": [],
+      "resolved_url": "https://pubs.acs.org/doi/10.1021/acssuschemeng.5c13182"
+    },
+    {
+      "paper_slug": "paper03_bread_waste_valorization",
+      "title": "Multi-Objective Optimization of Bread Waste Valorization: A Framework for Integrated Food Waste Management",
+      "year": 2026,
+      "doi": "10.1016/j.resconrec.2026.108871",
+      "landing_url": "https://doi.org/10.1016/j.resconrec.2026.108871",
+      "pdf_path": null,
+      "download_status": "unavailable_or_restricted",
+      "download_notes": [],
+      "image_count": 0,
+      "images": [],
+      "resolved_url": "https://linkinghub.elsevier.com/retrieve/pii/S0921344926000959"
+    },
+    {
+      "paper_slug": "paper04_anaerobic_digestion_sitewide",
+      "title": "Anaerobic digestion site-wide optimisation and decision-making: An industrial perspective and review",
+      "year": 2026,
+      "doi": "10.1016/j.rser.2025.116402",
+      "landing_url": "https://doi.org/10.1016/j.rser.2025.116402",
+      "pdf_path": null,
+      "download_status": "unavailable_or_restricted",
+      "download_notes": [],
+      "image_count": 0,
+      "images": [],
+      "resolved_url": "https://linkinghub.elsevier.com/retrieve/pii/S1364032125010755"
+    },
+    {
+      "paper_slug": "paper05_intermediate_temp_anaerobic_digestion",
+      "title": "Challenging conventional temperature ranges in anaerobic digestion: intermediate (45?C) as general optimum with feedstock-dependent performance differences from mesophilic (35?C) and thermophilic (55?C) conditions",
+      "year": 2025,
+      "doi": "10.1016/j.biortech.2025.133609",
+      "landing_url": "https://doi.org/10.1016/j.biortech.2025.133609",
+      "pdf_path": null,
+      "download_status": "unavailable_or_restricted",
+      "download_notes": [],
+      "image_count": 0,
+      "images": [],
+      "resolved_url": "https://linkinghub.elsevier.com/retrieve/pii/S0960852425015767"
+    }
+  ]
+}

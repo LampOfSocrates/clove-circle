@@ -77,7 +77,7 @@ The current palette is monochromatic green. We'll extend it with:
 | `css/eco-theme.css` | Full rewrite of the `:root` variables and all component styles |
 | `index.html` | Minor class/markup tweaks for new components |
 | `resources.html` | Minor class tweaks |
-| `case-study-tea-lca.html` | Minor class tweaks |
+| `case_studies/case-study-pha-biocomposite.html` | Minor class tweaks |
 | `about.html` | Port from Bootstrap 3 → Bootstrap 5 + eco-theme (legacy unification) |
 | `services.html` | Same |
 | `portfolio.html` | Same |
