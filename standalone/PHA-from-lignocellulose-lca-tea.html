@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Biorefinery TEA &amp; LCA — PHA Biocomposite</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:15px}
-body{background:#0b0f19;color:#e2e8f0;font-family:'Syne',sans-serif;min-height:100vh}
+body{background:#0b0f19;color:#e2e8f0;font-family:'IBM Plex Sans',sans-serif;line-height:1.65;min-height:100vh}
+body.in-frame{min-height:0!important}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
@@ -35,7 +36,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 .hdr-sub{font-size:12px;color:#94a3b8;margin-top:3px}
 .hdr-sub .hl{color:#fbbf24}
 #resetBtn{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.4);color:#f87171;
-  border-radius:7px;padding:9px 18px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;
+  border-radius:7px;padding:9px 18px;font-size:12px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;
   font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;transition:all .15s}
 #resetBtn:hover{background:rgba(248,113,113,.2);border-color:rgba(248,113,113,.7)}
 
@@ -43,7 +44,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 #tabbar{background:#080c14;border-bottom:1px solid #2a3450;padding:0 24px}
 #tabbar-inner{max-width:1300px;margin:0 auto;display:flex}
 .tbtn{padding:11px 24px;background:transparent;border:none;border-bottom:2px solid transparent;
-  color:#94a3b8;font-size:14px;cursor:pointer;font-weight:500;font-family:'Syne',sans-serif;transition:color .15s}
+  color:#94a3b8;font-size:14px;cursor:pointer;font-weight:500;font-family:'IBM Plex Sans',sans-serif;transition:color .15s}
 .tbtn.active{color:#e2e8f0;border-bottom-color:#34d399;font-weight:700}
 
 /* Content */
@@ -58,7 +59,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 /* KPI */
 .kpi{background:#141a27;border:1px solid #2a3450;border-radius:10px;padding:16px}
 .kpi-lbl{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.kpi-val{font-size:24px;font-family:'JetBrains Mono',monospace;font-weight:700;line-height:1}
+.kpi-val{font-size:22px;font-family:'IBM Plex Mono',monospace;font-weight:600;line-height:1}
 .kpi-unit{font-size:12px;color:#94a3b8;margin-top:4px}
 .kpi-sub{font-size:11px;margin-top:2px}
 
@@ -68,7 +69,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 .pair-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .pair-unit{font-size:11px;color:#94a3b8;min-width:72px}
 .inp{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);border-radius:4px;
-  color:#fde68a;padding:4px 8px;font-size:13px;font-family:'JetBrains Mono',monospace;
+  color:#fde68a;padding:4px 8px;font-size:13px;font-family:'IBM Plex Mono',monospace;
   outline:none;text-align:right;transition:border-color .15s}
 .inp:focus{border-color:rgba(251,191,36,.9)}
 .w85{width:85px}.w70{width:70px}.w52{width:52px}.w95{width:95px}
@@ -77,16 +78,16 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 table{width:100%;border-collapse:collapse}
 th{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;
   padding:8px 10px;border-bottom:1px solid #2a3450;background:#1a2235;
-  font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap}
-td{padding:6px 10px;font-size:13px;font-family:'JetBrains Mono',monospace;
+  font-family:'IBM Plex Sans',sans-serif;font-weight:600;white-space:nowrap}
+td{padding:6px 10px;font-size:13px;font-family:'IBM Plex Mono',monospace;
   color:#e2e8f0;border-bottom:1px solid rgba(42,52,80,.45)}
-td.lbl{font-family:'Syne',sans-serif;color:#cbd5e1;font-size:13px}
+td.lbl{font-family:'IBM Plex Sans',sans-serif;color:#cbd5e1;font-size:13px}
 .tr-tot{background:#1a2235}
 .scroll-x{overflow-x:auto}
 .scroll-y{overflow-y:auto;max-height:300px}
 
 /* Utility */
-.mono{font-family:'JetBrains Mono',monospace}
+.mono{font-family:'IBM Plex Mono',monospace}
 .muted{color:#94a3b8}
 .green{color:#34d399}.amber{color:#fbbf24}.red{color:#f87171}.blue{color:#60a5fa}
 .tr{text-align:right}.tc{text-align:center}.tl{text-align:left}
@@ -97,10 +98,10 @@ td.lbl{font-family:'Syne',sans-serif;color:#cbd5e1;font-size:13px}
 /* Cost row */
 .crow{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #2a3450}
 .crow .cl{font-size:13px;color:#cbd5e1}
-.crow .cv{font-size:13px;font-family:'JetBrains Mono',monospace}
+.crow .cv{font-size:13px;font-family:'IBM Plex Mono',monospace}
 .cnet{display:flex;justify-content:space-between;align-items:center;padding:7px 0 0}
 .cnet .cl{font-size:13px;font-weight:700}
-.cnet .cv{font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700}
+.cnet .cv{font-size:14px;font-family:'IBM Plex Mono',monospace;font-weight:700}
 
 /* Dist bar */
 #dist-bar{display:flex;gap:3px;height:34px;border-radius:6px;overflow:hidden;margin-bottom:10px}
@@ -119,7 +120,7 @@ td.lbl{font-family:'Syne',sans-serif;color:#cbd5e1;font-size:13px}
 .rank-row{margin-bottom:12px}
 .rank-top{display:flex;justify-content:space-between;margin-bottom:3px}
 .rank-name{font-size:11px;color:#cbd5e1}
-.rank-pct{font-size:11px;font-family:'JetBrains Mono',monospace}
+.rank-pct{font-size:11px;font-family:'IBM Plex Mono',monospace}
 .rbar-wrap{height:5px;background:#1a2235;border-radius:3px}
 .rbar-fill{height:100%;border-radius:3px}
 
@@ -161,10 +162,6 @@ td.lbl{font-family:'Syne',sans-serif;color:#cbd5e1;font-size:13px}
   <div id="p2" class="panel"></div>
 </div>
 
-<div id="footer">
-  &copy; Sadhukhan J, Ng KS, Martinez-Hernandez E. (2014).
-  <em>Biorefineries and Chemical Processes: Design, Integration and Sustainability Analysis.</em> Wiley.
-</div>
 
 <script>
 "use strict";
@@ -807,5 +804,6 @@ document.addEventListener('DOMContentLoaded', function() {
   showTab(0);
 });
 </script>
+<script>if (window.self !== window.top) document.body.classList.add('in-frame');</script>
 </body>
 </html>

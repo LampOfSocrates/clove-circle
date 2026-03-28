@@ -14,6 +14,9 @@
   <link href="../css/eco-theme.css" rel="stylesheet">
   <link href="../css/case-study-format.css" rel="stylesheet">
   <style>
+    /* Override shared min-height — JS will size the frame to its content */
+    .cc-case-study-frame { min-height: 0; }
+
     .cc-readable-copy {
       color: rgba(255, 255, 255, 0.9);
     }
@@ -82,7 +85,6 @@
     <div class="cc-card cc-case-study-shell">
       <div class="cc-case-study-head">
         <div>
-          <span class="cc-eyebrow">Embedded Model</span>
           <h3 class="cc-case-study-title">Laterite LCA + TEA Dashboard</h3>
           <p class="cc-case-study-copy cc-readable-copy mb-0">The original dashboard is framed inside a darker shell so it sits within the Clove Circle palette while preserving the source tool's contrast.</p>
         </div>
@@ -147,5 +149,27 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/site.js"></script>
+<script>
+  (function () {
+    var frame = document.querySelector('.cc-case-study-frame');
+    if (!frame) return;
+
+    function fitFrame() {
+      try {
+        var body = frame.contentDocument && frame.contentDocument.body;
+        if (!body) return;
+        frame.style.height = '0';
+        frame.style.height = body.scrollHeight + 'px';
+      } catch (e) {}
+    }
+
+    frame.addEventListener('load', function () {
+      fitFrame();
+      try {
+        new ResizeObserver(fitFrame).observe(frame.contentDocument.body);
+      } catch (e) {}
+    });
+  })();
+</script>
 </body>
 </html>

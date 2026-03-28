@@ -18,10 +18,11 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:15px;line-height:1.65;min-height:100vh;}
+body.in-frame{min-height:0!important;}
 
 header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
 .hicon{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
-.htxt h1{font-family:var(--font-mono);font-size:16px;font-weight:600;letter-spacing:.02em;}
+.htxt h1{font-family:var(--font-mono);font-size:15px;font-weight:600;letter-spacing:.02em;}
 .htxt p{font-size:12px;color:var(--text2);font-family:var(--font-mono);}
 .hbadges{margin-left:auto;display:flex;gap:8px;}
 .badge{font-family:var(--font-mono);font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid;letter-spacing:.06em;text-transform:uppercase;}
@@ -31,6 +32,9 @@ header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 
 .app{display:grid;grid-template-columns:310px 1fr;min-height:calc(100vh - 57px);}
 .sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 16px;overflow-y:auto;max-height:calc(100vh - 57px);position:sticky;top:57px;}
 .main{padding:24px 28px;overflow-y:auto;}
+body.in-frame .app{min-height:0;}
+body.in-frame .sidebar{max-height:none;overflow-y:visible;position:static;}
+body.in-frame .main{overflow-y:visible;}
 
 .slabel{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border);}
 .ig{margin-bottom:11px;}
@@ -124,27 +128,26 @@ svg text{font-family:var(--font-mono);}
 <!-- ══ SIDEBAR ══ -->
 <div class="sidebar">
   <div class="slabel">Mass Balance Inputs</div>
-  <div class="ig"><label>NCL raw material (dry) <span>kg/h</span></label><input type="number" id="i_ncl" value="360" min="1" step="1"></div>
-  <div class="ig"><label>Moisture content <span>%</span></label><input type="number" id="i_moist" value="25" min="0" max="99.9" step="0.1"></div>
+  <div class="ig"><label>NCL raw material (dry) <span>kg/h</span></label><input type="number" id="i_ncl" value="360" min="1" step="1" oninput="calc()"></div>
+  <div class="ig"><label>Moisture content <span>%</span></label><input type="number" id="i_moist" value="25" min="0" max="99.9" step="0.1" oninput="calc()"></div>
 
   <div class="sgap"><div class="slabel">Bioleaching Inventories</div></div>
-  <div class="ig"><label>Solid concentration <span>g/L</span></label><input type="number" id="i_solidc" value="50" min="0.1" step="0.1"></div>
-  <div class="ig"><label>Na₂SO₄ — BFL <span>g/L</span></label><input type="number" id="i_na2so4" value="60" min="0" step="0.1"></div>
-  <div class="ig"><label>FeSO₄ — BFL <span>g/L</span></label><input type="number" id="i_feso4b" value="3" min="0" step="0.01"></div>
-  <div class="ig"><label>FeSO₄ — Mn oxides conc. <span>g/L</span></label><input type="number" id="i_feso4m" value="25" min="0" step="0.1"></div>
+  <div class="ig"><label>Solid concentration <span>g/L</span></label><input type="number" id="i_solidc" value="50" min="0.1" step="0.1" oninput="calc()"></div>
+  <div class="ig"><label>Na₂SO₄ — BFL <span>g/L</span></label><input type="number" id="i_na2so4" value="60" min="0" step="0.1" oninput="calc()"></div>
+  <div class="ig"><label>FeSO₄ — BFL <span>g/L</span></label><input type="number" id="i_feso4b" value="3" min="0" step="0.01" oninput="calc()"></div>
+  <div class="ig"><label>FeSO₄ — Mn oxides conc. <span>g/L</span></label><input type="number" id="i_feso4m" value="25" min="0" step="0.1" oninput="calc()"></div>
 
   <div class="divider"></div>
   <div class="slabel">TEA Parameters</div>
-  <div class="ig"><label>Annual capital charge <span>fraction</span></label><input type="number" id="i_acc" value="0.1" min="0.001" max="1" step="0.01"></div>
-  <div class="ig"><label>Internal rate of return <span>fraction</span></label><input type="number" id="i_irr" value="0.1" min="0.001" max="1" step="0.01"></div>
-  <div class="ig"><label>Reagents price <span>$/kg</span></label><input type="number" id="i_preag" value="0.26" min="0" step="0.01"></div>
-  <div class="ig"><label>Electricity price <span>$/MJ</span></label><input type="number" id="i_pelec" value="0.0644" min="0" step="0.001"></div>
-  <div class="ig"><label>Heat price <span>$/MJ</span></label><input type="number" id="i_pheat" value="0.03" min="0" step="0.001"></div>
-  <div class="ig"><label>Critical metals price <span>$/kg</span></label><input type="number" id="i_pmet" value="18.5" min="0" step="0.1"></div>
-  <div class="ig"><label>Raw laterite price <span>$/dry t</span></label><input type="number" id="i_plat" value="75" min="0" step="1"></div>
-  <div class="ig"><label>Labour cost <span>$/person/y</span></label><input type="number" id="i_plab" value="85000" min="0" step="1000"></div>
+  <div class="ig"><label>Annual capital charge <span>fraction</span></label><input type="number" id="i_acc" value="0.1" min="0.001" max="1" step="0.01" oninput="calc()"></div>
+  <div class="ig"><label>Internal rate of return <span>fraction</span></label><input type="number" id="i_irr" value="0.1" min="0.001" max="1" step="0.01" oninput="calc()"></div>
+  <div class="ig"><label>Reagents price <span>$/kg</span></label><input type="number" id="i_preag" value="0.26" min="0" step="0.01" oninput="calc()"></div>
+  <div class="ig"><label>Electricity price <span>$/MJ</span></label><input type="number" id="i_pelec" value="0.0644" min="0" step="0.001" oninput="calc()"></div>
+  <div class="ig"><label>Heat price <span>$/MJ</span></label><input type="number" id="i_pheat" value="0.03" min="0" step="0.001" oninput="calc()"></div>
+  <div class="ig"><label>Critical metals price <span>$/kg</span></label><input type="number" id="i_pmet" value="18.5" min="0" step="0.1" oninput="calc()"></div>
+  <div class="ig"><label>Raw laterite price <span>$/dry t</span></label><input type="number" id="i_plat" value="75" min="0" step="1" oninput="calc()"></div>
+  <div class="ig"><label>Labour cost <span>$/person/y</span></label><input type="number" id="i_plab" value="85000" min="0" step="1000" oninput="calc()"></div>
 
-  <button class="calc-btn" onclick="calc()">▶ Calculate</button>
   <button class="rst-btn" onclick="resetDef()">↺ Reset to Defaults</button>
 </div>
 
@@ -804,5 +807,6 @@ function drawSankey(d) {
 // Initial run
 calc();
 </script>
+<script>if (window.self !== window.top) document.body.classList.add('in-frame');</script>
 </body>
 </html>
