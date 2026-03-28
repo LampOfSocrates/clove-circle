@@ -704,6 +704,116 @@ img { max-width: 100%; height: auto; }
   border-color: #fff;
 }
 
+/* ---- Compact page header (resources page) ---- */
+.cc-page-header--compact {
+  padding: 28px 0;
+}
+.cc-page-header--compact h1 {
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  margin-bottom: 0;
+}
+
+/* ---- Resources section (compact) ---- */
+.cc-resources-section {
+  background: var(--cc-green-xlight);
+  padding: 28px 0 48px;
+}
+
+/* ---- Case study sub-tabs (inside Case Studies pane) ---- */
+.cc-case-study-tabs {
+  border-bottom: 1px solid var(--cc-green-pale);
+  padding-bottom: 16px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cc-case-study-tabs .nav-link {
+  background: #fff;
+  color: var(--cc-green-dark);
+  border: 1px solid var(--cc-green-pale);
+  border-radius: var(--cc-radius-pill);
+  padding: 9px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background var(--cc-transition), color var(--cc-transition), border-color var(--cc-transition);
+}
+.cc-case-study-tabs .nav-link:hover {
+  background: var(--cc-green-pale);
+  border-color: var(--cc-green-light);
+}
+.cc-case-study-tabs .nav-link.active {
+  background: var(--cc-green-darkest);
+  color: #fff;
+  border-color: var(--cc-green-darkest);
+}
+
+/* ---- Resources thin tab bar ---- */
+.cc-resources-bar {
+  background: linear-gradient(135deg, var(--cc-ink) 0%, var(--cc-green-darkest) 50%, var(--cc-green-mid) 100%);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.cc-resources-bar .cc-tab-nav .nav-link {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border-color: rgba(255,255,255,0.25);
+}
+.cc-resources-bar .cc-tab-nav .nav-link:hover {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.45);
+}
+.cc-resources-bar .cc-tab-nav .nav-link.active {
+  background: #fff;
+  color: var(--cc-green-darkest);
+  border-color: #fff;
+}
+
+/* ---- Tab bar (sits below header, light bg) ---- */
+.cc-tab-nav--bar {
+  border-bottom: 1px solid var(--cc-green-pale);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  gap: 6px;
+}
+.cc-tab-nav--bar .nav-link {
+  background: #fff;
+  color: var(--cc-green-dark);
+  border: 1px solid var(--cc-green-pale);
+  border-radius: var(--cc-radius-pill);
+  padding: 7px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background var(--cc-transition), color var(--cc-transition), border-color var(--cc-transition);
+}
+.cc-tab-nav--bar .nav-link:hover {
+  background: var(--cc-green-pale);
+  border-color: var(--cc-green-light);
+}
+.cc-tab-nav--bar .nav-link.active {
+  background: var(--cc-green-mid);
+  color: #fff;
+  border-color: var(--cc-green-mid);
+}
+
+/* ---- Small card icon variant ---- */
+.cc-card-icon--sm {
+  width: 40px;
+  height: 40px;
+  font-size: 17px;
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+/* ---- Inline link in placeholder card ---- */
+.cc-case-meta-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cc-green-mid);
+  text-decoration: none;
+}
+.cc-case-meta-link:hover { color: var(--cc-green-dark); }
+
 /* ---- References List ---- */
 .cc-ref-search {
   max-width: 560px;
@@ -778,7 +888,7 @@ img { max-width: 100%; height: auto; }
 .cc-case-card-link:focus-visible {
   outline: none;
 }
-.cc-case-card { padding: 32px; }
+.cc-case-card { padding: 22px 24px; }
 .cc-case-card-head {
   display: flex;
   align-items: center;

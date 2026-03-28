@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flue2Chem TEA and LCA</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #0c1014;
+  --bg2:  #141a22;
+  --bg3:  #1a2130;
+  --bg4:  #202a3a;
+  --bd:   #2a3a50;
+  --bd2:  #3a5068;
+  --teal: #38bdf8;
+  --tdim: #1a5f7a;
+  --tlt:  #7dd3fc;
+  --grn:  #4ade80;
+  --gdim: #166534;
+  --red:  #f87171;
+  --amb:  #fbbf24;
+  --tx:   #e2e8f0;
+  --tx2:  #94a3b8;
+  --tx3:  #64748b;
+  --bv:   #f0f6ff;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --r:    6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;line-height:1.5}
+/* ── HEADER ── */
+header{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;display:flex;align-items:center;gap:18px;height:54px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px;border-right:1px solid var(--bd);padding-right:18px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--teal),#0ea5e9);border-radius:8px;display:flex;align-items:center;justify-content:center;font:700 12px var(--mono);color:#fff;flex-shrink:0}
+.logo-title{font-size:15px;font-weight:600;color:var(--bv);letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:var(--tx3);font-family:var(--mono)}
+.hm{font-family:var(--mono);font-size:11px;color:var(--tx3)}
+.hm span{color:var(--teal);font-weight:500}
+.pill{margin-left:auto;display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:3px 10px;font-family:var(--mono);font-size:10px;color:var(--grn);font-weight:500;letter-spacing:.5px}
+.pill::before{content:'';width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ── TABS ── */
+.tabbar{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.tab{padding:10px 16px;font-family:var(--mono);font-size:10px;font-weight:500;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.tab:hover{color:var(--tx2)}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-n{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--bg3);border-radius:3px;font-size:9px;margin-right:6px}
+.tab.active .tab-n{background:var(--tdim);color:var(--teal)}
+/* ── LAYOUT ── */
+.content{padding:20px 24px;max-width:1440px;margin:0 auto}
+.panel{display:none;animation:fadein .18s ease}
+.panel.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.sec{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--bd),transparent)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mb{margin-bottom:16px}
+.sp{height:14px}
+/* ── KPI CARDS ── */
+.kpi{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--teal),transparent)}
+.kpi.grn::before{background:linear-gradient(to right,var(--grn),transparent)}
+.kpi.red::before{background:linear-gradient(to right,var(--red),transparent)}
+.kpi.amb::before{background:linear-gradient(to right,var(--amb),transparent)}
+.kl{font-size:10px;font-family:var(--mono);color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kv{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--bv);letter-spacing:-1px}
+.kv.grn{color:var(--grn)}.kv.red{color:var(--red)}.kv.amb{color:var(--amb)}
+.ku{font-family:var(--mono);font-size:11px;color:var(--tx3);margin-top:2px}
+/* ── INPUT FORM ── */
+.iform{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r)}
+.ihead{padding:9px 16px;background:var(--bg3);font-family:var(--mono);font-size:10px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bd)}
+.irow{display:grid;grid-template-columns:1fr 150px 120px;align-items:center;padding:7px 16px;border-bottom:1px solid rgba(42,58,80,.5);gap:10px;transition:background .1s}
+.irow:last-child{border-bottom:none}
+.irow:hover{background:rgba(255,255,255,.015)}
+.ilabel{font-size:12px;color:var(--tx2)}
+.ifield{background:var(--bg3);border:1px solid var(--bd2);border-radius:4px;padding:5px 10px;font-family:var(--mono);font-size:12px;color:var(--tlt);width:100%;outline:none;text-align:right;transition:border-color .15s,box-shadow .15s}
+.ifield:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.iunit{font-family:var(--mono);font-size:10px;color:var(--tx3)}
+/* ── TABLES ── */
+.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd)}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+th{background:var(--bg3);color:var(--tx3);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+th.r,td.r{text-align:right}
+th.c,td.c{text-align:center}
+td{padding:6px 12px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.018)}
+td.lbl{color:var(--tx)}
+td.bld{color:var(--bv);font-weight:600}
+td.num{color:var(--tlt);font-weight:500}
+td.pos{color:var(--grn)}
+td.neg{color:var(--red)}
+td.unt{color:var(--tx3);font-size:10px}
+tr.sh td{background:var(--bg3);color:var(--teal);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+tr.tot td{background:rgba(56,189,248,.04);border-top:1px solid var(--tdim);font-weight:600}
+/* ── DCF CANVAS ── */
+.dcf-wrap{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:16px}
+/* ── FLOWSHEET SVG ── */
+.fs-wrap{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:20px;overflow-x:auto}
+.blk{fill:var(--bg3);stroke:var(--bd2);stroke-width:1.2}
+.blk-hl{fill:rgba(56,189,248,.1);stroke:var(--teal);stroke-width:1.8}
+.ft{font-family:var(--mono);font-size:12px;fill:var(--bv);font-weight:500}
+.fs{font-family:var(--mono);font-size:10px;fill:var(--tx3)}
+.fv{font-family:var(--mono);font-size:9px;fill:var(--teal);font-weight:600}
+.fleg{display:flex;gap:20px;font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);flex-wrap:wrap}
+.fleg-i{display:flex;align-items:center;gap:6px}
+/* ── NOTICE ── */
+.notice{background:rgba(56,189,248,.06);border:1px solid var(--tdim);border-radius:var(--r);padding:10px 14px;font-family:var(--mono);font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.notice span{color:var(--teal);font-weight:600}
+/* ── LCA BARS ── */
+.lb{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.lb-f{height:100%;border-radius:4px;background:linear-gradient(to right,var(--tdim),var(--teal))}
+.lb-f.fo{background:linear-gradient(to right,#5c2d00,var(--amb))}
+@media(max-width:900px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">F2C</div>
+    <div><div class="logo-title">Flue2Chem TEA LCA</div></div>
+  </div>
+  <div class="hm">Product: <span>Surfactant via CO₂ capture</span></div>
+  <div class="hm">Method: <span>LCA and TEA</span></div>
+  <div class="pill">LIVE</div>
+</header>
+
+<div class="tabbar">
+  <button class="tab active" onclick="showTab(0)"><span class="tab-n">1</span>User Input</button>
+  <button class="tab" onclick="showTab(1)"><span class="tab-n">2</span>TEA Results</button>
+  <button class="tab" onclick="showTab(2)"><span class="tab-n">3</span>Mass Balance</button>
+  <button class="tab" onclick="showTab(3)"><span class="tab-n">4</span>Equip. Cost</button>
+  <button class="tab" onclick="showTab(4)"><span class="tab-n">5</span>Flowsheet</button>
+  <button class="tab" onclick="showTab(5)"><span class="tab-n">6</span>LCA</button>
+</div>
+
+<div class="content">
+
+<!-- ════════════════ TAB 1 ════════════════ -->
+<div class="panel active" id="tab-0">
+  <div class="notice"><span>ℹ</span> All values are editable — TEA results update instantly across all tabs.<button onclick="resetDefaults()" style="margin-left:auto;background:rgba(56,189,248,.12);border:1px solid var(--tdim);border-radius:4px;padding:4px 12px;font-family:var(--mono);font-size:10px;color:var(--teal);cursor:pointer;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='rgba(56,189,248,.22)'" onmouseout="this.style.background='rgba(56,189,248,.12)'">↺ Reset to defaults</button></div>
+  <div class="g2">
+    <div>
+      <div class="sec">Process parameters</div>
+      <div class="iform">
+        <div class="ihead">Feed &amp; Capture</div>
+        <div class="irow"><div class="ilabel">Flue gas throughput</div><input class="ifield" id="i_flue" type="number" value="36000" oninput="calc()"><div class="iunit">tpd</div></div>
+        <div class="irow"><div class="ilabel">Flue gas CO₂ composition, mass fraction</div><input class="ifield" id="i_co2f" type="number" step="0.01" value="0.22" oninput="calc()"><div class="iunit">—</div></div>
+        <div class="irow"><div class="ilabel">Flue gas H₂O composition, mass fraction</div><input class="ifield" id="i_h2of" type="number" step="0.01" value="0.13" oninput="calc()"><div class="iunit">—</div></div>
+        <div class="irow"><div class="ilabel">CO₂ recovered by capture</div><input class="ifield" id="i_co2rec" type="number" step="0.01" value="0.85" oninput="calc()"><div class="iunit">—</div></div>
+        <div class="irow"><div class="ilabel">CO₂ concentration (w/w) after capture</div><input class="ifield" id="i_co2conc" type="number" step="0.01" value="0.9" oninput="calc()"><div class="iunit">—</div></div>
+        <div class="ihead">Chemistry &amp; Yield</div>
+        <div class="irow"><div class="ilabel">H₂ to CO₂ molar ratio</div><input class="ifield" id="i_h2co2" type="number" step="0.1" value="3" oninput="calc()"><div class="iunit">mol/mol</div></div>
+        <div class="irow"><div class="ilabel">Surfactant yield</div><input class="ifield" id="i_syield" type="number" step="0.01" value="0.14" oninput="calc()"><div class="iunit">kg/kg CO₂ in flue</div></div>
+        <div class="irow"><div class="ilabel">Electricity required by carbon capture</div><input class="ifield" id="i_elec_cc" type="number" step="0.1" value="0.7" oninput="calc()"><div class="iunit">GJ/t CO₂</div></div>
+        <div class="irow"><div class="ilabel">Electricity to generate electrolytic H₂</div><input class="ifield" id="i_elec_h2" type="number" step="0.1" value="39.4" oninput="calc()"><div class="iunit">kWh/kg H₂</div></div>
+        <div class="irow"><div class="ilabel">Onsite electricity generated</div><input class="ifield" id="i_onsite" type="number" step="1" value="10" oninput="calc()"><div class="iunit">% of consumed</div></div>
+        <div class="irow"><div class="ilabel">Operating days per year</div><input class="ifield" id="i_opdays" type="number" value="365" oninput="calc()"><div class="iunit">days/y</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec">Economic parameters</div>
+      <div class="iform">
+        <div class="ihead">Prices</div>
+        <div class="irow"><div class="ilabel">Surfactant price</div><input class="ifield" id="i_sprice" type="number" value="7500" oninput="calc()"><div class="iunit">£/t</div></div>
+        <div class="irow"><div class="ilabel">Co-product price</div><input class="ifield" id="i_cprice" type="number" value="1500" oninput="calc()"><div class="iunit">£/t</div></div>
+        <div class="irow"><div class="ilabel">Electricity cost</div><input class="ifield" id="i_elcost" type="number" step="0.01" value="0.25" oninput="calc()"><div class="iunit">£/kWh</div></div>
+        <div class="irow"><div class="ilabel">Flue gas price</div><input class="ifield" id="i_flgp" type="number" value="0" oninput="calc()"><div class="iunit">£/t</div></div>
+        <div class="ihead">Capital</div>
+        <div class="irow"><div class="ilabel">Lang factor</div><input class="ifield" id="i_lang" type="number" step="0.01" value="5.03" oninput="calc()"><div class="iunit">—</div></div>
+        <div class="irow"><div class="ilabel">Annual capital charge</div><input class="ifield" id="i_acc" type="number" step="0.01" value="0.1" oninput="calc()"><div class="iunit">fraction</div></div>
+        <div class="irow"><div class="ilabel">Internal rate of return</div><input class="ifield" id="i_irr" type="number" step="0.01" value="0.1" oninput="calc()"><div class="iunit">fraction</div></div>
+        <div class="ihead">Operating Costs</div>
+        <div class="irow"><div class="ilabel">Indirect opex / annual delivered equip. cost</div><input class="ifield" id="i_indopex" type="number" step="0.01" value="0.06" oninput="calc()"><div class="iunit">fraction</div></div>
+        <div class="irow"><div class="ilabel">Labour overhead</div><input class="ifield" id="i_laboh" type="number" step="0.1" value="1.9" oninput="calc()"><div class="iunit">—</div></div>
+        <div class="irow"><div class="ilabel">Worker salary</div><input class="ifield" id="i_salary" type="number" value="50000" oninput="calc()"><div class="iunit">£/y</div></div>
+        <div class="irow"><div class="ilabel">Number of jobs</div><input class="ifield" id="i_jobs" type="number" step="0.5" value="1" oninput="calc()"><div class="iunit">per ktpa surfactant</div></div>
+        <div class="irow"><div class="ilabel">Miscellaneous opex / total opex</div><input class="ifield" id="i_misc" type="number" step="0.01" value="0.2" oninput="calc()"><div class="iunit">fraction</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ TAB 2 ════════════════ -->
+<div class="panel" id="tab-1">
+  <div class="sec mb">Key results</div>
+  <div class="g4 mb">
+    <div class="kpi" id="kc_totalcap"><div class="kl">Total Capital</div><div class="kv" id="k_totalcap">—</div><div class="ku">million £</div></div>
+    <div class="kpi red" id="kc_cost"><div class="kl">Total Cost</div><div class="kv red" id="k_cost">—</div><div class="ku">million £/y</div></div>
+    <div class="kpi grn" id="kc_val"><div class="kl">Total Value</div><div class="kv grn" id="k_val">—</div><div class="ku">million £/y</div></div>
+    <div class="kpi" id="kc_margin"><div class="kl">Economic Margin</div><div class="kv" id="k_margin">—</div><div class="ku">million £/y</div></div>
+  </div>
+  <div class="g4 mb">
+    <div class="kpi amb"><div class="kl">Min. Surfactant Selling Price</div><div class="kv amb" id="k_mssp">—</div><div class="ku">£/t</div></div>
+    <div class="kpi"><div class="kl">Surfactant Value</div><div class="kv" id="k_sval">—</div><div class="ku">million £/y</div></div>
+    <div class="kpi"><div class="kl">Coproduct Value</div><div class="kv" id="k_coval">—</div><div class="ku">million £/y</div></div>
+    <div class="kpi"><div class="kl">Variable Opex</div><div class="kv" id="k_varopex">—</div><div class="ku">million £/y</div></div>
+  </div>
+  <div class="g2 mb">
+    <div>
+      <div class="sec mb">TEA summary</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Item</th><th class="r">Value</th><th>Unit</th></tr></thead>
+          <tbody>
+            <tr class="sh"><td colspan="3">Electricity</td></tr>
+            <tr><td class="lbl">Electricity generated (onsite)</td><td class="r num" id="t_elecgen">—</td><td class="unt">MWh/y</td></tr>
+            <tr><td class="lbl">Electricity total consumed</td><td class="r num" id="t_eleccon">—</td><td class="unt">MWh/y</td></tr>
+            <tr class="sh"><td colspan="3">Capital</td></tr>
+            <tr><td class="lbl">Delivered cost of equipment</td><td class="r num" id="t_equip">—</td><td class="unt">million £</td></tr>
+            <tr><td class="lbl">Total capital</td><td class="r bld" id="t_totalcap">—</td><td class="unt">million £</td></tr>
+            <tr><td class="lbl">Capex (annual)</td><td class="r num" id="t_capex">—</td><td class="unt">million £/y</td></tr>
+            <tr class="sh"><td colspan="3">Operating costs</td></tr>
+            <tr><td class="lbl">Variable opex (electricity)</td><td class="r num" id="t_varopex">—</td><td class="unt">million £/y</td></tr>
+            <tr><td class="lbl">Fixed opex</td><td class="r num" id="t_fixopex">—</td><td class="unt">million £/y</td></tr>
+            <tr><td class="lbl">Total opex (incl. misc)</td><td class="r num" id="t_opex">—</td><td class="unt">million £/y</td></tr>
+            <tr><td class="lbl">Feedstock cost</td><td class="r num" id="t_feed">—</td><td class="unt">million £/y</td></tr>
+            <tr class="sh"><td colspan="3">Revenue &amp; profitability</td></tr>
+            <tr><td class="lbl">Surfactant value</td><td class="r pos" id="t_sval">—</td><td class="unt">million £/y</td></tr>
+            <tr><td class="lbl">Coproduct value</td><td class="r pos" id="t_coval">—</td><td class="unt">million £/y</td></tr>
+            <tr><td class="lbl">Min. surfactant selling price (MSSP)</td><td class="r amb" id="t_mssp" style="font-weight:600">—</td><td class="unt">£/t</td></tr>
+            <tr class="tot"><td class="bld">Total cost</td><td class="r neg" id="t_cost" style="font-weight:700">—</td><td class="unt">million £/y</td></tr>
+            <tr class="tot"><td class="bld">Total value</td><td class="r pos" id="t_val2" style="font-weight:700">—</td><td class="unt">million £/y</td></tr>
+            <tr class="tot"><td class="bld">Economic margin</td><td class="r bld" id="t_margin" style="font-size:14px">—</td><td class="unt">million £/y</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="sec mb">Discounted cash flow</div>
+      <div class="dcf-wrap mb">
+        <canvas id="dcfCanvas" width="580" height="210" style="width:100%;height:210px;display:block"></canvas>
+      </div>
+      <div class="tw" style="max-height:240px;overflow-y:auto">
+        <table>
+          <thead><tr><th class="c">Year</th><th class="r">Ann. DCF (m£)</th><th class="r">Cumulative (m£)</th></tr></thead>
+          <tbody id="dcf-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ TAB 3 ════════════════ -->
+<div class="panel" id="tab-2">
+  <div class="sec mb">Mass balance</div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Stream</th><th class="r">tpd</th><th class="r">ktpa</th></tr></thead>
+      <tbody id="mb-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════ TAB 4 ════════════════ -->
+<div class="panel" id="tab-3">
+  <div class="notice"><span>ℹ</span> Equipment costs use the six-tenths rule: Cost = Base_cost × (Size/Base_size)^n × (CEPCI_current/CEPCI_base)</div>
+  <div class="g4 mb">
+    <div class="kpi amb"><div class="kl">Total Delivered Equip. Cost</div><div class="kv amb" id="k_equip">—</div><div class="ku">million £</div></div>
+    <div class="kpi"><div class="kl">FT + Alcohol Synthesis</div><div class="kv" id="k_ft">—</div><div class="ku">million £</div></div>
+    <div class="kpi"><div class="kl">Gas Treatment / Electrolysis</div><div class="kv" id="k_gastrt">—</div><div class="ku">million £</div></div>
+    <div class="kpi"><div class="kl">CO₂ Capture</div><div class="kv" id="k_co2cap">—</div><div class="ku">million £</div></div>
+  </div>
+  <div class="sec mb">Equipment cost breakdown</div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Process unit</th><th class="r">Base cost (m£)</th><th class="r">Base size</th><th class="r">Current size</th><th>Unit</th><th class="r">Scale n</th><th class="r">CEPCI base</th><th class="r">CEPCI now</th><th class="r">Cost (m£)</th></tr></thead>
+      <tbody id="eq-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════ TAB 5 ════════════════ -->
+<div class="panel" id="tab-4">
+  <div class="sec mb">Block flow diagram — Flue2Chem surfactant process</div>
+  <div class="fs-wrap">
+    <svg id="flowsvg" width="100%" viewBox="0 0 880 490" style="display:block;min-width:780px">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- ══ BLOCKS ══ -->
+      <rect x="20"  y="183" width="140" height="52" rx="6" class="blk"/>
+      <text x="90"  y="205" text-anchor="middle" dominant-baseline="central" class="ft">CO₂ Capture</text>
+
+      <rect x="215" y="98"  width="155" height="52" rx="6" class="blk"/>
+      <text x="292" y="118" text-anchor="middle" dominant-baseline="central" class="ft">FT + Alcohol</text>
+      <text x="292" y="136" text-anchor="middle" dominant-baseline="central" class="fs">synthesis</text>
+
+      <rect x="215" y="263" width="155" height="52" rx="6" class="blk"/>
+      <text x="292" y="289" text-anchor="middle" dominant-baseline="central" class="ft">Ethanol plant</text>
+
+      <rect x="215" y="390" width="165" height="56" rx="6" class="blk"/>
+      <text x="297" y="410" text-anchor="middle" dominant-baseline="central" class="ft">Gas treatment</text>
+      <text x="297" y="428" text-anchor="middle" dominant-baseline="central" class="fs">ETP &amp; Electrolysis</text>
+
+      <rect x="435" y="243" width="148" height="52" rx="6" class="blk"/>
+      <text x="509" y="261" text-anchor="middle" dominant-baseline="central" class="ft">Ethylene oxide</text>
+      <text x="509" y="279" text-anchor="middle" dominant-baseline="central" class="fs">plant</text>
+
+      <rect x="638" y="153" width="158" height="52" rx="6" class="blk-hl"/>
+      <text x="717" y="173" text-anchor="middle" dominant-baseline="central" class="ft">Surfactant</text>
+      <text x="717" y="191" text-anchor="middle" dominant-baseline="central" class="fs">synthesis</text>
+
+      <!-- ══ A: FLUE GAS → CO₂ CAPTURE ══ -->
+      <line x1="0" y1="209" x2="19" y2="209" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="2" y="202" text-anchor="start" class="fs">Flue gas</text>
+      <text id="fs_flue" x="2" y="216" text-anchor="start" class="fv">—</text>
+
+      <!-- ══ B: CO₂ CAPTURE → CO₂ RICH GAS SPLIT to FT and Ethanol ══ -->
+      <line x1="160" y1="209" x2="182" y2="209" stroke="#1e6a8a" stroke-width="1.5"/>
+      <circle cx="182" cy="209" r="3.5" fill="#1e6a8a"/>
+      <path d="M182,209 L182,124 L214,124" stroke="#1e6a8a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+      <path d="M182,209 L182,289 L214,289" stroke="#1e6a8a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+      <!-- CO2 rich gas to FT label (upper branch) -->
+      <text x="188" y="148" text-anchor="start" class="fs">CO₂ rich gas (FT)</text>
+      <text id="fs_co2ft" x="188" y="160" text-anchor="start" class="fv">—</text>
+      <!-- CO2 rich gas to Ethanol label (lower branch) -->
+      <text x="188" y="244" text-anchor="start" class="fs">CO₂ rich gas (Ethanol)</text>
+      <text id="fs_co2eth" x="188" y="256" text-anchor="start" class="fv">—</text>
+
+      <!-- ══ C: CO₂ CAPTURE → REMAINING FLUE GAS → GAS TREATMENT (left spine) ══ -->
+      <path d="M90,235 L90,418 L214,418" stroke="#1e6a8a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+      <text x="96" y="322" text-anchor="start" class="fs">Rem. flue gas</text>
+      <text id="fs_remflue" x="96" y="335" text-anchor="start" class="fv">—</text>
+
+      <!-- ══ D: FT → ALCOHOL INTERMEDIATE → SURFACTANT (main teal stream) ══ -->
+      <path d="M370,114 L627,114 L627,168 L637,168" stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+      <text x="498" y="106" text-anchor="middle" class="fs">Alcohol intermediate</text>
+      <text id="fs_alc" x="498" y="128" text-anchor="middle" class="fv">—</text>
+
+      <!-- ══ E: FT → FT COPRODUCT (dashed up) ══ -->
+      <line x1="258" y1="98" x2="258" y2="60" stroke="#475569" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <text x="264" y="76" text-anchor="start" class="fs">FT coproduct</text>
+      <text id="fs_ftcp" x="264" y="89" text-anchor="start" class="fv" style="fill:#64748b">—</text>
+
+      <!-- ══ F: FT → FT FLUE GAS → GAS TREATMENT (dashed, no labels) ══ -->
+      <path d="M350,150 L393,150 L393,406 L381,406" stroke="#475569" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#arr)"/>
+
+      <!-- ══ G: ETHANOL → ETHANOL RICH STREAM → EO PLANT (no label, clean arrow only) ══ -->
+      <path d="M370,278 L414,278 L414,269 L434,269" stroke="#1e6a8a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+      <!-- ══ H: ETHANOL → COPRODUCT (vertical down from block centre-bottom) ══ -->
+      <line x1="292" y1="315" x2="292" y2="360" stroke="#475569" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <text id="fs_cp" x="292" y="374" text-anchor="middle" class="fv" style="fill:#64748b">—</text>
+
+      <!-- ══ I: ETHANOL → WASTEWATER → GAS TREATMENT (dashed path, no labels) ══ -->
+      <path d="M350,315 L400,315 L400,416 L381,416" stroke="#475569" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#arr)"/>
+
+      <!-- ══ J: EO → ETHYLENE OXIDE → SURFACTANT (label right of vertical segment) ══ -->
+      <path d="M583,269 L624,269 L624,179 L637,179" stroke="#1e6a8a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+      <text x="630" y="218" text-anchor="start" class="fs">Ethylene oxide</text>
+      <text id="fs_eo" x="630" y="231" text-anchor="start" class="fv">—</text>
+
+      <!-- ══ K: EO → BYPRODUCT (dashed down) ══ -->
+      <line x1="509" y1="295" x2="509" y2="383" stroke="#475569" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <text x="515" y="370" text-anchor="start" class="fs">EO byproduct</text>
+      <text id="fs_eobp" x="515" y="383" text-anchor="start" class="fv" style="fill:#64748b">—</text>
+
+      <!-- ══ L: SURFACTANT OUTPUT (green, up) ══ -->
+      <line x1="717" y1="153" x2="717" y2="102" stroke="#4ade80" stroke-width="2.5" marker-end="url(#arr)"/>
+      <text x="717" y="93" text-anchor="middle" class="fs" style="fill:#4ade80;font-weight:600">Surfactant output</text>
+      <text id="fs_surf" x="717" y="80" text-anchor="middle" class="fv" style="fill:#4ade80">—</text>
+
+      <!-- ══ M: GAS TREATMENT → H₂ (exits left, up spine, splits to FT and Ethanol) ══ -->
+      <line x1="215" y1="430" x2="201" y2="430" stroke="#1e6a8a" stroke-width="1.5"/>
+      <path d="M200,430 L200,124 L214,124" stroke="#1e6a8a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+      <circle cx="200" cy="289" r="3.5" fill="#1e6a8a"/>
+      <line x1="200" y1="289" x2="214" y2="289" stroke="#1e6a8a" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="173" y="360" text-anchor="end" class="fs">H₂</text>
+      <text id="fs_h2" x="173" y="373" text-anchor="end" class="fv">—</text>
+
+      <!-- ══ N: GAS TREATMENT → EXHAUST + WATER (dashed right, with amount) ══ -->
+      <line x1="380" y1="408" x2="432" y2="408" stroke="#475569" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <text x="386" y="400" text-anchor="start" class="fs">Exhaust + water</text>
+      <text id="fs_exhaust" x="386" y="423" text-anchor="start" class="fv" style="fill:#64748b">—</text>
+    </svg>
+
+    <div class="fleg">
+      <div class="fleg-i"><div style="width:24px;height:2px;background:var(--teal)"></div><span>Main product stream</span></div>
+      <div class="fleg-i"><div style="width:24px;height:1.5px;background:var(--tdim)"></div><span>Intermediate stream</span></div>
+      <div class="fleg-i"><div style="width:24px;height:1px;border-top:1px dashed #475569"></div><span>Secondary / exit stream</span></div>
+      <div class="fleg-i"><div style="width:24px;height:2.5px;background:var(--grn)"></div><span>Main product</span></div>
+      <div style="margin-left:auto;color:var(--teal);font-family:var(--mono);font-size:10px;font-weight:600">Values update live ↗</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ TAB 6 ════════════════ -->
+<div class="panel" id="tab-5">
+  <div class="g2 mb">
+    <div class="iform">
+      <div class="ihead">Analysis metadata</div>
+      <div class="irow"><div class="ilabel">Product</div><div style="font-family:var(--mono);font-size:11px;color:var(--tlt);grid-column:span 2">1 kg F2C surfactant (Flue2Chem)</div></div>
+      <div class="irow"><div class="ilabel">Method</div><div style="font-family:var(--mono);font-size:11px;color:var(--tlt);grid-column:span 2">ReCiPe 2016 Midpoint (H) V1.05 / World (2010) H</div></div>
+      <div class="irow"><div class="ilabel">Indicator</div><div style="font-family:var(--mono);font-size:11px;color:var(--tlt);text-align:right">Characterisation</div><div></div></div>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Impact category</th><th class="r">F2C</th><th class="r">Fossil-based</th><th>Ratio</th></tr></thead>
+        <tbody>
+          <tr><td class="lbl">Global warming</td><td class="r num">66.0%</td><td class="r">100%</td><td><div class="lb"><div class="lb-f" style="width:66%"></div></div></td></tr>
+          <tr><td class="lbl">Stratospheric ozone depletion</td><td class="r pos">100%</td><td class="r">38.4%</td><td><div class="lb"><div class="lb-f fo" style="width:100%"></div></div></td></tr>
+          <tr><td class="lbl">Ionizing radiation</td><td class="r num">32.0%</td><td class="r">100%</td><td><div class="lb"><div class="lb-f" style="width:32%"></div></div></td></tr>
+          <tr><td class="lbl">Ozone formation (human health)</td><td class="r pos">100%</td><td class="r">50.2%</td><td><div class="lb"><div class="lb-f fo" style="width:100%"></div></div></td></tr>
+          <tr><td class="lbl">Fine particulate matter</td><td class="r pos">100%</td><td class="r">52.1%</td><td><div class="lb"><div class="lb-f fo" style="width:100%"></div></div></td></tr>
+          <tr><td class="lbl">Terrestrial acidification</td><td class="r pos">100%</td><td class="r">56.4%</td><td><div class="lb"><div class="lb-f fo" style="width:100%"></div></div></td></tr>
+          <tr><td class="lbl">Fossil resource scarcity</td><td class="r num">24.4%</td><td class="r">100%</td><td><div class="lb"><div class="lb-f" style="width:24.4%"></div></div></td></tr>
+          <tr><td class="lbl">Terrestrial ecotoxicity</td><td class="r pos">100%</td><td class="r">23.6%</td><td><div class="lb"><div class="lb-f fo" style="width:100%"></div></div></td></tr>
+          <tr><td class="lbl">Water consumption</td><td class="r neg">−0.3%</td><td class="r">100%</td><td><div class="lb"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="sec mb">Full impact assessment — per kg surfactant (F2C vs fossil-based)</div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Impact category</th><th>Unit</th><th class="r">F2C total</th><th class="r">Electricity</th><th class="r">Emissions</th><th class="r">Infrastructure</th><th class="r">Wastewater</th><th class="r">Fossil-based</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">Global warming</td><td class="unt">kg CO₂ eq</td><td class="r num">1.4420</td><td class="r">1.0608</td><td class="r">0.2854</td><td class="r">0.0894</td><td class="r">0.0065</td><td class="r">2.1857</td></tr>
+        <tr><td class="lbl">Stratospheric ozone depletion</td><td class="unt">kg CFC11 eq</td><td class="r num">9.06E-07</td><td class="r">4.92E-07</td><td class="r">3.44E-07</td><td class="r">4.99E-08</td><td class="r">1.99E-08</td><td class="r">3.48E-07</td></tr>
+        <tr><td class="lbl">Ionizing radiation</td><td class="unt">kBq Co-60 eq</td><td class="r num">0.05607</td><td class="r">0.05142</td><td class="r">0</td><td class="r">0.00383</td><td class="r">8.25E-04</td><td class="r">0.17530</td></tr>
+        <tr><td class="lbl">Ozone formation, Human health</td><td class="unt">kg NOₓ eq</td><td class="r num">0.01041</td><td class="r">0.00373</td><td class="r">0.00617</td><td class="r">4.92E-04</td><td class="r">2.26E-05</td><td class="r">0.00523</td></tr>
+        <tr><td class="lbl">Fine particulate matter</td><td class="unt">kg PM2.5 eq</td><td class="r num">0.004400</td><td class="r">0.002327</td><td class="r">0.001740</td><td class="r">3.18E-04</td><td class="r">1.43E-05</td><td class="r">0.002293</td></tr>
+        <tr><td class="lbl">Ozone formation, Terrestrial</td><td class="unt">kg NOₓ eq</td><td class="r num">0.01084</td><td class="r">0.00386</td><td class="r">0.00646</td><td class="r">5.00E-04</td><td class="r">2.30E-05</td><td class="r">0.00602</td></tr>
+        <tr><td class="lbl">Terrestrial acidification</td><td class="unt">kg SO₂ eq</td><td class="r num">0.01117</td><td class="r">0.00459</td><td class="r">0.00589</td><td class="r">6.49E-04</td><td class="r">4.60E-05</td><td class="r">0.00630</td></tr>
+        <tr><td class="lbl">Freshwater eutrophication</td><td class="unt">kg P eq</td><td class="r num">1.208E-03</td><td class="r">1.075E-03</td><td class="r">0</td><td class="r">1.18E-04</td><td class="r">1.52E-05</td><td class="r">5.42E-04</td></tr>
+        <tr><td class="lbl">Marine eutrophication</td><td class="unt">kg N eq</td><td class="r num">1.815E-04</td><td class="r">7.63E-05</td><td class="r">0</td><td class="r">2.12E-05</td><td class="r">8.41E-05</td><td class="r">3.82E-05</td></tr>
+        <tr><td class="lbl">Terrestrial ecotoxicity</td><td class="unt">kg 1,4-DCB</td><td class="r num">8.711</td><td class="r">8.581</td><td class="r">0</td><td class="r">0.1012</td><td class="r">0.0282</td><td class="r">2.059</td></tr>
+        <tr><td class="lbl">Freshwater ecotoxicity</td><td class="unt">kg 1,4-DCB</td><td class="r num">2.392</td><td class="r">2.387</td><td class="r">0</td><td class="r">4.63E-03</td><td class="r">5.94E-04</td><td class="r">0.1016</td></tr>
+        <tr><td class="lbl">Marine ecotoxicity</td><td class="unt">kg 1,4-DCB</td><td class="r num">2.897</td><td class="r">2.890</td><td class="r">0</td><td class="r">6.35E-03</td><td class="r">7.95E-04</td><td class="r">0.1305</td></tr>
+        <tr><td class="lbl">Human carcinogenic toxicity</td><td class="unt">kg 1,4-DCB</td><td class="r num">0.9275</td><td class="r">0.9123</td><td class="r">0</td><td class="r">0.01141</td><td class="r">3.84E-03</td><td class="r">0.1304</td></tr>
+        <tr><td class="lbl">Human non-carcinogenic toxicity</td><td class="unt">kg 1,4-DCB</td><td class="r num">8.931</td><td class="r">8.722</td><td class="r">0</td><td class="r">0.1681</td><td class="r">0.0409</td><td class="r">1.721</td></tr>
+        <tr><td class="lbl">Land use</td><td class="unt">m²a crop eq</td><td class="r num">0.06731</td><td class="r">0.06343</td><td class="r">0</td><td class="r">3.71E-03</td><td class="r">1.77E-04</td><td class="r">0.03572</td></tr>
+        <tr><td class="lbl">Mineral resource scarcity</td><td class="unt">kg Cu eq</td><td class="r num">0.06102</td><td class="r">0.04505</td><td class="r">0</td><td class="r">0.01586</td><td class="r">1.11E-04</td><td class="r">6.80E-03</td></tr>
+        <tr><td class="lbl">Fossil resource scarcity</td><td class="unt">kg oil eq</td><td class="r num">0.3546</td><td class="r">0.2601</td><td class="r">0</td><td class="r">0.09343</td><td class="r">1.06E-03</td><td class="r">1.4502</td></tr>
+        <tr><td class="lbl">Water consumption</td><td class="unt">m³</td><td class="r neg">−1.06E-04</td><td class="r">0.01388</td><td class="r">0</td><td class="r">−1.15E-03</td><td class="r">−0.01284</td><td class="r">0.03266</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CALCULATION ENGINE — mirrors spreadsheet formulas exactly
+// ═══════════════════════════════════════════════════════
+function g(id){ return +document.getElementById(id).value; }
+function fmt(n, d=1){ if(isNaN(n)||!isFinite(n)) return '—'; return n.toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function fmt0(n){ return n.toLocaleString('en-GB',{maximumFractionDigits:0}); }
+function set(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+
+const DEFAULTS = {
+  i_flue:'36000', i_co2f:'0.22', i_h2of:'0.13', i_co2rec:'0.85', i_co2conc:'0.9',
+  i_h2co2:'3', i_syield:'0.14', i_elec_cc:'0.7', i_elec_h2:'39.4', i_onsite:'10',
+  i_opdays:'365', i_sprice:'7500', i_cprice:'1500', i_elcost:'0.25', i_flgp:'0',
+  i_lang:'5.03', i_acc:'0.1', i_irr:'0.1', i_indopex:'0.06', i_laboh:'1.9',
+  i_salary:'50000', i_jobs:'1', i_misc:'0.2'
+};
+function resetDefaults(){
+  Object.entries(DEFAULTS).forEach(([id,v])=>{ const el=document.getElementById(id); if(el) el.value=v; });
+  calc();
+}
+
+function calc(){
+  // ── Inputs ──
+  const flue    = g('i_flue');      // tpd
+  const co2f    = g('i_co2f');      // mass fraction
+  const h2of    = g('i_h2of');
+  const co2rec  = g('i_co2rec');    // recovery fraction
+  const co2conc = g('i_co2conc');   // concentration after capture
+  const h2co2   = g('i_h2co2');     // molar ratio
+  const syield  = g('i_syield');    // kg/kg CO2 in flue
+  const elec_cc = g('i_elec_cc');   // GJ/t CO2
+  const elec_h2 = g('i_elec_h2');   // kWh/kg H2
+  const onsite  = g('i_onsite');    // %
+  const opdays  = g('i_opdays');
+  const sprice  = g('i_sprice');    // £/t
+  const cprice  = g('i_cprice');    // £/t
+  const elcost  = g('i_elcost');    // £/kWh
+  const flgp    = g('i_flgp');      // £/t
+  const lang    = g('i_lang');
+  const acc     = g('i_acc');
+  const irr     = g('i_irr');
+  const indopex = g('i_indopex');
+  const laboh   = g('i_laboh');
+  const salary  = g('i_salary');
+  const jobs    = g('i_jobs');
+  const misc    = g('i_misc');
+  const k = opdays / 1000;          // tpd → ktpa factor
+
+  // ── MASS BALANCE (tpd) ──
+  // Formulae from TEA sheet
+  const B46 = syield * co2f * flue;                          // surfactant
+  const B44 = 0.59 * B46;                                    // ethylene oxide
+  const B40 = B44 * 46 / 44;                                 // ethanol
+  const B36 = 0.947 * B40;                                   // H2 to ethanol
+  // B34: CO2 in CO2-rich gas to ethanol
+  // =B36/(h2co2*2/(h2co2*2+44))*44/(h2co2*2+44)
+  const denom = h2co2 * 2 + 44;
+  const B34 = B36 / (h2co2 * 2 / denom) * 44 / denom;
+  const B33 = B34 / co2conc;                                 // CO2-rich gas to ethanol
+  const B32 = (flue * co2f * co2rec) - B34;                  // CO2 in FT gas
+  const B35 = B32 / 44 * h2co2 * 2;                          // H2 to FT
+  const B47 = B35 + B36;                                     // total H2 from electrolysis
+  const B29 = B32 / co2conc;                                 // CO2-rich gas to FT
+  const B28 = flue * co2f * co2rec;                          // CO2 recovered
+  const B27 = co2f * flue;                                   // CO2 in flue
+  const B31 = B27 - B28;                                     // CO2 in remaining flue
+  const B37 = 0.41 * B46;                                    // alcohol intermediate
+  const B38 = B46 * 0.1;                                     // FT coproduct
+  const B39 = B29 + B35 - B37 - B38;                         // FT flue gas
+  const B41 = B40 + B44 * 0.05;                              // ethanol rich stream
+  const B42 = (B33 + B36 - B41) * 0.445;                     // coproduct from ethanol
+  const B43 = (B33 + B36 - B41) * (1 - 0.445);               // wastewater from ethanol
+  const B45 = B40 - B44 + B44 * 0.05;                        // byproduct from EO
+  const B30 = flue - B29 - B33;                              // remaining flue gas
+  const B48 = B30 + B39 + B43 - B47;                        // Exhaust + water
+
+  // ktpa
+  const C46=B46*k, C42=B42*k, C38=B38*k, C45=B45*k, C47=B47*k;
+
+  // ── ELECTRICITY ──
+  // B4 = (elec_h2*1000*C47*1000 + (elec_cc*co2f*1000/3.6)*flue*opdays) / 1000  MWh/y
+  const B4 = (elec_h2 * 1000 * C47 * 1000 + (elec_cc * co2f * 1000 / 3.6) * flue * opdays) / 1000;
+  const B3 = onsite / 100 * B4;   // generated onsite
+
+  // ── EQUIPMENT COSTS (six-tenths rule) ──
+  // I = base_cost * (current_size/base_size)^n * (CEPCI_now/CEPCI_base)
+  function equip(bc, cs, bs, n, cb, cn){ return bc * Math.pow(cs/bs, n) * cn/cb; }
+
+  // Gas treatment: D5 = B3/opdays/24  MWe
+  const D5  = B3 / opdays / 24;
+  const I5  = equip(1.6,  D5,     1,      0.7,  800,   800);
+
+  // CO2 Capture: D6 = flue*co2f/24*1000/44  kmol/h
+  const D6  = flue * co2f / 24 * 1000 / 44;
+  const I6  = equip(28*0.77, D6,  9600,   0.7,  394.3, 800);
+
+  // Surfactant synthesis: D8 = B46/24  tph
+  const D8  = B46 / 24;
+  const I8  = equip(3.5*0.77, D8, 87.5,   0.72, 402,   800);
+
+  // EO plant: D9 = (B44+B45)/24  tph
+  const D9  = (B44 + B45) / 24;
+  const I9  = equip(3.5*0.77, D9, 87.5,   0.72, 402,   800);
+
+  // FT synthesis: D14 = (B29+B35)/24*23*1000/3600  MWe
+  const D14 = (B29 + B35) / 24 * 23 * 1000 / 3600;
+  const I14 = equip(25.3*0.77, D14, 100,  0.72, 394.3, 800);
+
+  // FT product upgrading: D15 = (B46+0.16*flue*co2f*0.77)/24  m3/h
+  const D15 = (B46 + 0.16 * flue * co2f * 0.77) / 24;
+  const I15 = equip(233*0.77, D15, 286,   0.7,  394.3, 800);
+
+  // Alcohol synthesis: D16 = 0.56*B46/24  tph
+  const D16 = 0.56 * B46 / 24;
+  const I16 = equip(3.5*0.77, D16, 87.5,  0.72, 394.3, 800);
+
+  // Fermentation: D20 = 0.56*B46/24  tph
+  const D20 = 0.56 * B46 / 24;
+  const I20 = equip(0.67*0.77, D20, 1.04, 0.8,  402,   800);
+
+  // EtOH purification
+  const I21 = equip(2.92*0.77, D20, 18.466, 0.8, 402,  800);
+
+  const I17 = I14 + I15 + I16;      // FT+Alcohol subtotal
+  const I22 = I20 + I21;            // Ethanol subtotal
+  const I10 = I17 + I5 + I6 + I22 + I8 + I9;  // TOTAL
+
+  // ── FINANCIAL ──
+  const B7   = I10;                                          // delivered equip cost m£
+  const B8   = B7 * lang;                                    // total capital m£
+  const B9   = B8 * acc;                                     // annual capex m£/y
+  const B10  = (B4 - B3) * elcost / 1000;                   // variable opex m£/y
+  const B11  = indopex * B7 * acc + salary * laboh * jobs * C46 / 1e6;  // fixed opex
+  const B12  = (1 + misc) * (B10 + B11);                    // total opex m£/y
+  const B13  = flue * flgp * opdays / 1e6;                   // feedstock cost m£/y
+  const B16  = C46 * sprice / 1000;                          // surfactant value m£/y
+  const B17  = cprice / 1000 * (C38 + C42 + C45);            // coproduct value m£/y
+  const B18  = (B9 + B12 + B13 - B17) * 1e6 / (C46 * 1000); // MSSP £/t
+  const B20  = B9 + B12 + B13;                               // total cost m£/y
+  const B21  = B16 + B17;                                    // total value m£/y
+  const B22  = B21 - B20;                                    // economic margin m£/y
+
+  // ── DCF ──
+  // F(yr=-3)=0, F(yr=-2)=F7/3, F(yr=-1)=F5*2, F(yr=0)=-B8
+  // F(yr>=1) = F(yr-1) + B22/(1+irr)^yr   [cumulative]
+  const dcf = [];
+  const F7dcf = -B8;
+  const F5dcf = F7dcf / 3;
+  const F6dcf = F5dcf * 2;
+  dcf.push({yr:-3, ann:0,    cum:0});
+  dcf.push({yr:-2, ann:F5dcf, cum:F5dcf});
+  dcf.push({yr:-1, ann:F6dcf-F5dcf, cum:F6dcf});
+  dcf.push({yr:0,  ann:F7dcf-F6dcf, cum:F7dcf});
+  let cum = F7dcf;
+  for(let yr=1; yr<=20; yr++){
+    const contribution = B22 / Math.pow(1+irr, yr);
+    cum += contribution;
+    dcf.push({yr, ann:contribution, cum});
+  }
+
+  // ══ UPDATE UI ══
+
+  // KPIs
+  set('k_totalcap', fmt(B8));
+  set('k_cost',     fmt(B20));
+  set('k_val',      fmt(B21));
+  set('k_margin',   fmt(B22));
+  set('k_mssp',     fmt(B18, 1));
+  set('k_sval',     fmt(B16));
+  set('k_coval',    fmt(B17));
+  set('k_varopex',  fmt(B10));
+  set('k_equip',    fmt(I10));
+  set('k_ft',       fmt(I17));
+  set('k_gastrt',   fmt(I5));
+  set('k_co2cap',   fmt(I6));
+
+  // Margin card colour
+  const mc = document.getElementById('kc_margin');
+  const mv = document.getElementById('k_margin');
+  if(B22 >= 0){ mc.className='kpi grn'; mv.className='kv grn'; }
+  else         { mc.className='kpi red'; mv.className='kv red'; }
+
+  // TEA table
+  set('t_elecgen',  fmt0(B3));
+  set('t_eleccon',  fmt0(B4));
+  set('t_equip',    fmt(I10));
+  set('t_totalcap', fmt(B8));
+  set('t_capex',    fmt(B9));
+  set('t_varopex',  fmt(B10));
+  set('t_fixopex',  fmt(B11));
+  set('t_opex',     fmt(B12));
+  set('t_feed',     fmt(B13));
+  set('t_sval',     fmt(B16));
+  set('t_coval',    fmt(B17));
+  set('t_mssp',     fmt(B18, 1));
+  set('t_cost',     fmt(B20));
+  set('t_val2',     fmt(B21));
+  const tm = document.getElementById('t_margin');
+  if(tm){ tm.textContent=fmt(B22); tm.style.color=B22>=0?'var(--grn)':'var(--red)'; }
+
+  // DCF table
+  const tbody = document.getElementById('dcf-tbody');
+  tbody.innerHTML = dcf.map(r=>`<tr>
+    <td class="c">${r.yr}</td>
+    <td class="r ${r.ann>=0?'pos':'neg'}">${fmt(r.ann,1)}</td>
+    <td class="r ${r.cum>=0?'pos':'neg'}">${fmt(r.cum,1)}</td>
+  </tr>`).join('');
+
+  // Mass balance table
+  const mb = [
+    {lbl:'Flue gas',                              tpd:flue,  kt:flue*k,  bld:false},
+    {lbl:'CO₂ in flue gas',                       tpd:B27,   kt:B27*k},
+    {lbl:'CO₂ recovered',                         tpd:B28,   kt:B28*k,  bld:true},
+    {lbl:'CO₂ rich gas to FT + Alcohol',          tpd:B29,   kt:B29*k},
+    {lbl:'CO₂ in CO₂ rich gas to FT',             tpd:B32,   kt:B32*k},
+    {lbl:'CO₂ rich gas to Ethanol plant',         tpd:B33,   kt:B33*k},
+    {lbl:'CO₂ in CO₂ rich gas to Ethanol',        tpd:B34,   kt:B34*k},
+    {lbl:'Remaining flue gas',                    tpd:B30,   kt:B30*k},
+    {lbl:'CO₂ in remaining flue gas',             tpd:B31,   kt:B31*k},
+    {lbl:'H₂ to FT + Alcohol synthesis',          tpd:B35,   kt:B35*k},
+    {lbl:'H₂ to Ethanol plant',                   tpd:B36,   kt:B36*k},
+    {lbl:'H₂ from electrolysis (total)',           tpd:B47,   kt:C47,    bld:true},
+    {lbl:'Alcohol intermediate',                  tpd:B37,   kt:B37*k},
+    {lbl:'FT coproduct',                          tpd:B38,   kt:C38},
+    {lbl:'FT flue gas',                           tpd:B39,   kt:B39*k},
+    {lbl:'Ethanol',                               tpd:B40,   kt:B40*k},
+    {lbl:'Ethanol rich stream',                   tpd:B41,   kt:B41*k},
+    {lbl:'Coproduct from Ethanol plant',          tpd:B42,   kt:C42},
+    {lbl:'Wastewater from Ethanol plant',         tpd:B43,   kt:B43*k},
+    {lbl:'Ethylene oxide',                        tpd:B44,   kt:B44*k},
+    {lbl:'Byproduct from Ethylene oxide plant',   tpd:B45,   kt:C45},
+    {lbl:'Surfactant output',                     tpd:B46,   kt:C46,    bld:true},
+    {lbl:'Exhaust + water',                               tpd:B48,   kt:B48*k},
+    {lbl:'Mass balance check (should = flue gas)',        tpd:B38+B42+B45+B46+B48, kt:null},
+  ];
+  document.getElementById('mb-tbody').innerHTML = mb.map(r=>`<tr>
+    <td class="${r.bld?'bld':'lbl'}">${r.lbl}</td>
+    <td class="r num">${fmt(r.tpd,2)}</td>
+    <td class="r num">${r.kt!==null?fmt(r.kt,2):'—'}</td>
+  </tr>`).join('');
+
+  // Equipment cost table
+  const eqRows = [
+    {lbl:'FT synthesis',          bc:fmt(25.3*0.77,3), bs:'100',   cs:fmt(D14,2), un:'MWe',   n:'0.72', gb:'394.3', gn:'800', cost:I14},
+    {lbl:'FT product upgrading',  bc:fmt(233*0.77,3),  bs:'286',   cs:fmt(D15,2), un:'m³/h',  n:'0.70', gb:'394.3', gn:'800', cost:I15},
+    {lbl:'Alcohol synthesis',     bc:fmt(3.5*0.77,3),  bs:'87.5',  cs:fmt(D16,2), un:'tph',   n:'0.72', gb:'394.3', gn:'800', cost:I16},
+    {lbl:'FT + Alcohol TOTAL',    bc:'—', bs:'—', cs:'—', un:'—', n:'—', gb:'—', gn:'—', cost:I17, tot:true},
+    {lbl:'Fermentation',          bc:fmt(0.67*0.77,3), bs:'1.04',  cs:fmt(D20,2), un:'tph',   n:'0.80', gb:'402',   gn:'800', cost:I20},
+    {lbl:'EtOH purification',     bc:fmt(2.92*0.77,3), bs:'18.47', cs:fmt(D20,2), un:'tph',   n:'0.80', gb:'402',   gn:'800', cost:I21},
+    {lbl:'Ethanol plant TOTAL',   bc:'—', bs:'—', cs:'—', un:'—', n:'—', gb:'—', gn:'—', cost:I22, tot:true},
+    {lbl:'Gas treatment, ETP & Electrolysis', bc:'1.600', bs:'1',  cs:fmt(D5,3),  un:'MWe',   n:'0.70', gb:'800',   gn:'800', cost:I5},
+    {lbl:'CO₂ Capture',           bc:fmt(28*0.77,3),   bs:'9600', cs:fmt(D6,1),  un:'kmol/h', n:'0.70', gb:'394.3', gn:'800', cost:I6},
+    {lbl:'Surfactant synthesis',  bc:fmt(3.5*0.77,3),  bs:'87.5', cs:fmt(D8,2),  un:'tph',   n:'0.72', gb:'402',   gn:'800', cost:I8},
+    {lbl:'Ethylene oxide plant',  bc:fmt(3.5*0.77,3),  bs:'87.5', cs:fmt(D9,2),  un:'tph',   n:'0.72', gb:'402',   gn:'800', cost:I9},
+    {lbl:'Total Delivered Equip. Cost', bc:'—', bs:'—', cs:'—', un:'—', n:'—', gb:'—', gn:'—', cost:I10, grand:true},
+  ];
+  document.getElementById('eq-tbody').innerHTML = eqRows.map(r=>`<tr class="${r.grand?'tot':r.tot?'sh':''}">
+    <td class="${r.grand?'bld':r.tot?'':'lbl'}">${r.lbl}</td>
+    <td class="r">${r.bc}</td><td class="r">${r.bs}</td><td class="r">${r.cs}</td>
+    <td class="unt">${r.un}</td><td class="r">${r.n}</td>
+    <td class="r">${r.gb}</td><td class="r">${r.gn}</td>
+    <td class="r ${r.grand?'amb bld':r.tot?'num':''}">${fmt(r.cost)}</td>
+  </tr>`).join('');
+
+  // Flowsheet live values
+  const fpSet=(id,v,u)=>{const el=document.getElementById(id);if(el)el.textContent=fmt(v,0)+' '+u};
+  fpSet('fs_flue',    flue,   'tpd');
+  fpSet('fs_co2ft',   B29,    'tpd');   // CO2 rich gas to FT
+  fpSet('fs_co2eth',  B33,    'tpd');   // CO2 rich gas to Ethanol
+  fpSet('fs_remflue', B30,    'tpd');   // Remaining flue gas → Gas treatment
+  fpSet('fs_h2',      B47,    'tpd');   // H2 from electrolysis
+  fpSet('fs_alc',     B37,    'tpd');   // Alcohol intermediate → Surfactant
+  fpSet('fs_ftcp',    B38,    'tpd');   // FT coproduct exit
+  fpSet('fs_cp',      B42,    'tpd');   // Coproduct from Ethanol exit
+  fpSet('fs_eo',      B44,    'tpd');   // Ethylene oxide → Surfactant
+  fpSet('fs_eobp',    B45,    'tpd');   // EO byproduct exit
+  fpSet('fs_surf',    B46,    'tpd');   // Surfactant output
+  fpSet('fs_exhaust', B48,    'tpd');   // Exhaust + water = B30+B39+B43-B47
+
+  // Draw DCF chart
+  drawDCF(dcf);
+}
+
+// ═══════════════════════════════════════════════════════
+// DCF LINE CHART
+// ═══════════════════════════════════════════════════════
+function drawDCF(rows){
+  const canvas = document.getElementById('dcfCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pad = {t:26,r:20,b:32,l:72};
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+
+  ctx.clearRect(0,0,W,H);
+
+  const cums = rows.map(r=>r.cum);
+  const minV = Math.min(...cums), maxV = Math.max(...cums);
+  const rng = maxV - minV || 1;
+
+  const yp = v => pad.t + cH - (v - minV)/rng * cH;
+  const xp = i => pad.l + i * (cW/(rows.length-1));
+  const zY = yp(0);
+
+  // Grid
+  ctx.font = '9px IBM Plex Mono, monospace';
+  [minV, 0, maxV].forEach(v => {
+    const y = yp(v);
+    ctx.strokeStyle = v===0 ? 'rgba(56,189,248,.2)' : 'rgba(255,255,255,.04)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash(v===0?[4,4]:[]);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W-pad.r, y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#64748b';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(0), pad.l-5, y+3);
+  });
+
+  // X labels
+  ctx.fillStyle = '#475569';
+  ctx.textAlign = 'center';
+  rows.forEach((r,i)=>{
+    if(r.yr===-2||r.yr===0||r.yr%4===0)
+      ctx.fillText(r.yr, xp(i), H-5);
+  });
+
+  // Payback marker
+  const pb = rows.findIndex(r=>r.cum>=0);
+  if(pb>0){
+    const x=xp(pb);
+    ctx.strokeStyle='rgba(74,222,128,.25)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,H-pad.b);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(74,222,128,.7)';ctx.font='8px IBM Plex Mono,monospace';
+    ctx.textAlign='left';
+    ctx.fillText('payback yr '+rows[pb].yr, x+3, pad.t+10);
+  }
+
+  // Draw line: red below zero → green above, with interpolated crossover
+  let drawing = false;
+  let lastX, lastY;
+  for(let i=0;i<rows.length;i++){
+    const x=xp(i), y=yp(rows[i].cum);
+    if(!drawing){
+      ctx.beginPath();
+      ctx.strokeStyle = rows[i].cum<0?'rgba(248,113,113,.85)':'rgba(74,222,128,.85)';
+      ctx.lineWidth=2; ctx.lineJoin='round';
+      ctx.moveTo(x,y); drawing=true;
+    } else {
+      const prev=rows[i-1];
+      if((prev.cum<0&&rows[i].cum>=0)||(prev.cum>=0&&rows[i].cum<0)){
+        // crossover
+        const t = -prev.cum/(rows[i].cum-prev.cum);
+        const xc = lastX + t*(x-lastX);
+        ctx.lineTo(xc,zY); ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = rows[i].cum>=0?'rgba(74,222,128,.85)':'rgba(248,113,113,.85)';
+        ctx.lineWidth=2; ctx.moveTo(xc,zY);
+      }
+      ctx.lineTo(x,y);
+    }
+    lastX=x; lastY=y;
+  }
+  ctx.stroke();
+
+  // Dots
+  rows.forEach((r,i)=>{
+    ctx.beginPath();
+    ctx.arc(xp(i),yp(r.cum),2.5,0,Math.PI*2);
+    ctx.fillStyle=r.cum>=0?'rgba(74,222,128,.9)':'rgba(248,113,113,.9)';
+    ctx.fill();
+  });
+
+  // Axis label
+  ctx.fillStyle='#64748b';ctx.font='9px IBM Plex Mono,monospace';
+  ctx.textAlign='left';ctx.fillText('Cumulative DCF (m£)',pad.l,pad.t-7);
+}
+
+// ═══════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════
+const panels = document.querySelectorAll('.panel');
+const tabs   = document.querySelectorAll('.tab');
+
+function showTab(n){
+  panels.forEach((p,i)=>p.classList.toggle('active',i===n));
+  tabs.forEach((t,i)=>t.classList.toggle('active',i===n));
+  if(n===1||n===4) setTimeout(calc,30);
+}
+
+// Init
+calc();
+</script>
+</body>
+</html>
