@@ -1,0 +1,28 @@
+{
+  "name": "clove-circle",
+  "version": "1.0.0",
+  "description": "Website for **Clove Circle Consulting** — expert consulting in net zero strategies, life cycle assessment, and sustainability, founded by Prof. Jhuma Sadhukhan.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LampOfSocrates/clove-circle.git"
+  },
+  "keywords": [],
+  "author": "Sourav Sen <souravsen.home@gmail.com>",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/LampOfSocrates/clove-circle/issues"
+  },
+  "homepage": "https://github.com/LampOfSocrates/clove-circle#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
