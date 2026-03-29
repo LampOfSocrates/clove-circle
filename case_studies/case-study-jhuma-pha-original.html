@@ -153,22 +153,10 @@
   (function () {
     var frame = document.querySelector('.cc-case-study-frame');
     if (!frame) return;
-
-    function fitFrame() {
-      try {
-        var body = frame.contentDocument && frame.contentDocument.body;
-        if (!body) return;
-        // Reset to auto first so shrinkage is detected
-        frame.style.height = '0';
-        frame.style.height = body.scrollHeight + 'px';
-      } catch (e) {}
-    }
-
-    frame.addEventListener('load', function () {
-      fitFrame();
-      try {
-        new ResizeObserver(fitFrame).observe(frame.contentDocument.body);
-      } catch (e) {}
+    window.addEventListener('message', function (e) {
+      if (e.data && typeof e.data.phaHeight === 'number' && e.data.phaHeight > 100) {
+        frame.style.height = e.data.phaHeight + 'px';
+      }
     });
   })();
 </script>

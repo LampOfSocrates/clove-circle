@@ -48,7 +48,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 .tbtn.active{color:#e2e8f0;border-bottom-color:#34d399;font-weight:700}
 
 /* Content */
-#content{padding:20px 24px;max-width:1300px;margin:0 auto}
+#content{padding:20px 24px 4px;max-width:1300px;margin:0 auto}
 .panel{display:none}
 .panel.active{display:block}
 
@@ -125,7 +125,7 @@ td.lbl{font-family:'IBM Plex Sans',sans-serif;color:#cbd5e1;font-size:13px}
 .rbar-fill{height:100%;border-radius:3px}
 
 /* Footer */
-#footer{border-top:1px solid #2a3450;padding:12px 24px;font-size:11px;color:#94a3b8;text-align:center;margin-top:20px}
+#footer{border-top:1px solid #2a3450;padding:6px 24px;font-size:11px;color:#94a3b8;text-align:center}
 
 @media(max-width:900px){
   .g-bal,.g-tea,.g-gwp{grid-template-columns:1fr}
@@ -763,6 +763,12 @@ function updateGWP(g, b) {
   setHTML('gwp-rank', html);
 }
 
+/* ── Height reporting (for iframe parent) ─────────────── */
+function reportHeight() {
+  if (window.self === window.top) return;
+  window.parent.postMessage({ phaHeight: document.body.scrollHeight }, '*');
+}
+
 /* ── Tab switching ────────────────────────────────────── */
 function showTab(n) {
   document.querySelectorAll('.panel').forEach(function(p, i) {
@@ -778,6 +784,7 @@ function showTab(n) {
     builtTab[n] = true;
   }
   updateAll();
+  reportHeight();
 }
 
 /* ── Reset ────────────────────────────────────────────── */
