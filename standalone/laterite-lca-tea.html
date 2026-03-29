@@ -8,29 +8,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
-  --bg:#0a0e14; --bg2:#111720; --bg3:#171e2b; --bg4:#1e2736;
+  --bg:#0b0f19; --bg2:#111820; --bg3:#182030; --bg4:#1e2840;
   --border:#2a3550; --border2:#3a4a68;
-  --accent:#00c9a7; --accent2:#0094ff; --accent3:#ff6b6b; --accent4:#ffd166;
+  --accent:#00c9a7; --accent2:#0094ff; --accent3:#f87171; --accent4:#fbbf24;
   --text:#e4eaf5; --text2:#b7c4d9; --text3:#8ea0b8;
-  --mn:#00c9a7; --ni:#0094ff; --co:#ff6b6b;
+  --mn:#00c9a7; --ni:#0094ff; --co:#f87171;
   --font-mono:'IBM Plex Mono',monospace; --font-sans:'IBM Plex Sans',sans-serif;
-  --r:6px;
+  --r:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:15px;line-height:1.65;min-height:100vh;}
 body.in-frame{min-height:0!important;}
 
-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
-.hicon{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
-.htxt h1{font-family:var(--font-mono);font-size:15px;font-weight:600;letter-spacing:.02em;}
-.htxt p{font-size:12px;color:var(--text2);font-family:var(--font-mono);}
-.hbadges{margin-left:auto;display:flex;gap:8px;}
-.badge{font-family:var(--font-mono);font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid;letter-spacing:.06em;text-transform:uppercase;}
-.bg{color:var(--accent);border-color:rgba(0,201,167,.3);background:rgba(0,201,167,.07);}
-.bb{color:var(--accent2);border-color:rgba(0,148,255,.3);background:rgba(0,148,255,.07);}
 
-.app{display:grid;grid-template-columns:310px 1fr;min-height:calc(100vh - 57px);}
-.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 16px;overflow-y:auto;max-height:calc(100vh - 57px);position:sticky;top:57px;}
+
+.app{display:grid;grid-template-columns:310px 1fr;min-height:100vh;}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 16px;overflow-y:auto;max-height:100vh;position:sticky;top:0;}
 .main{padding:24px 28px;overflow-y:auto;}
 body.in-frame .app{min-height:0;}
 body.in-frame .sidebar{max-height:none;overflow-y:visible;position:static;}
@@ -46,8 +39,6 @@ body.in-frame .main{overflow-y:visible;}
 .calc-btn{width:100%;margin-top:18px;padding:11px;background:linear-gradient(135deg,var(--accent),#00a885);color:#001a14;border:none;border-radius:var(--r);font-family:var(--font-mono);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:opacity .2s,transform .1s;}
 .calc-btn:hover{opacity:.9;transform:translateY(-1px);}
 .calc-btn:active{transform:translateY(0);}
-.rst-btn{width:100%;margin-top:7px;padding:8px;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:var(--r);font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;cursor:pointer;transition:color .2s,border-color .2s;}
-.rst-btn:hover{color:var(--text2);border-color:var(--border2);}
 .divider{height:1px;background:var(--border);margin:16px 0;}
 
 .tabs{display:flex;gap:2px;margin-bottom:24px;border-bottom:1px solid var(--border);}
@@ -96,7 +87,7 @@ body.in-frame .main{overflow-y:visible;}
 .chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:24px;}
 .chart-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-bottom:14px;}
 
-.warn{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:var(--r);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--accent3);margin-bottom:14px;display:none;}
+.warn{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:var(--r);padding:10px 12px;font-family:var(--font-mono);font-size:12px;color:var(--accent3);margin-bottom:14px;display:none;}
 .warn.show{display:block;}
 .info{background:rgba(0,148,255,.06);border:1px solid rgba(0,148,255,.2);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--text2);margin-bottom:18px;font-family:var(--font-mono);line-height:1.7;}
 .info b{color:var(--accent2);}
@@ -111,17 +102,6 @@ svg text{font-family:var(--font-mono);}
 </head>
 <body>
 
-<header>
-  <div class="hicon">⚗</div>
-  <div class="htxt">
-    <h1>Laterite NHM Processing — LCA &amp; TEA</h1>
-    <p>New Caledonian laterite · Bioleaching · Critical metals recovery</p>
-  </div>
-  <div class="hbadges">
-    <span class="badge bg">GWP / LCA</span>
-    <span class="badge bb">TEA</span>
-  </div>
-</header>
 
 <div class="app">
 
@@ -148,7 +128,6 @@ svg text{font-family:var(--font-mono);}
   <div class="ig"><label>Raw laterite price <span>$/dry t</span></label><input type="number" id="i_plat" value="75" min="0" step="1" oninput="calc()"></div>
   <div class="ig"><label>Labour cost <span>$/person/y</span></label><input type="number" id="i_plab" value="85000" min="0" step="1000" oninput="calc()"></div>
 
-  <button class="rst-btn" onclick="resetDef()">↺ Reset to Defaults</button>
 </div>
 
 <!-- ══ MAIN ══ -->
@@ -729,26 +708,26 @@ function calc() {
          data:npv_data.map(r=>r.npv),
          borderColor:'#0094ff',backgroundColor:'rgba(0,148,255,.09)',
          borderWidth:2.5,fill:true,tension:0.3,
-         pointBackgroundColor:npv_data.map(r=>r.npv>=0?'#00c9a7':'#ff6b6b'),
-         pointBorderColor:npv_data.map(r=>r.npv>=0?'#00c9a7':'#ff6b6b'),
+         pointBackgroundColor:npv_data.map(r=>r.npv>=0?'#00c9a7':'#f87171'),
+         pointBorderColor:npv_data.map(r=>r.npv>=0?'#00c9a7':'#f87171'),
          pointRadius:5,yAxisID:'y'},
         {type:'bar',label:'Discounted Cash Flow (M$/y)',
          data:npv_data.map(r=>r.cf),
-         backgroundColor:npv_data.map(r=>r.cf>=0?'rgba(0,201,167,.15)':'rgba(255,107,107,.15)'),
-         borderColor:npv_data.map(r=>r.cf>=0?'#00c9a7':'#ff6b6b'),
+         backgroundColor:npv_data.map(r=>r.cf>=0?'rgba(0,201,167,.15)':'rgba(248,113,113,.15)'),
+         borderColor:npv_data.map(r=>r.cf>=0?'#00c9a7':'#f87171'),
          borderWidth:1.5,borderRadius:3,yAxisID:'y'},
       ]
     },
     options:{
       responsive:true,interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{labels:{color:'#8fa3c0',font:{family:'IBM Plex Mono',size:11}}},
-        tooltip:{backgroundColor:'#1e2736',titleColor:'#e4eaf5',bodyColor:'#8fa3c0',
+        legend:{labels:{color:'#8ea0b8',font:{family:'IBM Plex Mono',size:11}}},
+        tooltip:{backgroundColor:'#1e2840',titleColor:'#e4eaf5',bodyColor:'#8ea0b8',
                  borderColor:'#2a3550',borderWidth:1,
                  callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(4)} M$`}},
       },
       scales:{
-        x:{ticks:{color:'#5a6f8a',font:{family:'IBM Plex Mono',size:10}},grid:{color:'#1e2736'}},
+        x:{ticks:{color:'#5a6f8a',font:{family:'IBM Plex Mono',size:10}},grid:{color:'#1e2840'}},
         y:{ticks:{color:'#5a6f8a',font:{family:'IBM Plex Mono',size:10},callback:v=>v.toFixed(2)+' M$'},
            grid:{color:'#2a3550'}},
       }
@@ -768,21 +747,21 @@ function drawSankey(d) {
   const nodes=[
     {id:'wet',  x:20,  y:28,  val:d.ncl_wet,  c:'#00c9a7',lbl:'NCL wet'},
     {id:'dry',  x:140, y:42,  val:d.NCL,       c:'#0094ff',lbl:'NCL dry'},
-    {id:'bfl',  x:265, y:10,  val:d.bfl,       c:'#ffd166',lbl:'BFL'},
+    {id:'bfl',  x:265, y:10,  val:d.bfl,       c:'#fbbf24',lbl:'BFL'},
     {id:'bcl',  x:265, y:100, val:d.bcl,       c:'#0094ff',lbl:'BCL'},
     {id:'stor', x:420, y:58,  val:d.bcl_stor,  c:'#5a6f8a',lbl:'Storage'},
     {id:'attr', x:420, y:148, val:d.bcl_attr,  c:'#0094ff',lbl:'Attrition'},
-    {id:'fine', x:570, y:106, val:d.bcl_fine,  c:'#ffd166',lbl:'Fine frac.'},
+    {id:'fine', x:570, y:106, val:d.bcl_fine,  c:'#fbbf24',lbl:'Fine frac.'},
     {id:'mozl', x:570, y:175, val:d.bcl_mozl,  c:'#0094ff',lbl:'Mozley'},
     {id:'mnox', x:660, y:224, val:d.mnox,      c:'#00c9a7',lbl:'Mn-ox conc.'},
   ];
   const edges=[
     {f:'wet',to:'dry',v:d.NCL,     c:'#0094ff'},
-    {f:'dry',to:'bfl',v:d.bfl,     c:'#ffd166'},
+    {f:'dry',to:'bfl',v:d.bfl,     c:'#fbbf24'},
     {f:'dry',to:'bcl',v:d.bcl,     c:'#0094ff'},
     {f:'bcl',to:'stor',v:d.bcl_stor,c:'#5a6f8a'},
     {f:'bcl',to:'attr',v:d.bcl_attr,c:'#0094ff'},
-    {f:'attr',to:'fine',v:d.bcl_fine,c:'#ffd166'},
+    {f:'attr',to:'fine',v:d.bcl_fine,c:'#fbbf24'},
     {f:'attr',to:'mozl',v:d.bcl_mozl,c:'#0094ff'},
     {f:'mozl',to:'mnox',v:d.mnox,   c:'#00c9a7'},
   ];
@@ -798,7 +777,7 @@ function drawSankey(d) {
   nodes.forEach(n=>{
     const nh=bh(n.val);
     h+=`<rect x="${n.x}" y="${n.y}" width="12" height="${nh}" fill="${n.c}" rx="2" opacity="0.9"/>`;
-    h+=`<text x="${n.x+15}" y="${n.y+nh/2+3}" font-size="9" fill="#8fa3c0">${n.lbl}</text>`;
+    h+=`<text x="${n.x+15}" y="${n.y+nh/2+3}" font-size="9" fill="#8ea0b8">${n.lbl}</text>`;
     h+=`<text x="${n.x+15}" y="${n.y+nh/2+13}" font-size="8" fill="#5a6f8a">${n.val.toFixed(1)} kg/h</text>`;
   });
   svg.innerHTML=h;
@@ -807,6 +786,11 @@ function drawSankey(d) {
 // Initial run
 calc();
 </script>
-<script>if (window.self !== window.top) document.body.classList.add('in-frame');</script>
+<script>
+  if (window.self !== window.top) document.body.classList.add('in-frame');
+  window.addEventListener('message', function (e) {
+    if (e.data === 'laterite:reset') resetDef();
+  });
+</script>
 </body>
 </html>

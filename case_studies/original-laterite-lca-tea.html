@@ -88,9 +88,12 @@
           <h3 class="cc-case-study-title">Laterite LCA + TEA Dashboard</h3>
           <p class="cc-case-study-copy cc-readable-copy mb-0">The original dashboard is framed inside a darker shell so it sits within the Clove Circle palette while preserving the source tool's contrast.</p>
         </div>
-        <a class="btn cc-btn-outline cc-btn-embed" href="../standalone/laterite-lca-tea.html" target="_blank" rel="noopener">
-          <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
-        </a>
+        <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:180px;">
+          <a class="btn cc-btn-outline cc-btn-embed" href="../standalone/laterite-lca-tea.html" target="_blank" rel="noopener">
+            <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
+          </a>
+          <button class="cc-btn-reset" id="resetBtn" type="button">&#8635; Reset to Defaults</button>
+        </div>
       </div>
       <iframe
         class="cc-case-study-frame"
@@ -168,6 +171,10 @@
       try {
         new ResizeObserver(fitFrame).observe(frame.contentDocument.body);
       } catch (e) {}
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', function () {
+      frame.contentWindow.postMessage('laterite:reset', '*');
     });
   })();
 </script>

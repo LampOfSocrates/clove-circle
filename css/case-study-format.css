@@ -53,6 +53,30 @@
   color: var(--cc-ink);
 }
 
+.cc-btn-reset {
+  display: block;
+  width: 100%;
+  padding: 9px 16px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: var(--cc-radius);
+  color: #f87171;
+  font-family: var(--cc-mono, 'IBM Plex Mono', monospace);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  text-align: center;
+}
+
+.cc-btn-reset:hover,
+.cc-btn-reset:focus {
+  background: rgba(248, 113, 113, 0.18);
+  border-color: rgba(248, 113, 113, 0.75);
+}
+
 .cc-case-study-frame {
   width: 100%;
   min-height: 1600px;

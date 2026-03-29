@@ -7,36 +7,33 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:   #0c1014;
-  --bg2:  #141a22;
-  --bg3:  #1a2130;
-  --bg4:  #202a3a;
-  --bd:   #2a3a50;
-  --bd2:  #3a5068;
-  --teal: #38bdf8;
-  --tdim: #1a5f7a;
-  --tlt:  #7dd3fc;
+  --bg:   #0b0f19;
+  --bg2:  #111820;
+  --bg3:  #182030;
+  --bg4:  #1e2840;
+  --bd:   #2a3550;
+  --bd2:  #3a4a68;
+  --teal: #00c9a7;
+  --tdim: #00614f;
+  --tlt:  #67e8cc;
   --grn:  #4ade80;
   --gdim: #166534;
   --red:  #f87171;
   --amb:  #fbbf24;
-  --tx:   #f0f4f8;
-  --tx2:  #cbd5e1;
-  --tx3:  #94a3b8;
-  --bv:   #f0f6ff;
+  --tx:   #e4eaf5;
+  --tx2:  #b7c4d9;
+  --tx3:  #8ea0b8;
+  --bv:   #e4eaf5;
   --mono: 'IBM Plex Mono', monospace;
   --sans: 'IBM Plex Sans', sans-serif;
-  --r:    6px;
+  --r:    8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:15px;line-height:1.65}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
 /* ── HEADER ── */
-header{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;display:flex;align-items:center;gap:18px;height:54px;position:sticky;top:0;z-index:100}
-.logo{display:flex;align-items:center;gap:10px;border-right:1px solid var(--bd);padding-right:18px}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--teal),#0ea5e9);border-radius:8px;display:flex;align-items:center;justify-content:center;font:700 12px var(--mono);color:#fff;flex-shrink:0}
-.logo-title{font-size:15px;font-weight:600;color:var(--bv);letter-spacing:-.3px}
-.logo-sub{font-size:10px;color:var(--tx3);font-family:var(--mono)}
-.hm{font-family:var(--mono);font-size:11px;color:var(--tx3)}
 .hm span{color:var(--teal);font-weight:500}
 .pill{margin-left:auto;display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:3px 10px;font-family:var(--mono);font-size:10px;color:var(--grn);font-weight:500;letter-spacing:.5px}
 .pill::before{content:'';width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pulse 2s infinite}
@@ -78,7 +75,7 @@ header{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;di
 .irow:hover{background:rgba(255,255,255,.015)}
 .ilabel{font-size:14px;color:var(--tx)}
 .ifield{background:var(--bg3);border:1px solid var(--bd2);border-radius:4px;padding:6px 10px;font-family:var(--mono);font-size:13px;color:var(--tlt);width:100%;outline:none;text-align:right;transition:border-color .15s,box-shadow .15s}
-.ifield:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.ifield:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,201,167,.15)}
 .iunit{font-family:var(--mono);font-size:12px;color:var(--tx2)}
 /* ── TABLES ── */
 .tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd)}
@@ -96,20 +93,20 @@ td.pos{color:var(--grn)}
 td.neg{color:var(--red)}
 td.unt{color:var(--tx2);font-size:12px}
 tr.sh td{background:var(--bg3);color:var(--teal);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-tr.tot td{background:rgba(56,189,248,.04);border-top:1px solid var(--tdim);font-weight:600}
+tr.tot td{background:rgba(0,201,167,.04);border-top:1px solid var(--tdim);font-weight:600}
 /* ── DCF CANVAS ── */
 .dcf-wrap{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:16px}
 /* ── FLOWSHEET SVG ── */
 .fs-wrap{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:20px;overflow-x:auto}
 .blk{fill:var(--bg3);stroke:var(--bd2);stroke-width:1.2}
-.blk-hl{fill:rgba(56,189,248,.1);stroke:var(--teal);stroke-width:1.8}
+.blk-hl{fill:rgba(0,201,167,.1);stroke:var(--teal);stroke-width:1.8}
 .ft{font-family:var(--mono);font-size:12px;fill:var(--bv);font-weight:500}
 .fs{font-family:var(--mono);font-size:10px;fill:var(--tx3)}
 .fv{font-family:var(--mono);font-size:9px;fill:var(--teal);font-weight:600}
 .fleg{display:flex;gap:20px;font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);flex-wrap:wrap}
 .fleg-i{display:flex;align-items:center;gap:6px}
 /* ── NOTICE ── */
-.notice{background:rgba(56,189,248,.06);border:1px solid var(--tdim);border-radius:var(--r);padding:10px 14px;font-family:var(--mono);font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.notice{background:rgba(0,201,167,.06);border:1px solid var(--tdim);border-radius:var(--r);padding:10px 14px;font-family:var(--mono);font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .notice span{color:var(--teal);font-weight:600}
 /* ── LCA BARS ── */
 .lb{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
@@ -119,14 +116,6 @@ tr.tot td{background:rgba(56,189,248,.04);border-top:1px solid var(--tdim);font-
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">
-    <div class="logo-icon">F2C</div>
-    <div><div class="logo-title">Flue2Chem TEA LCA</div></div>
-  </div>
-  <div class="hm">Product: <span>Surfactant via CO₂ capture</span></div>
-  <div class="hm">Method: <span>LCA and TEA</span></div>
-</header>
 
 <div class="tabbar">
   <button class="tab active" onclick="showTab(0)"><span class="tab-n">1</span>User Input</button>
@@ -141,7 +130,6 @@ tr.tot td{background:rgba(56,189,248,.04);border-top:1px solid var(--tdim);font-
 
 <!-- ════════════════ TAB 1 ════════════════ -->
 <div class="panel active" id="tab-0">
-  <div class="notice"><span>ℹ</span> All values are editable — TEA results update instantly across all tabs.<button onclick="resetDefaults()" style="margin-left:auto;background:rgba(56,189,248,.12);border:1px solid var(--tdim);border-radius:4px;padding:4px 12px;font-family:var(--mono);font-size:10px;color:var(--teal);cursor:pointer;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='rgba(56,189,248,.22)'" onmouseout="this.style.background='rgba(56,189,248,.12)'">↺ Reset to defaults</button></div>
   <div class="g2">
     <div>
       <div class="sec">Process parameters</div>
@@ -330,7 +318,7 @@ tr.tot td{background:rgba(56,189,248,.04);border-top:1px solid var(--tdim);font-
       <text id="fs_remflue" x="96" y="335" text-anchor="start" class="fv">—</text>
 
       <!-- ══ D: FT → ALCOHOL INTERMEDIATE → SURFACTANT (main teal stream) ══ -->
-      <path d="M370,114 L627,114 L627,168 L637,168" stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+      <path d="M370,114 L627,114 L627,168 L637,168" stroke="#00c9a7" stroke-width="2" fill="none" marker-end="url(#arr)"/>
       <text x="498" y="106" text-anchor="middle" class="fs">Alcohol intermediate</text>
       <text id="fs_alc" x="498" y="128" text-anchor="middle" class="fv">—</text>
 
@@ -754,7 +742,7 @@ function drawDCF(rows){
   ctx.font = '9px IBM Plex Mono, monospace';
   [minV, 0, maxV].forEach(v => {
     const y = yp(v);
-    ctx.strokeStyle = v===0 ? 'rgba(56,189,248,.2)' : 'rgba(255,255,255,.04)';
+    ctx.strokeStyle = v===0 ? 'rgba(0,201,167,.2)' : 'rgba(255,255,255,.04)';
     ctx.lineWidth = 1;
     ctx.setLineDash(v===0?[4,4]:[]);
     ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W-pad.r, y); ctx.stroke();
@@ -837,6 +825,11 @@ function showTab(n){
 
 // Init
 calc();
+</script>
+<script>
+  window.addEventListener('message', function (e) {
+    if (e.data === 'flue2chem:reset') resetDefaults();
+  });
 </script>
 </body>
 </html>
