@@ -156,13 +156,36 @@
   (function () {
     var frame = document.querySelector('.cc-case-study-frame');
     if (!frame) return;
+    function syncFrameHeight() {
+      try {
+        var doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
+        if (!doc || !doc.body || !doc.documentElement) return;
+        var height = Math.max(
+          doc.body.scrollHeight,
+          doc.documentElement.scrollHeight,
+          doc.body.offsetHeight,
+          doc.documentElement.offsetHeight
+        );
+        if (height > 100) frame.style.height = height + 'px';
+      } catch (err) {
+        // Same-origin in production, but keep the wrapper resilient if access changes.
+      }
+    }
+    frame.addEventListener('load', function () {
+      syncFrameHeight();
+      window.setTimeout(syncFrameHeight, 150);
+      window.setTimeout(syncFrameHeight, 600);
+    });
     window.addEventListener('message', function (e) {
       if (e.data && typeof e.data.phaHeight === 'number' && e.data.phaHeight > 100) {
         frame.style.height = e.data.phaHeight + 'px';
       }
     });
+    window.addEventListener('resize', syncFrameHeight);
     document.getElementById('phaResetBtn').addEventListener('click', function () {
       frame.contentWindow.postMessage('pha:reset', '*');
+      window.setTimeout(syncFrameHeight, 150);
+      window.setTimeout(syncFrameHeight, 600);
     });
   })();
 </script>
