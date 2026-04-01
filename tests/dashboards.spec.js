@@ -240,4 +240,16 @@ test.describe('Flue2Chem LCA + TEA', () => {
     const reset = await page.locator('#lca-cmp-tbody tr').first().locator('td').nth(1).textContent();
     expect(reset).toBe(original);
   });
+
+  test('embedded mode removes the viewport minimum height', async ({ page }) => {
+    const before = await page.evaluate(() => getComputedStyle(document.body).minHeight);
+    expect(before).not.toBe('0px');
+
+    await page.evaluate(() => {
+      document.body.classList.add('in-frame');
+    });
+
+    const after = await page.evaluate(() => getComputedStyle(document.body).minHeight);
+    expect(after).toBe('0px');
+  });
 });

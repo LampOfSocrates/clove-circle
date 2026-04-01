@@ -30,6 +30,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:15px;line-height:1.65}
+body.in-frame{min-height:0!important}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
@@ -894,6 +895,9 @@ function showTab(n){
 }
 
 // Init
+if (window.self !== window.top) {
+  document.body.classList.add('in-frame');
+}
 calc();
 </script>
 <script>
