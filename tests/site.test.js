@@ -37,12 +37,12 @@ assert.doesNotMatch(
 );
 assert.match(
   resourcesHtml,
-  /case_studies\/original-laterite-lca-tea\.html/,
+  /case_studies\/wrapper-laterite-lca-tea\.html/,
   'resources page should link to the original Jhuma case study'
 );
 assert.match(
   resourcesHtml,
-  /case_studies\/case-study-jhuma-pha-original\.html/,
+  /case_studies\/wrapper-pha-lca-tea\.html/,
   'resources page should link to the original Jhuma PHA case study'
 );
 assert.doesNotMatch(
@@ -82,7 +82,7 @@ const jhumaCaseStudyPath = path.join(
   __dirname,
   '..',
   'case_studies',
-  'original-laterite-lca-tea.html'
+  'wrapper-laterite-lca-tea.html'
 );
 assert.ok(
   fs.existsSync(jhumaCaseStudyPath),
@@ -115,7 +115,7 @@ const jhumaPhaCaseStudyPath = path.join(
   __dirname,
   '..',
   'case_studies',
-  'case-study-jhuma-pha-original.html'
+  'wrapper-pha-lca-tea.html'
 );
 assert.ok(
   fs.existsSync(jhumaPhaCaseStudyPath),

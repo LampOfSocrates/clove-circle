@@ -108,6 +108,9 @@ tr.tot td{background:rgba(0,201,167,.04);border-top:1px solid var(--tdim);font-w
 /* ── NOTICE ── */
 .notice{background:rgba(0,201,167,.06);border:1px solid var(--tdim);border-radius:var(--r);padding:10px 14px;font-family:var(--mono);font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .notice span{color:var(--teal);font-weight:600}
+.notice-actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.btn-reset{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.4);border-radius:6px;padding:7px 12px;font-family:var(--mono);font-size:11px;color:var(--red);font-weight:600;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-reset:hover{background:rgba(248,113,113,.18);border-color:rgba(248,113,113,.65)}
 /* ── LCA BARS ── */
 .lb{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
 .lb-f{height:100%;border-radius:4px;background:linear-gradient(to right,var(--tdim),var(--teal))}
@@ -130,6 +133,7 @@ tr.tot td{background:rgba(0,201,167,.04);border-top:1px solid var(--tdim);font-w
 
 <!-- ════════════════ TAB 1 ════════════════ -->
 <div class="panel active" id="tab-0">
+  <div class="notice"><span>ℹ</span> All values are editable and the TEA, flowsheet, and LCA tabs update live.<div class="notice-actions"><button class="btn-reset" id="resetDefaultsBtn" type="button" onclick="resetDefaults()">Reset to defaults</button><button class="btn-reset" id="resetDefaultsBtnSecondary" type="button" onclick="resetDefaults()">Restore baseline case</button></div></div>
   <div class="g2">
     <div>
       <div class="sec">Process parameters</div>
@@ -391,7 +395,7 @@ tr.tot td{background:rgba(0,201,167,.04);border-top:1px solid var(--tdim);font-w
     <div class="tw">
       <table>
         <thead><tr><th>Impact category</th><th class="r">F2C</th><th class="r">Fossil-based</th><th>Ratio</th></tr></thead>
-        <tbody>
+        <tbody id="lca-cmp-tbody">
           <tr><td class="lbl">Global warming</td><td class="r num">66.0%</td><td class="r">100%</td><td><div class="lb"><div class="lb-f" style="width:66%"></div></div></td></tr>
           <tr><td class="lbl">Stratospheric ozone depletion</td><td class="r pos">100%</td><td class="r">38.4%</td><td><div class="lb"><div class="lb-f fo" style="width:100%"></div></div></td></tr>
           <tr><td class="lbl">Ionizing radiation</td><td class="r num">32.0%</td><td class="r">100%</td><td><div class="lb"><div class="lb-f" style="width:32%"></div></div></td></tr>
@@ -409,7 +413,7 @@ tr.tot td{background:rgba(0,201,167,.04);border-top:1px solid var(--tdim);font-w
   <div class="tw">
     <table>
       <thead><tr><th>Impact category</th><th>Unit</th><th class="r">F2C total</th><th class="r">Electricity</th><th class="r">Emissions</th><th class="r">Infrastructure</th><th class="r">Wastewater</th><th class="r">Fossil-based</th></tr></thead>
-      <tbody>
+      <tbody id="lca-full-tbody">
         <tr><td class="lbl">Global warming</td><td class="unt">kg CO₂ eq</td><td class="r num">1.4420</td><td class="r">1.0608</td><td class="r">0.2854</td><td class="r">0.0894</td><td class="r">0.0065</td><td class="r">2.1857</td></tr>
         <tr><td class="lbl">Stratospheric ozone depletion</td><td class="unt">kg CFC11 eq</td><td class="r num">9.06E-07</td><td class="r">4.92E-07</td><td class="r">3.44E-07</td><td class="r">4.99E-08</td><td class="r">1.99E-08</td><td class="r">3.48E-07</td></tr>
         <tr><td class="lbl">Ionizing radiation</td><td class="unt">kBq Co-60 eq</td><td class="r num">0.05607</td><td class="r">0.05142</td><td class="r">0</td><td class="r">0.00383</td><td class="r">8.25E-04</td><td class="r">0.17530</td></tr>
@@ -714,6 +718,71 @@ function calc(){
   fpSet('fs_surf',    B46,    'tpd');   // Surfactant output
   fpSet('fs_exhaust', B48,    'tpd');   // Exhaust + water = B30+B39+B43-B47
 
+  // Dynamic LCA values scale the electricity contribution with net grid demand.
+  const lcaBaseElec = 13763858 * 0.9;
+  const lcaNetElec  = B4 - B3;
+  const elecScale   = lcaNetElec / lcaBaseElec;
+
+  const lcaData = [
+    ['Global warming', 'kg CO2 eq', 1.0607551, 0.285375, 0.08936802919, 0.0064614894, 2.185726 + 0.64 * 44 / 12],
+    ['Stratospheric ozone depletion', 'kg CFC11 eq', 4.9239225e-7, 3.4375e-7, 4.9922787547e-8, 1.9943478e-8, 3.4760424e-7],
+    ['Ionizing radiation', 'kBq Co-60 eq', 0.051415125, 0, 0.0038335225294, 8.2519462e-4, 0.17530133],
+    ['Ozone formation, Human health', 'kg NOx eq', 0.0037280049, 0.006165625, 4.9219888022e-4, 2.2567098e-5, 0.0052260676],
+    ['Fine particulate matter', 'kg PM2.5 eq', 0.0023273351, 0.0017403125, 3.1848259915e-4, 1.4280727e-5, 0.0022926558],
+    ['Ozone formation, Terrestrial', 'kg NOx eq', 0.0038616056, 0.0064578125, 5.0026460764e-4, 2.2984902e-5, 0.0060159632],
+    ['Terrestrial acidification', 'kg SO2 eq', 0.0045865722, 0.00589125, 6.4896025883e-4, 4.6007754e-5, 0.006303221],
+    ['Freshwater eutrophication', 'kg P eq', 0.0010751903, 0, 1.1791223297e-4, 1.5170362e-5, 5.4236412e-4],
+    ['Marine eutrophication', 'kg N eq', 7.6260947e-5, 0, 2.118049862e-5, 8.4057874e-5, 3.815583e-5],
+    ['Terrestrial ecotoxicity', 'kg 1,4-DCB', 8.5813554, 0, 0.10119159137, 0.028192356, 2.058589],
+    ['Freshwater ecotoxicity', 'kg 1,4-DCB', 2.3868748, 0, 4.626991924e-3, 5.9393039e-4, 0.10163104],
+    ['Marine ecotoxicity', 'kg 1,4-DCB', 2.8895168, 0, 6.353215326e-3, 7.9544647e-4, 0.13049075],
+    ['Human carcinogenic toxicity', 'kg 1,4-DCB', 0.91225563, 0, 0.011407915082, 0.0038394484, 0.13044001],
+    ['Human non-carcinogenic toxicity', 'kg 1,4-DCB', 8.7216028, 0, 0.1680895485, 0.040888059, 1.7206876],
+    ['Land use', 'm2a crop eq', 0.063431464, 0, 3.7063635572e-3, 1.7670612e-4, 0.035719791],
+    ['Mineral resource scarcity', 'kg Cu eq', 0.045053124, 0, 0.015855830033, 1.1112903e-4, 0.0068036511],
+    ['Fossil resource scarcity', 'kg oil eq', 0.26008135, 0, 0.0934271474168, 0.0010644289, 1.450212],
+    ['Water consumption', 'm3', 0.01387925, 0, -1.1470742006e-3, -0.012838407, 0.032658977],
+  ];
+
+  const lcaRows = lcaData.map(([name, unit, elecBase, emis, infra, ww, fossil]) => {
+    const elec = elecBase * elecScale;
+    const f2c = elec + emis + infra + ww;
+    const f2cPct = f2c >= fossil ? 100 : (f2c / fossil) * 100;
+    const fosPct = fossil >= f2c ? 100 : (fossil / f2c) * 100;
+    return { name, unit, f2c, elec, emis, infra, ww, fossil, f2cPct, fosPct };
+  });
+
+  function fmtLCA(v){
+    if(v === 0) return '0';
+    const a = Math.abs(v);
+    if(a >= 1) return v.toFixed(4);
+    if(a >= 0.01) return v.toFixed(5);
+    if(a >= 1e-4) return v.toFixed(6);
+    return v.toExponential(2);
+  }
+
+  document.getElementById('lca-full-tbody').innerHTML = lcaRows.map(r => `<tr>
+    <td class="lbl">${r.name}</td><td class="unt">${r.unit}</td>
+    <td class="r num">${fmtLCA(r.f2c)}</td><td class="r">${fmtLCA(r.elec)}</td>
+    <td class="r">${fmtLCA(r.emis)}</td><td class="r">${fmtLCA(r.infra)}</td>
+    <td class="r">${fmtLCA(r.ww)}</td><td class="r">${fmtLCA(r.fossil)}</td>
+  </tr>`).join('');
+
+  const cmpIdx = [0,1,2,3,4,6,16,9,17];
+  document.getElementById('lca-cmp-tbody').innerHTML = cmpIdx.map(i => {
+    const r = lcaRows[i];
+    const f2cStr = r.f2cPct.toFixed(1) + '%';
+    const fosStr = r.fosPct.toFixed(1) + '%';
+    const f2cBigger = r.f2cPct >= 100;
+    const barW = f2cBigger ? 100 : r.f2cPct;
+    const barClass = f2cBigger ? 'lb-f fo' : 'lb-f';
+    const f2cClass = f2cBigger ? 'r pos' : (r.f2c < 0 ? 'r neg' : 'r num');
+    return `<tr><td class="lbl">${r.name}</td>
+      <td class="${f2cClass}">${r.f2c < 0 ? '−' : ''}${f2cStr}</td>
+      <td class="r">${fosStr}</td>
+      <td><div class="lb"><div class="${barClass}" style="width:${Math.max(0, barW)}%"></div></div></td></tr>`;
+  }).join('');
+
   // Draw DCF chart
   drawDCF(dcf);
 }
@@ -820,7 +889,7 @@ const tabs   = document.querySelectorAll('.tab');
 function showTab(n){
   panels.forEach((p,i)=>p.classList.toggle('active',i===n));
   tabs.forEach((t,i)=>t.classList.toggle('active',i===n));
-  if(n===1||n===4) setTimeout(calc,30);
+  if(n===1||n===4||n===5) setTimeout(calc,30);
 }
 
 // Init

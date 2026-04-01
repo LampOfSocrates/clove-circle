@@ -12,7 +12,7 @@ Add a new case study that wraps the original [PHA-from-lignocellulose-lca-tea.ht
 ## Files To Change Or Create
 
 - `resources.html`
-- `case_studies/case-study-jhuma-pha-original.html` (new)
+- `case_studies/wrapper-pha-lca-tea.html` (new)
 - `tests/resources_case_study_test.py`
 - `tests/site.test.js`
 
@@ -24,11 +24,11 @@ Optional, only if needed:
 
 1. Add failing tests that assert:
    - `resources.html` includes a new case-study entry linking to the new wrapper page.
-   - `case_studies/case-study-jhuma-pha-original.html` exists.
+   - `case_studies/wrapper-pha-lca-tea.html` exists.
    - The wrapper page uses the standard Clove Circle case-study shell.
    - The wrapper page references or embeds `standalone/PHA-from-lignocellulose-lca-tea.html`.
 2. Run the tests and confirm they fail before implementation.
-3. Create `case_studies/case-study-jhuma-pha-original.html` based on the structure of `case_studies/case-study-jhuma-original.html`.
+3. Create `case_studies/wrapper-pha-lca-tea.html` based on the structure of `case_studies/case-study-jhuma-original.html`.
 4. Update the page copy, title, heading, and iframe metadata so they describe the PHA-from-lignocellulose model accurately.
 5. Add a new case-study card to `resources.html` that links to the new wrapper page and clearly distinguishes it from the laterite model.
 6. Make only minimal styling adjustments if the embedded model needs spacing or height refinements for responsiveness.

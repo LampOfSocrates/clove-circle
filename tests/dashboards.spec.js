@@ -152,6 +152,11 @@ test.describe('Flue2Chem LCA + TEA', () => {
     await expect(page.locator('#k_totalcap')).not.toHaveText('—');
   });
 
+  test('visible reset controls are present in the standalone UI', async ({ page }) => {
+    await expect(page.locator('#resetDefaultsBtn')).toBeVisible();
+    await expect(page.locator('#resetDefaultsBtnSecondary')).toBeVisible();
+  });
+
   test('default inputs produce non-zero Total Capital', async ({ page }) => {
     const cap = await page.locator('#k_totalcap').textContent();
     expect(parseFloat(cap)).toBeGreaterThan(0);
@@ -206,5 +211,33 @@ test.describe('Flue2Chem LCA + TEA', () => {
   test('switching to TEA Results tab shows MSSP card', async ({ page }) => {
     await page.locator('.tab').nth(1).click();
     await expect(page.locator('#k_mssp')).toBeVisible();
+  });
+
+  test('LCA comparison updates when electricity inputs change', async ({ page }) => {
+    await page.locator('.tab').nth(5).click();
+    const before = await page.locator('#lca-cmp-tbody tr').first().locator('td').nth(1).textContent();
+
+    await page.locator('.tab').nth(0).click();
+    await page.locator('#i_elec_h2').fill('60');
+    await page.waitForTimeout(300);
+    await page.locator('.tab').nth(5).click();
+
+    const after = await page.locator('#lca-cmp-tbody tr').first().locator('td').nth(1).textContent();
+    expect(after).not.toBe(before);
+  });
+
+  test('reset via visible button restores the default LCA comparison value', async ({ page }) => {
+    await page.locator('.tab').nth(5).click();
+    const original = await page.locator('#lca-cmp-tbody tr').first().locator('td').nth(1).textContent();
+
+    await page.locator('.tab').nth(0).click();
+    await page.locator('#i_elec_h2').fill('60');
+    await page.waitForTimeout(300);
+    await page.locator('#resetDefaultsBtn').click();
+    await page.waitForTimeout(300);
+    await page.locator('.tab').nth(5).click();
+
+    const reset = await page.locator('#lca-cmp-tbody tr').first().locator('td').nth(1).textContent();
+    expect(reset).toBe(original);
   });
 });

@@ -7,7 +7,7 @@ assert "Biorefinery: PHA Biocomposite Production" not in resources_html
 assert "Laterite NHM Processing" not in resources_html
 assert 'href="case_studies/case-study-laterite-lca-tea.html"' not in resources_html
 assert "Laterite to Metal Extraction" in resources_html
-assert 'href="case_studies/original-laterite-lca-tea.html"' in resources_html
+assert 'href="case_studies/wrapper-laterite-lca-tea.html"' in resources_html
 assert "More Case Studies in Preparation" in resources_html
 assert 'href="index.html#contact"' in resources_html
 assert "PHA Analytics Case Study" not in resources_html

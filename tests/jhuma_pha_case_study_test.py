@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-case_study_path = Path(r"D:\S\Code\2026\clove-circle\case_studies\case-study-jhuma-pha-original.html")
+case_study_path = Path(r"D:\S\Code\2026\clove-circle\case_studies\wrapper-pha-lca-tea.html")
 
 assert case_study_path.exists(), "PHA wrapper case study page should exist"
 

@@ -4,8 +4,8 @@ from pathlib import Path
 root = Path(r"D:\S\Code\2026\clove-circle")
 
 
-laterite_wrapper = (root / "case_studies" / "original-laterite-lca-tea.html").read_text(encoding="utf-8")
-pha_wrapper = (root / "case_studies" / "case-study-jhuma-pha-original.html").read_text(encoding="utf-8")
+laterite_wrapper = (root / "case_studies" / "wrapper-laterite-lca-tea.html").read_text(encoding="utf-8")
+pha_wrapper = (root / "case_studies" / "wrapper-pha-lca-tea.html").read_text(encoding="utf-8")
 pha_standalone = (root / "standalone" / "PHA-from-lignocellulose-lca-tea.html").read_text(encoding="utf-8")
 laterite_standalone = (root / "standalone" / "laterite-lca-tea.html").read_text(encoding="utf-8")
 

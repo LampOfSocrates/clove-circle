@@ -12,7 +12,7 @@ Add a third case study to the Resources page that links to the original `standal
 ## Files To Change Or Create
 
 - `resources.html`
-- `case_studies/original-laterite-lca-tea.html` (new)
+- `case_studies/wrapper-laterite-lca-tea.html` (new)
 - `tests/site.test.js`
 - `tests/resources_case_study_test.py`
 
@@ -28,7 +28,7 @@ Optional, only if needed for styling consistency:
    - The wrapper page includes standard Clove Circle navigation/banner structure.
    - The wrapper page references or embeds `standalone/laterite-lca-tea.html`.
 2. Run the tests and confirm they fail before implementation.
-3. Create `case_studies/original-laterite-lca-tea.html` using the established case-study shell pattern from the existing case studies.
+3. Create `case_studies/wrapper-laterite-lca-tea.html` using the established case-study shell pattern from the existing case studies.
 4. Embed or frame the original `standalone/laterite-lca-tea.html` inside the wrapper so users access the original calculator while staying within consistent site chrome.
 5. Add the third case-study card to `resources.html` with copy that clearly distinguishes it from the simplified and adapted laterite case study.
 6. Add only minimal styling adjustments if the embedded page needs spacing, sizing, or responsive fixes.
