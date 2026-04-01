@@ -39,12 +39,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .pill::before{content:'';width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 /* ── TABS ── */
-.tabbar{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.tabbar{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;display:flex;gap:0;overflow-x:auto;align-items:center}
 .tab{padding:10px 16px;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .tab:hover{color:var(--tx2)}
 .tab.active{color:var(--teal);border-bottom-color:var(--teal)}
 .tab-n{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--bg3);border-radius:3px;font-size:9px;margin-right:6px}
 .tab.active .tab-n{background:var(--tdim);color:var(--teal)}
+.tabbar-actions{margin-left:auto;display:flex;align-items:center;gap:10px;padding-left:16px;white-space:nowrap}
 /* ── LAYOUT ── */
 .content{padding:20px 24px;max-width:1440px;margin:0 auto}
 .panel{display:none;animation:fadein .18s ease}
@@ -127,13 +128,13 @@ tr.tot td{background:rgba(0,201,167,.04);border-top:1px solid var(--tdim);font-w
   <button class="tab" onclick="showTab(3)"><span class="tab-n">4</span>Equip. Cost</button>
   <button class="tab" onclick="showTab(4)"><span class="tab-n">5</span>Flowsheet</button>
   <button class="tab" onclick="showTab(5)"><span class="tab-n">6</span>LCA</button>
+  <div class="tabbar-actions"><button class="btn-reset" id="resetDefaultsBtn" type="button" onclick="resetDefaults()">Reset to defaults</button><button class="btn-reset" id="resetDefaultsBtnSecondary" type="button" onclick="resetDefaults()">Restore baseline case</button></div>
 </div>
 
 <div class="content">
 
 <!-- ════════════════ TAB 1 ════════════════ -->
 <div class="panel active" id="tab-0">
-  <div class="notice"><span>ℹ</span> All values are editable and the TEA, flowsheet, and LCA tabs update live.<div class="notice-actions"><button class="btn-reset" id="resetDefaultsBtn" type="button" onclick="resetDefaults()">Reset to defaults</button><button class="btn-reset" id="resetDefaultsBtnSecondary" type="button" onclick="resetDefaults()">Restore baseline case</button></div></div>
   <div class="g2">
     <div>
       <div class="sec">Process parameters</div>
