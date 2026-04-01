@@ -720,11 +720,13 @@ function calc(){
   fpSet('fs_surf',    B46,    'tpd');   // Surfactant output
   fpSet('fs_exhaust', B48,    'tpd');   // Exhaust + water = B30+B39+B43-B47
 
-  // Dynamic LCA values scale the electricity contribution with net grid demand.
-  const lcaBaseElec = 13763858 * 0.9;
-  const lcaNetElec  = B4 - B3;
+  // ── LCA (dynamic electricity scaling) ──
+  // Base electricity consumed at default inputs = 13763858 MWh/y
+  // Scaling factor: (actual net elec) / (base net elec)
+  const lcaBaseElec = 161*1000/3.2;   // base net electricity (total - 10% onsite)
+  const lcaNetElec  = (B4 - B3)/(C46+C45+C42+C38);          // actual net electricity
   const elecScale   = lcaNetElec / lcaBaseElec;
-
+  
   const lcaData = [
     ['Global warming', 'kg CO2 eq', 1.0607551, 0.285375, 0.08936802919, 0.0064614894, 2.185726 + 0.64 * 44 / 12],
     ['Stratospheric ozone depletion', 'kg CFC11 eq', 4.9239225e-7, 3.4375e-7, 4.9922787547e-8, 1.9943478e-8, 3.4760424e-7],
