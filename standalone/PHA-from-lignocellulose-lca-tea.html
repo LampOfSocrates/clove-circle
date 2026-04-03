@@ -20,6 +20,8 @@
 html{font-size:15px}
 body{background:var(--bg);color:var(--tx);font-family:var(--sans);line-height:1.65;min-height:100vh}
 body.in-frame{min-height:0!important}
+body.in-frame .app{min-height:0}
+body.in-frame .sidebar{max-height:none;overflow-y:visible;position:static}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
@@ -28,6 +30,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
 
 /* Layout */
+.app{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:100vh}
+.sidebar{background:var(--bg2);border-right:1px solid var(--bd);padding:20px 16px;overflow-y:auto;max-height:100vh;position:sticky;top:0}
+.main{min-width:0}
 .grid2{display:grid;gap:18px}
 .g-bal{grid-template-columns:300px 1fr}
 .g-tea{grid-template-columns:285px 1fr}
@@ -129,6 +134,8 @@ td.lbl{font-family:var(--sans);color:var(--tx2);font-size:13px}
 #footer{border-top:1px solid var(--bd);padding:6px 24px;font-size:11px;color:var(--tx3);text-align:center}
 
 @media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{max-height:none;position:static;border-right:none;border-bottom:1px solid var(--bd)}
   .g-bal,.g-tea,.g-gwp{grid-template-columns:1fr}
   .g-kpi4{grid-template-columns:repeat(2,1fr)}
   .g-2col{grid-template-columns:1fr}
@@ -138,18 +145,26 @@ td.lbl{font-family:var(--sans);color:var(--tx2);font-size:13px}
 <body>
 
 
-<div id="tabbar">
-  <div id="tabbar-inner">
-    <button class="tbtn active" data-t="0">&#9878; Mass Balance</button>
-    <button class="tbtn"        data-t="1">&#128176; TEA</button>
-    <button class="tbtn"        data-t="2">&#127757; LCA / GWP</button>
-  </div>
-</div>
+<div class="app">
+  <aside class="sidebar">
+    <div id="global-sidebar"></div>
+  </aside>
 
-<div id="content">
-  <div id="p0" class="panel active"></div>
-  <div id="p1" class="panel"></div>
-  <div id="p2" class="panel"></div>
+  <main class="main">
+    <div id="tabbar">
+      <div id="tabbar-inner">
+        <button class="tbtn active" data-t="0">&#9878; Mass Balance</button>
+        <button class="tbtn"        data-t="1">&#128176; TEA</button>
+        <button class="tbtn"        data-t="2">&#127757; LCA / GWP</button>
+      </div>
+    </div>
+
+    <div id="content">
+      <div id="p0" class="panel active"></div>
+      <div id="p1" class="panel"></div>
+      <div id="p2" class="panel"></div>
+    </div>
+  </main>
 </div>
 
 
@@ -256,6 +271,39 @@ function crowHtml(id, label) {
 }
 
 /* ── Calculations ─────────────────────────────────────── */
+function buildGlobalSidebar() {
+  var html =
+    cardHtml('Feedstock Basis',
+      pairHtml('Dry biomass',      'i-basisTpa',   S.basisTpa,   100,  'tpa') +
+      pairHtml('Moisture content', 'i-moisture',   S.moisture,   1,    'mass % wet') +
+      '<div class="note">Wet input: <span class="mono blue" id="o-wet">--</span> tpa</div>') +
+    cardHtml('Dry Composition',
+      pairHtml('Hemicellulose', 'i-hemiPct', S.hemiPct, 1, 'mass %') +
+      pairHtml('Cellulose',     'i-cellPct', S.cellPct, 1, 'mass %') +
+      pairHtml('Lignin',        'i-lignPct', S.lignPct, 1, 'mass %') +
+      pairHtml('Ash',           'i-ashPct',  S.ashPct,  1, 'mass %') +
+      '<div class="pair" style="padding:6px 0 0"><span class="pair-lbl muted">Sum</span>' +
+      '<span id="o-compSum" class="mono"></span></div>') +
+    cardHtml('Recovery Rates',
+      pairHtml('Hemicellulose &rarr; fermenter', 'i-recHemi',    S.recHemi,    0.01, 'fraction') +
+      pairHtml('Cellulose &rarr; fermenter',     'i-recCell',    S.recCell,    0.01, 'fraction') +
+      pairHtml('Lignin &rarr; fermenter',        'i-recLign',    S.recLign,    0.01, 'fraction') +
+      pairHtml('PHA copolymer yield',            'i-recPHA',     S.recPHA,     0.01, 'fraction') +
+      pairHtml('Biocomposite recovery',          'i-biocompRec', S.biocompRec, 0.1,  '%'));
+
+  el('global-sidebar').innerHTML = html;
+
+  var balKeys = ['basisTpa','hemiPct','cellPct','lignPct','ashPct','moisture',
+                 'recHemi','recCell','recLign','recPHA','biocompRec'];
+  balKeys.forEach(function(k) {
+    var inp = el('i-' + k);
+    if (inp) inp.addEventListener('input', function(e) {
+      var v = parseFloat(e.target.value);
+      if (!isNaN(v)) { S[k] = v; updateAll(); }
+    });
+  });
+}
+
 function calcAll() {
   /* Balance */
   var E5  = S.hemiPct / 100 * S.basisTpa;
@@ -339,23 +387,6 @@ function calcAll() {
 /* ── Build Tab 0 ──────────────────────────────────────── */
 function buildTab0() {
   var leftCol =
-    cardHtml('Feedstock Basis',
-      pairHtml('Dry biomass',      'i-basisTpa',   S.basisTpa,   100,  'tpa') +
-      pairHtml('Moisture content', 'i-moisture',   S.moisture,   1,    'mass % wet') +
-      '<div class="note">Wet input: <span class="mono blue" id="o-wet">—</span> tpa</div>') +
-    cardHtml('Dry Composition',
-      pairHtml('Hemicellulose', 'i-hemiPct', S.hemiPct, 1, 'mass %') +
-      pairHtml('Cellulose',     'i-cellPct', S.cellPct, 1, 'mass %') +
-      pairHtml('Lignin',        'i-lignPct', S.lignPct, 1, 'mass %') +
-      pairHtml('Ash',           'i-ashPct',  S.ashPct,  1, 'mass %') +
-      '<div class="pair" style="padding:6px 0 0"><span class="pair-lbl muted">Sum</span>' +
-      '<span id="o-compSum" class="mono"></span></div>') +
-    cardHtml('Recovery Rates',
-      pairHtml('Hemicellulose &rarr; fermenter', 'i-recHemi',    S.recHemi,    0.01, 'fraction') +
-      pairHtml('Cellulose &rarr; fermenter',     'i-recCell',    S.recCell,    0.01, 'fraction') +
-      pairHtml('Lignin &rarr; fermenter',        'i-recLign',    S.recLign,    0.01, 'fraction') +
-      pairHtml('PHA copolymer yield',            'i-recPHA',     S.recPHA,     0.01, 'fraction') +
-      pairHtml('Biocomposite recovery',          'i-biocompRec', S.biocompRec, 0.1,  '%')) +
     cardHtml('Energy',
       pairHtml('Calorific value',         'i-calorific',   S.calorific,   1,    'GJ / t') +
       pairHtml('Electrical efficiency',   'i-elecEff',     S.elecEff,     0.01, 'fraction') +
@@ -410,8 +441,7 @@ function buildTab0() {
 
   el('p0').innerHTML = '<div class="grid2 g-bal"><div class="col">' + leftCol + '</div><div class="col">' + rightCol + '</div></div>';
 
-  var balKeys = ['basisTpa','hemiPct','cellPct','lignPct','ashPct','moisture',
-                 'recHemi','recCell','recLign','recPHA','biocompRec','calorific','elecEff','elecConsump'];
+  var balKeys = ['calorific','elecEff','elecConsump'];
   balKeys.forEach(function(k) {
     var inp = el('i-' + k);
     if (inp) inp.addEventListener('input', function(e) {
@@ -782,6 +812,7 @@ function resetAll() {
   if (npvChart) { npvChart.destroy(); npvChart = null; }
   copyDefaults();
   builtTab = [false, false, false];
+  buildGlobalSidebar();
   el('p0').innerHTML = '';
   el('p1').innerHTML = '';
   el('p2').innerHTML = '';
@@ -797,6 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.tbtn').forEach(function(btn) {
     btn.addEventListener('click', function() { showTab(parseInt(btn.dataset.t)); });
   });
+  buildGlobalSidebar();
   showTab(0);
 });
 </script>

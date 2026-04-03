@@ -203,13 +203,24 @@ test.describe('Flue2Chem LCA + TEA', () => {
     expect(cost_after).toBeGreaterThan(cost_before);
   });
 
-  test('all 6 tabs are present', async ({ page }) => {
+  test('tab set includes User Input plus 5 results tabs', async ({ page }) => {
     const tabs = page.locator('.tab');
     await expect(tabs).toHaveCount(6);
+    await expect(page.locator('.tab').filter({ hasText: 'User Input' })).toHaveCount(1);
+    await expect(page.locator('.tab').filter({ hasText: 'TEA Results' })).toHaveCount(1);
+    await expect(page.locator('.tab').filter({ hasText: 'LCA' })).toHaveCount(1);
   });
 
   test('switching to TEA Results tab shows MSSP card', async ({ page }) => {
     await page.locator('.tab').nth(1).click();
+    await expect(page.locator('#k_mssp')).toBeVisible();
+  });
+
+  test('user input pane is hidden while TEA results are shown', async ({ page }) => {
+    await page.locator('.tab').nth(1).click();
+    await expect(page.locator('#tab-0')).not.toHaveClass(/active/);
+    await expect(page.locator('#tab-1')).toHaveClass(/active/);
+    await expect(page.locator('#i_flue')).toBeHidden();
     await expect(page.locator('#k_mssp')).toBeVisible();
   });
 
@@ -239,6 +250,59 @@ test.describe('Flue2Chem LCA + TEA', () => {
 
     const reset = await page.locator('#lca-cmp-tbody tr').first().locator('td').nth(1).textContent();
     expect(reset).toBe(original);
+  });
+
+  test('changing input updates visible TEA output without switching tabs', async ({ page }) => {
+    await page.locator('.tab').nth(1).click();
+    const before = parseFloat(await page.locator('#k_sval').textContent());
+
+    await page.locator('.tab').nth(0).click();
+    await page.locator('#i_sprice').fill('15000');
+    await page.waitForTimeout(300);
+
+    await page.locator('.tab').nth(1).click();
+    const after = parseFloat(await page.locator('#k_sval').textContent());
+    expect(after).toBeGreaterThan(before);
+  });
+
+  test('10% higher flue gas throughput leaves LCA unchanged but changes all 8 top TEA KPIs', async ({ page }) => {
+    const teaKpiIds = [
+      '#k_totalcap',
+      '#k_cost',
+      '#k_val',
+      '#k_margin',
+      '#k_mssp',
+      '#k_sval',
+      '#k_coval',
+      '#k_varopex',
+    ];
+
+    await page.locator('.tab').nth(5).click();
+    const lcaComparisonBefore = await page.locator('#lca-cmp-tbody').textContent();
+    const lcaFullBefore = await page.locator('#lca-full-tbody').innerHTML();
+
+    await page.locator('.tab').nth(1).click();
+    const teaBefore = await Promise.all(
+      teaKpiIds.map(async (selector) => page.locator(selector).textContent())
+    );
+
+    await page.locator('.tab').nth(0).click();
+    await expect(page.locator('#i_flue')).toBeVisible();
+    await page.locator('#i_flue').fill('39600'); // 10% above default 36000
+    await page.waitForTimeout(300);
+
+    await page.locator('.tab').nth(5).click();
+    await expect(page.locator('#lca-cmp-tbody')).toHaveText(lcaComparisonBefore);
+    await expect(page.locator('#lca-full-tbody')).toHaveJSProperty('innerHTML', lcaFullBefore);
+
+    await page.locator('.tab').nth(1).click();
+    const teaAfter = await Promise.all(
+      teaKpiIds.map(async (selector) => page.locator(selector).textContent())
+    );
+
+    teaBefore.forEach((beforeValue, index) => {
+      expect(teaAfter[index]).not.toBe(beforeValue);
+    });
   });
 
   test('embedded mode removes the viewport minimum height', async ({ page }) => {
