@@ -7,7 +7,6 @@ module.exports = defineConfig({
   timeout: 30000,
   use: {
     headless: true,
-    browser: 'chromium',
   },
   projects: [
     {
