@@ -140,9 +140,47 @@ td.lbl{font-family:var(--sans);color:var(--tx2);font-size:13px}
   .g-kpi4{grid-template-columns:repeat(2,1fr)}
   .g-2col{grid-template-columns:1fr}
 }
+
+/* Escape hatch for anyone who lands on this dashboard directly (bookmark,
+   shared link, or the wrapper's "Open Standalone" button, which opens a new
+   tab with no history to go back through). Fixed, so it adds nothing to
+   scrollHeight and cannot disturb the wrapper's auto-fit. Hidden in-frame,
+   where the wrapper already provides the site chrome. */
+.cc-back-home {
+  position: fixed;
+  top: 12px;
+  right: 14px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 201, 167, 0.45);
+  background: rgba(11, 15, 25, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #00c9a7;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.cc-back-home:hover,
+.cc-back-home:focus {
+  background: rgba(0, 201, 167, 0.16);
+  border-color: rgba(0, 201, 167, 0.85);
+  color: #67e8cc;
+}
+body.in-frame .cc-back-home { display: none; }
+@media print { .cc-back-home { display: none; } }
 </style>
 </head>
 <body>
+<a class="cc-back-home" href="../resources.html"><span aria-hidden="true">&#8592;</span> Clove Circle</a>
 
 
 <div class="app">
