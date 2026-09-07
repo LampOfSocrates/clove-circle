@@ -25,6 +25,16 @@
     }
     #step-by-step .cc-sbs-fullbleed .cc-case-study-shell { max-width: none; }
     #step-by-step .cc-case-study-frame { border-radius: 14px; }
+    /* The embedded page prints its own step chrome, so the shell stays minimal. */
+    #step-by-step .cc-case-study-shell { padding: 12px; }
+    #step-by-step .cc-case-study-head { margin-bottom: 10px; align-items: center; }
+    #step-by-step .cc-case-study-title { font-size: 19px; margin: 0 0 2px; }
+    #step-by-step .cc-case-study-copy { font-size: 13px; margin: 0; }
+    #step-by-step .cc-sbs-intro {
+      max-width: 96ch; margin: 0 auto 14px; font-size: 14px; line-height: 1.6;
+      color: var(--cc-text-muted, #5e7a6a); text-align: center;
+    }
+    #step-by-step #sbsTabs { margin-bottom: 14px !important; }
     @media (max-width: 640px) {
       #step-by-step .cc-sbs-fullbleed { padding-left: 8px; padding-right: 8px; }
     }
@@ -200,19 +210,13 @@
         </div>
       </div>
 
-      <!-- Calculate LCA Step by Step -->
+      <!-- LCA Step by Step -->
       <div class="tab-pane fade" id="step-by-step" role="tabpanel" aria-labelledby="step-by-step-tab">
 
-        <div class="cc-card" style="padding:22px 26px;margin-bottom:22px;">
-          <h3 style="margin-top:0;">Learn the method, not just the answer</h3>
-          <p style="margin-bottom:8px;">Each case study below walks through the same eight steps &mdash;
-             the four ISO 14040 phases with the techno-economic sequence interleaved. Click any stream
-             or unit on the flowsheet to see what it is, change the inputs, then run each step yourself
-             and watch what moves downstream.</p>
-          <p style="margin-bottom:0;font-size:13px;opacity:0.75;">Goal &amp; scope &middot; Mass balance &middot;
-             Inventory &middot; Impact assessment &middot; Capital cost &middot; Operating cost &middot;
-             Profitability &middot; Interpretation</p>
-        </div>
+        <p class="cc-sbs-intro">Learn the method, not just the answer &mdash; the same eight steps
+           on every case study, the four ISO 14040 phases with the techno-economic sequence
+           interleaved. Click any stream or unit on the flowsheet to change it, then run each step
+           and watch what moves downstream.</p>
 
         <ul class="nav nav-pills cc-tab-nav cc-case-study-tabs mb-4" id="sbsTabs" role="tablist">
           <li class="nav-item" role="presentation">

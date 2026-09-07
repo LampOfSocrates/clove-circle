@@ -103,15 +103,60 @@ for (const c of CASES) {
       expect(rail.height).toBeLessThan(90);
     });
 
-    test('the flowsheet sits at half the column width', async ({ page }) => {
+    test('the flowsheet takes about half the main column', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
       await page.goto(page_(c.file));
       const pct = await page.evaluate(() => {
         const wrap = document.querySelector('[data-cc-diagram]');
-        return wrap.getBoundingClientRect().width / wrap.parentElement.clientWidth;
+        const split = document.querySelector('.cc-main-split');
+        return wrap.getBoundingClientRect().width / split.getBoundingClientRect().width;
       });
       expect(pct).toBeGreaterThan(0.4);
-      expect(pct).toBeLessThanOrEqual(0.51);
+      expect(pct).toBeLessThanOrEqual(0.52);
+    });
+
+    test('the flowsheet sits beside the teaching card, not above it', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await page.goto(page_(c.file));
+      const [diag, card] = await Promise.all([
+        page.locator('[data-cc-diagram]').boundingBox(),
+        page.locator('[data-cc-card]').boundingBox()
+      ]);
+      expect(card.x).toBeGreaterThan(diag.x + diag.width - 1);
+    });
+
+    test('the opening step fits one screen', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await page.goto(page_(c.file));
+      const h = await page.evaluate(() => document.body.scrollHeight);
+      // A little slack for font-loading jitter; later steps are allowed to spill.
+      expect(h).toBeLessThanOrEqual(1100);
+    });
+
+    test('"Try it" sits under the flowsheet', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await page.goto(page_(c.file));
+      await page.locator('[data-cc-rail] .cc-step').nth(1).click();
+      const tryIt = page.locator('[data-cc-tryit] .cc-card-try');
+      await expect(tryIt).toBeVisible();
+      const [t, diag, card] = await Promise.all([
+        tryIt.boundingBox(),
+        page.locator('[data-cc-diagram]').boundingBox(),
+        page.locator('[data-cc-card]').boundingBox()
+      ]);
+      expect(t.y).toBeGreaterThan(diag.y);          // below the flowsheet
+      expect(t.x).toBeLessThan(card.x);             // in the flowsheet column
+      await expect(page.locator('[data-cc-card] .cc-card-try')).toHaveCount(0);
+    });
+
+    test('the diamond marker renders as a glyph, not an escape', async ({ page }) => {
+      await page.goto(page_(c.file));
+      await page.locator('[data-cc-rail] .cc-step').nth(1).click();
+      const marker = await page.evaluate(() => {
+        const el = document.querySelector('.cc-mini-field.is-on-diagram .cc-mini-label');
+        return el ? getComputedStyle(el, '::after').content : '';
+      });
+      expect(marker).not.toContain('C8');
     });
 
     test('diagram text stays legible at that size', async ({ page }) => {
@@ -296,14 +341,18 @@ test.describe('Resources page', () => {
     const frameEl = page.locator('#sbs-flue2chem-pane iframe');
     const frame = page.frameLocator('#sbs-flue2chem-pane iframe');
 
+    const heightNow = async () => {
+      const box = await frameEl.boundingBox();
+      return box ? box.height : 0;
+    };
+    const opening = await heightNow();
+
     await frame.locator('[data-cc-solve-all]').click();
     await frame.locator('[data-cc-rail] .cc-step').nth(1).click();
 
-    // The mass-balance step is much taller than the opening step; the host must grow.
-    await expect.poll(async () => {
-      const box = await frameEl.boundingBox();
-      return box ? box.height : 0;
-    }, { timeout: 8000 }).toBeGreaterThan(2000);
+    // The mass-balance step is taller than the opening step; the host must grow
+    // to match rather than clipping it.
+    await expect.poll(heightNow, { timeout: 8000 }).toBeGreaterThan(opening + 100);
 
     // and the last card on the page is reachable, not cut off
     await expect(frame.locator('.cc-card-try')).toBeVisible();

@@ -27,8 +27,8 @@
 /* ── page header ─────────────────────────────────────────────────────── */
 .cc-sbs-header {
   border-bottom: 1px solid var(--sbs-line);
-  padding-bottom: 18px;
-  margin-bottom: 22px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
 }
 .cc-sbs-eyebrow {
   font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
@@ -36,9 +36,9 @@
 }
 .cc-sbs-header h2 {
   font-family: Fraunces, Georgia, serif;
-  font-size: 30px; line-height: 1.2; margin: 6px 0 8px; color: var(--sbs-ink);
+  font-size: 26px; line-height: 1.2; margin: 4px 0 5px; color: var(--sbs-ink);
 }
-.cc-sbs-header p { margin: 0; color: var(--sbs-muted); max-width: 70ch; }
+.cc-sbs-header p { margin: 0; color: var(--sbs-muted); max-width: 78ch; font-size: 13.5px; }
 .cc-sbs-headrow {
   display: flex; gap: 20px; align-items: flex-start;
   justify-content: space-between; flex-wrap: wrap;
@@ -57,7 +57,7 @@
 
 /* ── layout ──────────────────────────────────────────────────────────── */
 .cc-sbs-grid {
-  display: grid; gap: 20px;
+  display: grid; gap: 16px;
   grid-template-columns: minmax(0, 1fr) 330px;
   align-items: start;
 }
@@ -68,11 +68,33 @@
   border-radius: 12px; padding: 16px;
 }
 
+/* The flowsheet sits beside the teaching card rather than above it, so the
+   opening step fits on one screen. */
+.cc-main-split {
+  display: grid; gap: 18px; align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+@media (max-width: 1250px) { .cc-main-split { grid-template-columns: minmax(0, 1fr); } }
+.cc-diagram-col { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+/* The inspector lives under the flowsheet it describes, which also uses the
+   space the diagram alone would leave empty. */
+.cc-inspector-panel { flex: 1 1 auto; }
+
+/* Embedded in resources.html the surrounding shell already prints the title and
+   strapline, so the page drops its own and keeps just the action buttons. */
+body.is-embedded .cc-sbs-header {
+  border-bottom: 0; padding-bottom: 0; margin-bottom: 10px;
+}
+body.is-embedded .cc-sbs-header h2,
+body.is-embedded .cc-sbs-header p,
+body.is-embedded .cc-sbs-eyebrow { display: none; }
+body.is-embedded .cc-sbs-headrow { justify-content: flex-end; }
+
 /* ── step rail: horizontal breadcrumbs ──────────────────────────────── */
 .cc-rail {
   display: flex; align-items: stretch; gap: 0;
   background: var(--sbs-paper); border: 1px solid var(--sbs-line);
-  border-radius: 11px; padding: 5px; margin-bottom: 16px;
+  border-radius: 11px; padding: 4px; margin-bottom: 12px;
   overflow-x: auto; scrollbar-width: thin;
 }
 .cc-step {
@@ -176,7 +198,7 @@
 .cc-thiscase-table tr.is-linked { cursor: pointer; }
 .cc-thiscase-table tr.is-linked:hover td { background: var(--sbs-wash); }
 .cc-thiscase-table tr.is-linked .cc-tc-label::after {
-  content: ' C8'; color: var(--sbs-green); font-size: 10px;
+  content: ' ◈'; color: var(--sbs-green); font-size: 10px;
 }
 .cc-thiscase-table tr.is-picked td {
   background: var(--sbs-green-pale);
@@ -236,6 +258,7 @@
   background: var(--sbs-amber-pale); border-left: 3px solid var(--sbs-amber);
   border-radius: 8px; padding: 13px 15px;
 }
+.cc-card-try p { font-size: 13.5px; }
 .cc-card-try p { margin: 0; }
 
 .cc-card-summary { margin-top: 18px; }
@@ -250,15 +273,12 @@
 /* ── flowsheet ───────────────────────────────────────────────────────── */
 .cc-diagram-wrap {
   background: var(--sbs-wash); border: 1px solid var(--sbs-line);
-  border-radius: 12px; padding: 12px; margin-bottom: 18px; overflow-x: auto;
-  /* Half width: the flowsheet is a reference, not the main event. */
-  max-width: 50%;
+  border-radius: 12px; padding: 10px; margin-bottom: 0; overflow-x: auto;
 }
-@media (max-width: 1100px) { .cc-diagram-wrap { max-width: 100%; } }
 .cc-diagram-wrap svg { display: block; width: 100%; min-width: 0; height: auto; }
 .cc-diagram-hint {
   font-size: 12px; color: var(--sbs-muted);
-  margin: 0 0 10px; display: flex; gap: 16px; flex-wrap: wrap;
+  margin: 0 0 7px; display: flex; gap: 12px; flex-wrap: wrap;
 }
 .cc-diagram-hint b { font-weight: 700; }
 .cc-legend-swatch {
@@ -400,7 +420,7 @@
   outline: 2px solid var(--sbs-amber); outline-offset: 2px;
 }
 .cc-mini-field.is-on-diagram .cc-mini-label::after {
-  content: ' C8'; color: var(--sbs-amber); font-size: 10px;
+  content: ' ◈'; color: var(--sbs-amber); font-size: 10px;
 }
 .cc-mini-field.is-picked .cc-mini-label { color: var(--sbs-amber); }
 .cc-mini-value {
@@ -414,13 +434,13 @@
 
 /* ── KPI strip ───────────────────────────────────────────────────────── */
 .cc-kpis {
-  display: grid; gap: 10px; margin-bottom: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  display: grid; gap: 8px; margin-bottom: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
 }
 .cc-kpi {
   background: var(--sbs-paper); border: 1px solid var(--sbs-line);
-  border-radius: 9px; padding: 11px 13px;
-  display: flex; flex-direction: column; gap: 3px;
+  border-radius: 9px; padding: 8px 11px;
+  display: flex; flex-direction: column; gap: 1px;
 }
 .cc-kpi.is-stale { background: repeating-linear-gradient(45deg, #fafcfb, #fafcfb 6px, #f2f5f3 6px, #f2f5f3 12px); }
 .cc-kpi-label {
@@ -428,7 +448,7 @@
   font-weight: 700; color: var(--sbs-muted);
 }
 .cc-kpi-val {
-  font: 700 18px/1.15 ui-monospace, Consolas, monospace;
+  font: 700 16px/1.15 ui-monospace, Consolas, monospace;
   font-variant-numeric: tabular-nums; color: var(--sbs-ink);
 }
 .cc-kpi.is-stale .cc-kpi-val { color: #9aa8a0; }

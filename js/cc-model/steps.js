@@ -123,6 +123,7 @@
     this.$fields = this.root.querySelector('[data-cc-fields]');
     this.$kpis = this.root.querySelector('[data-cc-kpis]');
     this.$inspector = this.root.querySelector('[data-cc-inspector]');
+    this.$tryit = this.root.querySelector('[data-cc-tryit]');
     this.$svg = this.root.querySelector('[data-cc-diagram] svg');
 
     var self = this;
@@ -139,6 +140,8 @@
         self.inspector.show(sel);
       }
     });
+
+    if (window.parent !== window) document.body.classList.add('is-embedded');
 
     this.bindChrome();
     this.render();
@@ -324,12 +327,16 @@
       this.$card.appendChild(act);
     }
 
-    var tryIt = copy.tryIt || (id === 'interpret' ? null : undefined);
+    // "Try it" tells you what to poke on the flowsheet, so it sits under the
+    // flowsheet rather than at the bottom of the card.
+    var tryIt = copy.tryIt;
+    var host = this.$tryit || this.$card;
+    if (this.$tryit) this.$tryit.innerHTML = '';
     if (tryIt) {
       var t = el('div', 'cc-card-try');
       t.appendChild(el('span', 'cc-slot-label', 'Try it'));
       t.appendChild(el('p', null, tryIt));
-      this.$card.appendChild(t);
+      host.appendChild(t);
     }
 
     if (id === 'interpret') this.$card.appendChild(this.renderSummary());

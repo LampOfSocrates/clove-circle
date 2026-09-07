@@ -43,11 +43,12 @@
 
     <!-- step rail -->
     <!-- diagram + teaching card -->
-    <div>
+    <div class="cc-main-split">
+      <div class="cc-diagram-col">
       <p class="cc-diagram-hint">
-        <span><span class="cc-legend-swatch" style="background:#b57a17"></span><b>Amber</b> — you set this</span>
-        <span><span class="cc-legend-swatch" style="background:#8aa398"></span><b>Grey</b> — calculated; click to see the formula</span>
-        <span>Dashed means stale — re-run the step.</span>
+        <span><span class="cc-legend-swatch" style="background:#b57a17"></span><b>Amber</b> — yours to set</span>
+        <span><span class="cc-legend-swatch" style="background:#8aa398"></span><b>Grey</b> — calculated</span>
+        <span>Dashed — stale</span>
       </p>
 
       <div class="cc-diagram-wrap" data-cc-diagram>
@@ -172,6 +173,9 @@
             <text class="cc-stream-label" id="fs_exhaust" x="670" y="492">—</text>
           </g>
         </svg>
+        </div>
+        <div data-cc-tryit></div>
+        <div class="cc-sbs-panel cc-inspector-panel" data-cc-inspector></div>
       </div>
 
       <div class="cc-sbs-panel" data-cc-card></div>
@@ -179,8 +183,7 @@
 
     <!-- fields + inspector -->
     <div>
-      <div class="cc-sbs-panel" style="margin-bottom:16px;" data-cc-fields></div>
-      <div class="cc-sbs-panel" data-cc-inspector></div>
+      <div class="cc-sbs-panel" data-cc-fields></div>
     </div>
 
   </div>
