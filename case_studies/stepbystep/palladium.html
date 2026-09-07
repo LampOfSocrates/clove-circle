@@ -12,6 +12,23 @@
 <style>
   body { margin: 0; background: #f4f8f5; padding: 22px; }
   @media (max-width: 640px) { body { padding: 12px; } }
+
+  /* Escape hatch for anyone who opens this page directly — resources.html links
+     it with target="_blank", so the tab has no history to go back through.
+     It sits in the existing chrome row rather than floating, which would land
+     on top of it. Hidden in-frame, where resources.html supplies the chrome. */
+  .cc-sbs-chrome .cc-back-home {
+    border-color: rgba(61, 139, 104, 0.5);
+    color: #2a5c45;
+  }
+  .cc-sbs-chrome .cc-back-home:hover,
+  .cc-sbs-chrome .cc-back-home:focus {
+    background: #3d8b68;
+    border-color: #3d8b68;
+    color: #fff;
+  }
+  body.in-frame .cc-back-home { display: none; }
+  @media print { .cc-back-home { display: none; } }
 </style>
 </head>
 <body>
@@ -21,13 +38,14 @@
   <div class="cc-sbs-header">
     <div class="cc-sbs-headrow">
       <div>
-        <span class="cc-sbs-eyebrow">Calculate LCA step by step</span>
+        <span class="cc-sbs-eyebrow">LCA step by step</span>
         <h2>Palladium bio-recovery</h2>
         <p>Work through a full life cycle assessment and techno-economic analysis one step at a
            time. Click anything on the flowsheet to see what it is or to change it, then run each
            step yourself and watch what moves.</p>
       </div>
       <div class="cc-sbs-chrome">
+        <a class="cc-back-home" href="../../resources.html#step-by-step"><span aria-hidden="true">&#8592;</span> Clove Circle</a>
         <button type="button" data-cc-solve-all>Run all steps</button>
         <button type="button" data-cc-reset>Reset to published case</button>
         <a href="../../standalone/palladium-biorecovery-lca-tea.html" target="_blank" rel="noopener">Full dashboard</a>
@@ -171,6 +189,10 @@
 <script src="../models/palladium.model.js"></script>
 <script>
   new CCSteps({ root: document.getElementById('sbs'), model: CC_MODELS.palladium });
+</script>
+<script>
+  // resources.html embeds this page; hide the chrome it already provides.
+  if (window.self !== window.top) document.body.classList.add('in-frame');
 </script>
 </body>
 </html>

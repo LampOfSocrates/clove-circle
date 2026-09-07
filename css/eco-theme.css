@@ -583,6 +583,10 @@ img { max-width: 100%; height: auto; }
 }
 
 .cc-footer-logo {
+  /* The global `img { height: auto }` overrides the height="52" attribute,
+     which rendered this at its intrinsic 451px. */
+  height: 52px;
+  width: auto;
   filter: brightness(0) invert(1);
   opacity: 0.8;
 }
