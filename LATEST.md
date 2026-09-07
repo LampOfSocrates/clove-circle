@@ -11,16 +11,18 @@ Live at clovecircle.com (custom domain via CNAME), likely GitHub Pages given `.n
 - Standalone interactive LCA/TEA dashboards embedded via iframe wrappers: Flue2Chem, Laterite, PHA-from-lignocellulose, Palladium bio-recovery
 - postMessage-based iframe height sizing for embedded dashboards
 - Google Analytics 4 (G-RBTNS3ZZP2) via js/analytics.js on all pages + wrappers; standalone dashboards left untagged to avoid double-counting iframe views
-- Playwright + Python test suite covering typography, case studies, references/infographics pages, PHA data removal
+- Baseline (golden-file) calculation tests for all 4 LCA/TEA calculators in `tests/case_studies/` — see its README
+- GitHub Actions: `tests.yml` on every push/PR, `deploy-pages.yml` gates the Pages deploy on it
 
 ## Recently tried
+- 2026-09-07: Added tests/case_studies baseline calc tests (26 scenarios, 4 dashboards) + CI; mutation-verified they catch formula drift and ignore restyling
+- 2026-09-07: Fixed hardcoded `D:\S\...` paths in tests/*.py; they now run but 5 of 6 FAIL on stale HTML assertions — left out of the CI gate
 - 2026-09-07: Added Palladium bio-recovery case study (4th tab in resources.html + case_studies wrapper); source copied from jhumasadhukhan/Palladium-biorecovery-LCA-TEA, self-contained, no reset control so wrapper omits the reset button
 - 2026-08-20: Resources nav link became a "Try our sample calculators" pill button after Services; plain Resources link removed
 - 2026-08-20: Fixed playwright.config.js — `browser: 'chromium'` in `use` made the whole suite error out before running
-- 2026-08-20: Added GA4 tracking (js/analytics.js, skips localhost/file:)
-- 2026-05-24: Updated laterite-lca-tea.html figures
 
 ## Next
+- Decide the fate of the stale markup tests (tests/*.py, tests/site.test.js): resources.html now links `standalone/*` directly, so the `case_studies/wrapper-*.html` pages look orphaned
+- Switch Settings > Pages > Source to "GitHub Actions" or deploy-pages.yml's gate is inert
 - Continue tuning PHA case-study economics (labor cost / jobs-per-Kt) based on commit cadence
 - (Inferred) Extend the wrapper/iframe pattern to any future standalone case studies
-- (Inferred) Keep Playwright/pytest suite in sync as dashboard HTML changes

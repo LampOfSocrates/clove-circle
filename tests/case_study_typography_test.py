@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-root = Path(r"D:\S\Code\2026\clove-circle")
+root = Path(__file__).resolve().parents[1]
 
 
 laterite_wrapper = (root / "case_studies" / "wrapper-laterite-lca-tea.html").read_text(encoding="utf-8")

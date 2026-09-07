@@ -8,7 +8,11 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "test:case-studies": "playwright test tests/case_studies",
+    "test:case-studies:update": "node tests/case_studies/update-baselines.js",
+    "test:legacy-markup": "node tests/site.test.js"
   },
   "repository": {
     "type": "git",

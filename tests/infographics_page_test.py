@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-page_path = Path(r"D:\S\Code\2026\clove-circle\infographics\infographics.html")
+page_path = Path(__file__).resolve().parents[1] / "infographics" / "infographics.html"
 assert page_path.exists(), "Expected infographics/infographics.html to exist"
 
 html = page_path.read_text(encoding="utf-8")

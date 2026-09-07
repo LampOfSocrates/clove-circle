@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-references_html = Path(r"D:\S\Code\2026\clove-circle\references.html").read_text(encoding="utf-8")
+references_html = (Path(__file__).resolve().parents[1] / "references.html").read_text(encoding="utf-8")
 
 assert "<title>Clove Circle | References</title>" in references_html
 assert 'id="refWordCloud"' in references_html

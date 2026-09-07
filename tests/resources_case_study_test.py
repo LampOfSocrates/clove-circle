@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-resources_html = Path(r"D:\S\Code\2026\clove-circle\resources.html").read_text(encoding="utf-8")
+resources_html = (Path(__file__).resolve().parents[1] / "resources.html").read_text(encoding="utf-8")
 
 assert "Biorefinery: PHA Biocomposite Production" not in resources_html
 assert "Laterite NHM Processing" not in resources_html

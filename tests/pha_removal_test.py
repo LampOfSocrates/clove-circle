@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-root = Path(r"D:\S\Code\2026\clove-circle")
+root = Path(__file__).resolve().parents[1]
 
 for removed_path in [
     root / "case_studies" / "case-study-pha-biocomposite.html",

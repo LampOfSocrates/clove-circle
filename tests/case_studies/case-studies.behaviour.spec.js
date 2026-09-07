@@ -14,7 +14,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const file = (name) =>
-  'file:///' + path.resolve(__dirname, '..', 'standalone', name).replace(/\\/g, '/');
+  'file:///' + path.resolve(__dirname, '..', '..', 'standalone', name).replace(/\\/g, '/');
 
 // ─────────────────────────────────────────────────────────────
 // LATERITE LCA + TEA
