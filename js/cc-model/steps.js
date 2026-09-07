@@ -130,11 +130,22 @@
       onChange: function () { self.render(); }
     });
     this.diagram = new global.CCDiagram(this.$svg, this.engine, {
-      onSelect: function (sel) { self.inspector.show(sel); }
+      onSelect: function (sel) {
+        self.picked = null;
+        self.diagram.clearHighlight();
+        self.root.querySelectorAll('.is-picked').forEach(function (n) {
+          n.classList.remove('is-picked');
+        });
+        self.inspector.show(sel);
+      }
     });
 
     this.bindChrome();
     this.render();
+
+    var self = this;
+    window.addEventListener('resize', function () { self.postHeight(); });
+    window.addEventListener('load', function () { self.postHeight(); });
   }
 
   CCSteps.prototype.bindChrome = function () {
@@ -162,8 +173,53 @@
     return this.model.stages.filter(function (s) { return s.id === id; })[0];
   };
 
+  /* Point at one variable: highlight it on the flowsheet, mark the row that asked,
+     and open it in the inspector so the formula or the field is right there. */
+  CCSteps.prototype.pick = function (varId, row) {
+    var v = this.model.vars[varId];
+    if (!v) return;
+
+    if (this.picked === varId) { this.clearPick(); return; }
+    this.picked = varId;
+
+    this.diagram.highlight([varId]);
+    if (v.hit) this.diagram.select(v.hit);
+
+    this.root.querySelectorAll('.is-picked').forEach(function (n) {
+      n.classList.remove('is-picked');
+    });
+    if (row) row.classList.add('is-picked');
+
+    // Show the whole hit group, so a block's other parameters come too.
+    var group = v.hit ? this.$svg.querySelector('[data-hit="' + v.hit + '"]') : null;
+    var vars = group
+      ? (group.getAttribute('data-vars') || '').split(',')
+          .map(function (x) { return x.trim(); }).filter(Boolean)
+      : [varId];
+
+    this.inspector.show({
+      hit: v.hit || null,
+      title: group ? (group.getAttribute('data-title') || v.label) : v.label,
+      vars: vars,
+      editable: v.kind === 'input'
+    });
+  };
+
+  CCSteps.prototype.clearPick = function () {
+    this.picked = null;
+    this.diagram.clearHighlight();
+    this.diagram.select(null);
+    this.root.querySelectorAll('.is-picked').forEach(function (n) {
+      n.classList.remove('is-picked');
+    });
+    this.inspector.showEmpty();
+  };
+
   CCSteps.prototype.go = function (stepId) {
     this.active = stepId;
+    this.picked = null;
+    this.diagram.clearHighlight();
+    this.diagram.select(null);
     this.inspector.showEmpty();
     this.render();
   };
@@ -308,6 +364,22 @@
       tr.appendChild(el('td', 'cc-tc-val',
         U.formatWithUnit(val, v.dim, v.unit || U.canonicalUnit(v.dim))));
 
+      // Rows that correspond to something drawn on the flowsheet light it up.
+      if (self.diagram.hasVar(id)) {
+        tr.classList.add('is-linked');
+        tr.setAttribute('tabindex', '0');
+        tr.setAttribute('role', 'button');
+        tr.setAttribute('aria-label', 'Show ' + v.label + ' on the flowsheet');
+        var pick = function (e) {
+          if (e) e.preventDefault();
+          self.pick(id, tr);
+        };
+        tr.addEventListener('click', pick);
+        tr.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') pick(e);
+        });
+      }
+
       var d = self.engine.delta(id);
       var dt = el('td', 'cc-tc-delta');
       if (d !== null && Math.abs(d) > 0.0005) {
@@ -386,8 +458,17 @@
     ids.forEach(function (id) {
       var v = self.model.vars[id];
       var row = el('div', 'cc-mini-field');
-      var lab = el('label', 'cc-mini-label', v.label);
-      lab.setAttribute('for', 'm_' + id);
+      var lab;
+      if (v.hit && self.diagram.hasVar(id)) {
+        // On the flowsheet: the label is a button that points at it.
+        lab = el('button', 'cc-mini-label', v.label);
+        lab.type = 'button';
+        lab.setAttribute('aria-label', 'Show ' + v.label + ' on the flowsheet');
+        lab.addEventListener('click', function () { self.pick(id, row); });
+      } else {
+        lab = el('label', 'cc-mini-label', v.label);
+        lab.setAttribute('for', 'm_' + id);
+      }
       row.appendChild(lab);
 
       var unit = self.engine.display[id] || v.unit || U.canonicalUnit(v.dim);
@@ -410,7 +491,7 @@
       box.addEventListener('change', commit);
       box.addEventListener('keydown', function (e) { if (e.key === 'Enter') commit(); });
 
-      if (v.hit) {
+      if (v.hit && self.diagram.hasVar(id)) {
         row.classList.add('is-on-diagram');
         row.title = 'Also editable by clicking the flowsheet';
       }
@@ -438,13 +519,32 @@
     });
   };
 
+  /* Report height to a host page so an embedding iframe can size itself. The
+     tallest step is far taller than the first, so a fixed min-height either
+     clips or leaves a gap. */
+  CCSteps.prototype.postHeight = function () {
+    if (window.parent === window) return;
+    try {
+      window.parent.postMessage({
+        ccSbsHeight: Math.ceil(document.body.scrollHeight),
+        ccSbsModel: this.model.id
+      }, '*');
+    } catch (e) { /* cross-origin host: nothing to do */ }
+  };
+
   CCSteps.prototype.render = function () {
     this.renderRail();
     this.renderCard();
     this.renderFields();
     this.renderKpis();
     this.diagram.render();
+    if (this.picked) this.diagram.highlight([this.picked]);
     if (this.inspector.current) this.inspector.show(this.inspector.current);
+
+    var self = this;
+    this.postHeight();
+    // Fonts and the flowsheet settle a beat after the DOM is written.
+    window.setTimeout(function () { self.postHeight(); }, 120);
   };
 
   global.CCSteps = CCSteps;

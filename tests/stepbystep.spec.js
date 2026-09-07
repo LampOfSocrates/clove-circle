@@ -92,6 +92,70 @@ for (const c of CASES) {
       await expect(page.locator('.cc-field-formula code').first()).not.toBeEmpty();
     });
 
+    test('the step rail is a horizontal breadcrumb, not a sidebar', async ({ page }) => {
+      await page.goto(page_(c.file));
+      const first = await page.locator('[data-cc-rail] .cc-step').nth(0).boundingBox();
+      const second = await page.locator('[data-cc-rail] .cc-step').nth(1).boundingBox();
+      expect(second.x).toBeGreaterThan(first.x);
+      expect(Math.abs(second.y - first.y)).toBeLessThan(3);
+      // and it stays short, so it costs almost no vertical space
+      const rail = await page.locator('.cc-rail').boundingBox();
+      expect(rail.height).toBeLessThan(90);
+    });
+
+    test('the flowsheet is not cut off at desktop width', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await page.goto(page_(c.file));
+      const clipped = await page.evaluate(() => {
+        const wrap = document.querySelector('[data-cc-diagram]');
+        return wrap.scrollWidth > wrap.clientWidth + 1;
+      });
+      expect(clipped).toBe(false);
+    });
+
+    test('selecting a worked-numbers row highlights the flowsheet', async ({ page }) => {
+      await page.goto(page_(c.file));
+      await page.locator('[data-cc-solve-all]').click();
+      await page.locator('[data-cc-rail] .cc-step').nth(1).click();
+
+      const row = page.locator('.cc-thiscase-table tr.is-linked').first();
+      await expect(row).toBeVisible();
+      await row.click();
+
+      await expect(page.locator('.cc-hit.is-highlit').first()).toBeVisible();
+      await expect(page.locator('.cc-diagram-wrap')).toHaveClass(/is-focusing/);
+      await expect(row).toHaveClass(/is-picked/);
+
+      // clicking the same row again clears it
+      await row.click();
+      await expect(page.locator('.cc-hit.is-highlit')).toHaveCount(0);
+    });
+
+    test('clicking an input label highlights that field on the flowsheet', async ({ page }) => {
+      await page.goto(page_(c.file));
+      await page.locator('[data-cc-rail] .cc-step').nth(1).click();
+
+      const label = page.locator('.cc-mini-field.is-on-diagram .cc-mini-label').first();
+      await expect(label).toHaveJSProperty('tagName', 'BUTTON');
+      await label.click();
+
+      await expect(page.locator('.cc-hit.is-highlit')).toHaveCount(1);
+      await expect(page.locator('.cc-hit.is-selected')).toHaveCount(1);
+      await expect(page.locator('.cc-insp-head h4')).toBeVisible();
+    });
+
+    test('clicking the flowsheet clears a table-driven highlight', async ({ page }) => {
+      await page.goto(page_(c.file));
+      await page.locator('[data-cc-solve-all]').click();
+      await page.locator('[data-cc-rail] .cc-step').nth(1).click();
+      await page.locator('.cc-thiscase-table tr.is-linked').first().click();
+      await expect(page.locator('.cc-diagram-wrap')).toHaveClass(/is-focusing/);
+
+      await page.locator('[data-hit="' + c.stream + '"]').click();
+      await expect(page.locator('.cc-diagram-wrap')).not.toHaveClass(/is-focusing/);
+      await expect(page.locator('.is-picked')).toHaveCount(0);
+    });
+
     test('percent and fraction entry mean the same thing', async ({ page }) => {
       await page.goto(page_(c.file));
       // Find any fraction-dimension input via the step fields.
@@ -132,6 +196,35 @@ test.describe('Resources page', () => {
     for (const id of ['laterite-tab', 'pha-tab', 'flue2chem-tab', 'palladium-tab']) {
       await expect(page.locator('#' + id)).toBeVisible();
     }
+  });
+
+  test('sizes each embedded page to its content instead of clipping', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    await page.goto(resources);
+    await page.click('#step-by-step-tab');
+    const frameEl = page.locator('#sbs-flue2chem-pane iframe');
+    const frame = page.frameLocator('#sbs-flue2chem-pane iframe');
+
+    await frame.locator('[data-cc-solve-all]').click();
+    await frame.locator('[data-cc-rail] .cc-step').nth(1).click();
+
+    // The mass-balance step is much taller than the opening step; the host must grow.
+    await expect.poll(async () => {
+      const box = await frameEl.boundingBox();
+      return box ? box.height : 0;
+    }, { timeout: 8000 }).toBeGreaterThan(2000);
+
+    // and the last card on the page is reachable, not cut off
+    await expect(frame.locator('.cc-card-try')).toBeVisible();
+  });
+
+  test('uses the full page width for the flowsheet', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    await page.goto(resources);
+    await page.click('#step-by-step-tab');
+    const bleed = await page.locator('#sbs-flue2chem-pane .cc-sbs-fullbleed').boundingBox();
+    // full-bleed: as wide as the viewport, not the narrower Bootstrap container
+    expect(bleed.width).toBeGreaterThan(1500);
   });
 
   test('embeds each step-by-step page', async ({ page }) => {

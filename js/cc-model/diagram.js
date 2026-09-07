@@ -18,8 +18,16 @@
     this.bind();
   }
 
+  /* Which variables this particular flowsheet actually draws. A model may carry
+     variables no diagram element references; pointing at one of those from a table
+     would highlight nothing, so callers check first. */
+  CCDiagram.prototype.hasVar = function (id) {
+    return this.drawn.indexOf(id) !== -1;
+  };
+
   CCDiagram.prototype.bind = function () {
     var self = this;
+    this.drawn = [];
     var hits = this.svg.querySelectorAll('.cc-hit');
     Array.prototype.forEach.call(hits, function (g) {
       var vars = (g.getAttribute('data-vars') || '').split(',')
@@ -35,6 +43,10 @@
         return v && v.kind === 'input';
       });
       g.classList.add(editable ? 'cc-hit-input' : 'cc-hit-computed');
+
+      vars.forEach(function (id) {
+        if (self.drawn.indexOf(id) === -1) self.drawn.push(id);
+      });
 
       var fire = function (e) {
         e.preventDefault();
@@ -52,6 +64,53 @@
       });
     });
   };
+
+  /* Highlight the parts of the flowsheet a set of variables lives on, and dim the
+     rest so the path stands out. Driven from the worked-numbers table and the
+     input list, so a row in either can point at its own stream. */
+  CCDiagram.prototype.highlight = function (varIds) {
+    var self = this;
+    var ids = varIds || [];
+    var wrap = this.svg.parentNode;
+
+    var hits = this.svg.querySelectorAll('.cc-hit');
+    var flows = this.svg.querySelectorAll('[data-flow]');
+    var any = false;
+
+    Array.prototype.forEach.call(hits, function (g) {
+      var vars = (g.getAttribute('data-vars') || '').split(',')
+        .map(function (x) { return x.trim(); }).filter(Boolean);
+      var on = ids.some(function (id) { return vars.indexOf(id) !== -1; });
+      g.classList.toggle('is-highlit', on);
+      if (on) any = true;
+    });
+
+    Array.prototype.forEach.call(flows, function (f) {
+      if (ids.indexOf(f.getAttribute('data-flow')) !== -1) {
+        f.setAttribute('data-highlit', '');
+        any = true;
+      } else {
+        f.removeAttribute('data-highlit');
+      }
+    });
+
+    if (wrap && wrap.classList) wrap.classList.toggle('is-focusing', any && ids.length > 0);
+
+    // A wide flowsheet may be scrolled; bring the highlighted part into view.
+    if (any && wrap && wrap.scrollWidth > wrap.clientWidth) {
+      var first = this.svg.querySelector('.cc-hit.is-highlit');
+      if (first && first.getBoundingClientRect) {
+        var r = first.getBoundingClientRect();
+        var w = wrap.getBoundingClientRect();
+        if (r.left < w.left || r.right > w.right) {
+          wrap.scrollLeft += (r.left - w.left) - (w.width - r.width) / 2;
+        }
+      }
+    }
+    return any;
+  };
+
+  CCDiagram.prototype.clearHighlight = function () { this.highlight([]); };
 
   CCDiagram.prototype.select = function (hitId) {
     this.selected = hitId;
@@ -87,7 +146,9 @@
       var stale = engine.isStale(v.stage);
 
       if (val === undefined || !isFinite(val)) {
-        el.textContent = v.label + ': --';
+        // The stream's name is already drawn beside it, so an uncalculated value
+        // shows only a dash rather than repeating the label.
+        el.textContent = '—';
       } else {
         el.textContent = U.formatWithUnit(val, v.dim, v.unit || U.canonicalUnit(v.dim));
       }

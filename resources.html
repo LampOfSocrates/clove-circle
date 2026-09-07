@@ -13,6 +13,22 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <link href="css/eco-theme.css" rel="stylesheet">
   <link href="css/case-study-format.css" rel="stylesheet">
+  <style>
+    /* The step-by-step flowsheets need the full viewport width, so this pane
+       breaks out of the Bootstrap .container that wraps the rest of the page. */
+    #step-by-step .cc-sbs-fullbleed {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+    #step-by-step .cc-sbs-fullbleed .cc-case-study-shell { max-width: none; }
+    #step-by-step .cc-case-study-frame { border-radius: 14px; }
+    @media (max-width: 640px) {
+      #step-by-step .cc-sbs-fullbleed { padding-left: 8px; padding-right: 8px; }
+    }
+  </style>
   <script src="js/analytics.js"></script>
 </head>
 <body>
@@ -222,7 +238,8 @@
         <div class="tab-content" id="sbsTabContent">
 
           <div class="tab-pane fade show active" id="sbs-flue2chem-pane" role="tabpanel" aria-labelledby="sbs-flue2chem-tab">
-            <div class="cc-card cc-case-study-shell">
+            <div class="cc-sbs-fullbleed">
+              <div class="cc-card cc-case-study-shell">
               <div class="cc-case-study-head">
                 <div>
                   <h3 class="cc-case-study-title">Flue2Chem &mdash; CO&#8322; capture to surfactant</h3>
@@ -237,12 +254,14 @@
                 title="Flue2Chem step-by-step LCA and TEA"
                 src="case_studies/stepbystep/flue2chem.html"
                 loading="lazy"
-                style="background:#f4f8f5;min-height:1900px;"></iframe>
+                style="background:#f4f8f5;min-height:1500px;"></iframe>
+              </div>
             </div>
           </div>
 
           <div class="tab-pane fade" id="sbs-palladium-pane" role="tabpanel" aria-labelledby="sbs-palladium-tab">
-            <div class="cc-card cc-case-study-shell">
+            <div class="cc-sbs-fullbleed">
+              <div class="cc-card cc-case-study-shell">
               <div class="cc-case-study-head">
                 <div>
                   <h3 class="cc-case-study-title">Palladium bio-recovery</h3>
@@ -257,12 +276,14 @@
                 title="Palladium bio-recovery step-by-step LCA and TEA"
                 src="case_studies/stepbystep/palladium.html"
                 loading="lazy"
-                style="background:#f4f8f5;min-height:1900px;"></iframe>
+                style="background:#f4f8f5;min-height:1500px;"></iframe>
+              </div>
             </div>
           </div>
 
           <div class="tab-pane fade" id="sbs-laterite-pane" role="tabpanel" aria-labelledby="sbs-laterite-tab">
-            <div class="cc-card cc-case-study-shell">
+            <div class="cc-sbs-fullbleed">
+              <div class="cc-card cc-case-study-shell">
               <div class="cc-case-study-head">
                 <div>
                   <h3 class="cc-case-study-title">Laterite to metal extraction</h3>
@@ -277,7 +298,8 @@
                 title="Laterite step-by-step LCA and TEA"
                 src="case_studies/stepbystep/laterite.html"
                 loading="lazy"
-                style="background:#f4f8f5;min-height:1900px;"></iframe>
+                style="background:#f4f8f5;min-height:1500px;"></iframe>
+              </div>
             </div>
           </div>
 
@@ -338,6 +360,21 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/site.js"></script>
+
+<!-- Size the step-by-step iframes to their content -->
+<script>
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || typeof d.ccSbsHeight !== 'number') return;
+    var frames = document.querySelectorAll('#step-by-step iframe');
+    for (var i = 0; i < frames.length; i++) {
+      if (frames[i].contentWindow === e.source) {
+        frames[i].style.height = (d.ccSbsHeight + 8) + 'px';
+        frames[i].style.minHeight = '0';
+      }
+    }
+  });
+</script>
 
 <!-- Restore active tab from URL hash -->
 <script>
