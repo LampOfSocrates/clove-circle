@@ -10,10 +10,16 @@ pha_standalone = (root / "standalone" / "PHA-from-lignocellulose-lca-tea.html").
 laterite_standalone = (root / "standalone" / "laterite-lca-tea.html").read_text(encoding="utf-8")
 
 
+shared_css = (root / "css" / "case-study-format.css").read_text(encoding="utf-8")
+
+# Wrapper typography moved out of per-page <style> blocks into the shared sheet.
+assert ".cc-readable-copy" in shared_css
+assert "font-size: 18px;" in shared_css
+assert "color: rgba(255, 255, 255, 0.9);" in shared_css
+
 for wrapper_html in (laterite_wrapper, pha_wrapper):
-    assert ".cc-readable-copy" in wrapper_html
-    assert "font-size: 18px;" in wrapper_html
-    assert "color: rgba(255, 255, 255, 0.9);" in wrapper_html
+    assert "cc-readable-copy" in wrapper_html
+    assert "css/case-study-format.css" in wrapper_html
 
 
 assert "html{font-size:15px}" in pha_standalone

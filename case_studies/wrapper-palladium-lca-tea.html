@@ -14,48 +14,12 @@
   <link href="../css/eco-theme.css" rel="stylesheet">
   <link href="../css/case-study-format.css" rel="stylesheet">
   <style>
-    .cc-readable-copy {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .cc-page-header.cc-case-study-header p.cc-readable-copy {
-      font-size: 18px;
-      line-height: 1.75;
-      max-width: 760px;
-    }
-
-    .cc-case-study-shell .cc-eyebrow {
-      font-size: 12px;
-      letter-spacing: 0.2em;
-    }
-
-    .cc-case-study-shell .cc-case-study-copy.cc-readable-copy {
-      font-size: 16px;
-      line-height: 1.7;
-    }
-
-    .cc-footer,
-    .cc-footer ul li a,
-    .cc-footer-bottom,
-    .cc-footer-social a {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    #palladiumFrame {
-      min-height: 1800px;
-      background: #f8f8f5;
-    }
-
-    @media (max-width: 991.98px) {
-      #palladiumFrame {
-        min-height: 1400px;
-      }
-    }
-
-    @media (max-width: 767.98px) {
-      #palladiumFrame {
-        min-height: 1100px;
-      }
+    /* Frame tuning only — everything else lives in css/case-study-format.css */
+    .cc-case-study-frame {
+      --cc-frame-h: 1800px;
+      --cc-frame-h-md: 1400px;
+      --cc-frame-h-sm: 1100px;
+      --cc-frame-bg: #f8f8f5;
     }
   </style>
   <script src="../js/analytics.js"></script>
@@ -87,7 +51,7 @@
 <div class="cc-page-header cc-case-study-header">
   <div class="container">
     <span class="cc-eyebrow cc-eyebrow-light">
-      <a href="../resources.html#case-studies" style="color:inherit;text-decoration:none;">
+      <a class="cc-case-study-back" href="../resources.html#case-studies">
         <i class="fa-solid fa-arrow-left me-1"></i>Case Studies
       </a>
     </span>
@@ -103,20 +67,20 @@
         <div>
           <h3 class="cc-case-study-title">Pd Bio-Recovery LCA + TEA Dashboard</h3>
           <p class="cc-case-study-copy cc-readable-copy mb-2">Palladium recovery from secondary streams using a <em>Shewanella oneidensis</em> MR-1 biocatalyst, framed inside the Clove Circle shell while preserving the source tool's own palette.</p>
-          <p class="cc-case-study-copy cc-readable-copy mb-0" style="font-size:13px;opacity:0.7;">Product: Recovered Pd &nbsp;&middot;&nbsp; Method: LCA and TEA &nbsp;&middot;&nbsp; Functional unit: 1 kg Pd recovered</p>
+          <p class="cc-case-study-copy cc-case-study-meta cc-readable-copy mb-0">Product: Recovered Pd &nbsp;&middot;&nbsp; Method: LCA and TEA &nbsp;&middot;&nbsp; Functional unit: 1 kg Pd recovered</p>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:180px;">
+        <div class="cc-case-study-actions">
           <a class="btn cc-btn-outline cc-btn-embed" href="../standalone/palladium-biorecovery-lca-tea.html" target="_blank" rel="noopener">
             <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
           </a>
         </div>
       </div>
       <iframe
-        id="palladiumFrame"
+        id="caseStudyFrame"
         class="cc-case-study-frame"
         title="Palladium bio-recovery LCA and TEA model"
         src="../standalone/palladium-biorecovery-lca-tea.html"
-        loading="lazy"></iframe>
+        data-autofit></iframe>
     </div>
   </div>
 </section>
@@ -169,5 +133,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/site.js"></script>
+<script src="../js/case-study-frame.js"></script>
 </body>
 </html>

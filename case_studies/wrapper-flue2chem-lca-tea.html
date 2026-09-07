@@ -14,66 +14,11 @@
   <link href="../css/eco-theme.css" rel="stylesheet">
   <link href="../css/case-study-format.css" rel="stylesheet">
   <style>
-    .cc-readable-copy {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .cc-page-header.cc-case-study-header p.cc-readable-copy {
-      font-size: 18px;
-      line-height: 1.75;
-      max-width: 760px;
-    }
-
-    .cc-case-study-shell .cc-eyebrow {
-      font-size: 12px;
-      letter-spacing: 0.2em;
-    }
-
-    .cc-case-study-shell .cc-case-study-copy.cc-readable-copy {
-      font-size: 16px;
-      line-height: 1.7;
-    }
-
-    .cc-footer,
-    .cc-footer ul li a,
-    .cc-footer-bottom,
-    .cc-footer-social a {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    #flue2chemResetBtn {
-      background: rgba(248, 113, 113, .1);
-      border: 1px solid rgba(248, 113, 113, .4);
-      color: #f87171;
-      border-radius: 6px;
-      padding: 9px 18px;
-      font-size: 12px;
-      cursor: pointer;
-      font-weight: 700;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      transition: all .15s;
-    }
-    #flue2chemResetBtn:hover {
-      background: rgba(248, 113, 113, .2);
-      border-color: rgba(248, 113, 113, .7);
-    }
-
-    #flue2chemFrame {
-      min-height: 1240px;
-    }
-
-    @media (max-width: 991.98px) {
-      #flue2chemFrame {
-        min-height: 1040px;
-      }
-    }
-
-    @media (max-width: 767.98px) {
-      #flue2chemFrame {
-        min-height: 860px;
-      }
+    /* Frame tuning only — everything else lives in css/case-study-format.css */
+    .cc-case-study-frame {
+      --cc-frame-h: 900px;
+      --cc-frame-h-md: 820px;
+      --cc-frame-h-sm: 720px;
     }
   </style>
   <script src="../js/analytics.js"></script>
@@ -105,7 +50,7 @@
 <div class="cc-page-header cc-case-study-header">
   <div class="container">
     <span class="cc-eyebrow cc-eyebrow-light">
-      <a href="../resources.html#case-studies" style="color:inherit;text-decoration:none;">
+      <a class="cc-case-study-back" href="../resources.html#case-studies">
         <i class="fa-solid fa-arrow-left me-1"></i>Case Studies
       </a>
     </span>
@@ -121,21 +66,23 @@
         <div>
           <h3 class="cc-case-study-title">Flue2Chem TEA + LCA Dashboard</h3>
           <p class="cc-case-study-copy cc-readable-copy mb-2">The original dashboard is framed inside a darker shell so it sits within the Clove Circle palette while preserving the source tool's contrast.</p>
-          <p class="cc-case-study-copy cc-readable-copy mb-0" style="font-size:13px;opacity:0.7;">Product: Surfactant via CO&#8322; capture &nbsp;&middot;&nbsp; Method: LCA and TEA</p>
+          <p class="cc-case-study-copy cc-case-study-meta cc-readable-copy mb-0">Product: Surfactant via CO&#8322; capture &nbsp;&middot;&nbsp; Method: LCA and TEA</p>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:180px;">
+        <div class="cc-case-study-actions">
           <a class="btn cc-btn-outline cc-btn-embed" href="../standalone/flue2chem-lca-tea.html" target="_blank" rel="noopener">
             <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
           </a>
-          <button class="cc-btn-reset" id="flue2chemResetBtn" type="button">&#8635; Reset to Defaults</button>
+          <button class="cc-btn-reset" id="caseStudyResetBtn" type="button">&#8635; Reset to Defaults</button>
         </div>
       </div>
       <iframe
-        id="flue2chemFrame"
+        id="caseStudyFrame"
         class="cc-case-study-frame"
         title="Flue2Chem LCA and TEA model"
         src="../standalone/flue2chem-lca-tea.html"
-        loading="lazy"></iframe>
+        data-autofit
+        data-reset-target="caseStudyResetBtn"
+        data-reset-message="flue2chem:reset"></iframe>
     </div>
   </div>
 </section>
@@ -188,14 +135,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/site.js"></script>
-<script>
-  (function () {
-    var frame = document.getElementById('flue2chemFrame');
-    if (!frame) return;
-    document.getElementById('flue2chemResetBtn').addEventListener('click', function () {
-      frame.contentWindow.postMessage('flue2chem:reset', '*');
-    });
-  })();
-</script>
+<script src="../js/case-study-frame.js"></script>
 </body>
 </html>

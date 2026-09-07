@@ -14,34 +14,12 @@
   <link href="../css/eco-theme.css" rel="stylesheet">
   <link href="../css/case-study-format.css" rel="stylesheet">
   <style>
-    /* Override shared min-height — JS will size the frame to its content */
-    .cc-case-study-frame { min-height: 0; }
-
-    .cc-readable-copy {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .cc-page-header.cc-case-study-header p.cc-readable-copy {
-      font-size: 18px;
-      line-height: 1.75;
-      max-width: 760px;
-    }
-
-    .cc-case-study-shell .cc-eyebrow {
-      font-size: 12px;
-      letter-spacing: 0.2em;
-    }
-
-    .cc-case-study-shell .cc-case-study-copy.cc-readable-copy {
-      font-size: 16px;
-      line-height: 1.7;
-    }
-
-    .cc-footer,
-    .cc-footer ul li a,
-    .cc-footer-bottom,
-    .cc-footer-social a {
-      color: rgba(255, 255, 255, 0.7);
+    /* Frame tuning only — everything else lives in css/case-study-format.css.
+       This dashboard reports its own height, so it needs no floor. */
+    .cc-case-study-frame {
+      --cc-frame-h: 0;
+      --cc-frame-h-md: 0;
+      --cc-frame-h-sm: 0;
     }
   </style>
   <script src="../js/analytics.js"></script>
@@ -73,7 +51,7 @@
 <div class="cc-page-header cc-case-study-header">
   <div class="container">
     <span class="cc-eyebrow cc-eyebrow-light">
-      <a href="../resources.html#case-studies" style="color:inherit;text-decoration:none;">
+      <a class="cc-case-study-back" href="../resources.html#case-studies">
         <i class="fa-solid fa-arrow-left me-1"></i>Case Studies
       </a>
     </span>
@@ -88,20 +66,24 @@
       <div class="cc-case-study-head">
         <div>
           <h3 class="cc-case-study-title">PHA Biocomposite LCA + TEA Dashboard</h3>
-          <p class="cc-case-study-copy cc-readable-copy mb-0">The original dashboard is framed inside a darker shell so it sits within the Clove Circle palette while preserving the source tool's contrast.</p>
+          <p class="cc-case-study-copy cc-readable-copy mb-2">The original dashboard is framed inside a darker shell so it sits within the Clove Circle palette while preserving the source tool's contrast.</p>
+          <p class="cc-case-study-copy cc-case-study-meta cc-readable-copy mb-0">Product: PHA biocomposite from lignocellulose &nbsp;&middot;&nbsp; Method: LCA and TEA</p>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:180px;">
+        <div class="cc-case-study-actions">
           <a class="btn cc-btn-outline cc-btn-embed" href="../standalone/PHA-from-lignocellulose-lca-tea.html" target="_blank" rel="noopener">
             <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
           </a>
-          <button class="cc-btn-reset" id="phaResetBtn" type="button">&#8635; Reset to Defaults</button>
+          <button class="cc-btn-reset" id="caseStudyResetBtn" type="button">&#8635; Reset to Defaults</button>
         </div>
       </div>
       <iframe
+        id="caseStudyFrame"
         class="cc-case-study-frame"
-        title="Original Jhuma PHA from lignocellulose model"
+        title="PHA from lignocellulose LCA and TEA model"
         src="../standalone/PHA-from-lignocellulose-lca-tea.html"
-        loading="lazy"></iframe>
+        data-autofit
+        data-reset-target="caseStudyResetBtn"
+        data-reset-message="pha:reset"></iframe>
     </div>
   </div>
 </section>
@@ -154,42 +136,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/site.js"></script>
-<script>
-  (function () {
-    var frame = document.querySelector('.cc-case-study-frame');
-    if (!frame) return;
-    function syncFrameHeight() {
-      try {
-        var doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
-        if (!doc || !doc.body || !doc.documentElement) return;
-        var height = Math.max(
-          doc.body.scrollHeight,
-          doc.documentElement.scrollHeight,
-          doc.body.offsetHeight,
-          doc.documentElement.offsetHeight
-        );
-        if (height > 100) frame.style.height = height + 'px';
-      } catch (err) {
-        // Same-origin in production, but keep the wrapper resilient if access changes.
-      }
-    }
-    frame.addEventListener('load', function () {
-      syncFrameHeight();
-      window.setTimeout(syncFrameHeight, 150);
-      window.setTimeout(syncFrameHeight, 600);
-    });
-    window.addEventListener('message', function (e) {
-      if (e.data && typeof e.data.phaHeight === 'number' && e.data.phaHeight > 100) {
-        frame.style.height = e.data.phaHeight + 'px';
-      }
-    });
-    window.addEventListener('resize', syncFrameHeight);
-    document.getElementById('phaResetBtn').addEventListener('click', function () {
-      frame.contentWindow.postMessage('pha:reset', '*');
-      window.setTimeout(syncFrameHeight, 150);
-      window.setTimeout(syncFrameHeight, 600);
-    });
-  })();
-</script>
+<script src="../js/case-study-frame.js"></script>
 </body>
 </html>
