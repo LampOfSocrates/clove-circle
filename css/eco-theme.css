@@ -260,6 +260,54 @@ img { max-width: 100%; height: auto; }
 }
 .cc-nav-calc i { margin-right: 7px; }
 
+/* ---- Resources dropdown ---- */
+.cc-navbar .cc-nav-resources::after {
+  margin-left: 6px;
+  vertical-align: 1px;
+}
+
+.cc-navbar .cc-dropdown {
+  background: rgba(244, 248, 245, 0.98);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(26, 61, 46, 0.1);
+  border-radius: var(--cc-radius);
+  box-shadow: var(--cc-shadow);
+  padding: 6px;
+  margin-top: 8px;
+  min-width: 200px;
+}
+
+.cc-navbar .cc-dropdown .dropdown-item {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--cc-ink);
+  border-radius: var(--cc-radius-sm);
+  padding: 9px 12px;
+  transition: background var(--cc-transition), color var(--cc-transition);
+}
+
+.cc-navbar .cc-dropdown .dropdown-item:hover,
+.cc-navbar .cc-dropdown .dropdown-item:focus,
+.cc-navbar .cc-dropdown .dropdown-item.active {
+  background: var(--cc-green-xlight);
+  color: var(--cc-green-mid);
+}
+
+/* Collapsed nav: the menu is already inside a stacked list, so drop the
+   floating-panel treatment and let it read as an indented sub-list. */
+@media (max-width: 991.98px) {
+  .cc-navbar .cc-dropdown {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0 0 0 12px;
+    margin-top: 0;
+  }
+}
+
 .navbar-toggler {
   border: none;
   padding: 4px;

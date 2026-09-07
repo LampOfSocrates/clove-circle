@@ -273,7 +273,7 @@ for (const c of CASES) {
 }
 
 test.describe('Resources page', () => {
-  test('has a Calculate LCA Step by Step tab alongside Case Studies', async ({ page }) => {
+  test('has an LCA Step by Step tab alongside Case Studies', async ({ page }) => {
     await page.goto(resources);
     await expect(page.locator('#case-studies-tab')).toBeVisible();
     await expect(page.locator('#step-by-step-tab')).toBeVisible();
