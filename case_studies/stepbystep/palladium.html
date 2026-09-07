@@ -49,7 +49,7 @@
       </p>
 
       <div class="cc-diagram-wrap" data-cc-diagram>
-        <svg viewBox="0 0 1120 450" role="img" aria-label="Simplified palladium bio-recovery flowsheet. Click a stream or unit to inspect it.">
+        <svg viewBox="0 0 1280 440" role="img" aria-label="Simplified palladium bio-recovery flowsheet. Click a stream or unit to inspect it.">
           <defs>
             <marker id="ccarr" viewBox="0 0 10 10" refX="9" refY="5"
                     markerWidth="5" markerHeight="5" orient="auto-start-reverse">
@@ -61,90 +61,90 @@
           <!-- ══ UNIT BLOCKS ══ -->
           <g class="cc-hit" data-hit="block-buffer" data-title="Buffer make-up"
              data-vars="tris_mm,nacl_mm">
-            <rect class="cc-hit-pad" x="186" y="26" width="178" height="108" rx="10"/>
-            <rect class="cc-blk" x="190" y="30" width="170" height="100" rx="8"/>
-            <text class="cc-blk-label" x="275" y="70" text-anchor="middle">Buffer make-up</text>
-            <text class="cc-blk-sub" x="275" y="90" text-anchor="middle">Tris-HCl + NaCl</text>
+            <rect class="cc-hit-pad" x="246" y="26" width="178" height="108" rx="10"/>
+            <rect class="cc-blk" x="250" y="30" width="170" height="100" rx="8"/>
+            <text class="cc-blk-label" x="335" y="70" text-anchor="middle">Buffer make-up</text>
+            <text class="cc-blk-sub" x="335" y="92" text-anchor="middle">Tris-HCl + NaCl</text>
           </g>
 
           <g class="cc-hit" data-hit="block-bioreactor" data-title="Bioreactor"
              data-vars="recovery,biocat_cycles">
-            <rect class="cc-hit-pad" x="386" y="196" width="178" height="72" rx="10"/>
-            <rect class="cc-blk" x="390" y="200" width="170" height="64" rx="8"/>
-            <text class="cc-blk-label" x="475" y="224" text-anchor="middle">Bioreactor</text>
-            <text class="cc-blk-sub" x="475" y="244" text-anchor="middle">Shewanella reduction</text>
+            <rect class="cc-hit-pad" x="466" y="206" width="178" height="72" rx="10"/>
+            <rect class="cc-blk" x="470" y="210" width="170" height="64" rx="8"/>
+            <text class="cc-blk-label" x="555" y="234" text-anchor="middle">Bioreactor</text>
+            <text class="cc-blk-sub" x="555" y="254" text-anchor="middle">Shewanella reduction</text>
           </g>
 
           <g class="cc-hit" data-hit="block-sep" data-title="Solid–liquid separation"
              data-vars="pd_recovered">
-            <rect class="cc-hit-pad" x="646" y="196" width="158" height="72" rx="10"/>
-            <rect class="cc-blk" x="650" y="200" width="150" height="64" rx="8"/>
-            <text class="cc-blk-label" x="725" y="224" text-anchor="middle">Centrifuge</text>
-            <text class="cc-blk-sub" x="725" y="244" text-anchor="middle">+ microfilter</text>
+            <rect class="cc-hit-pad" x="756" y="206" width="158" height="72" rx="10"/>
+            <rect class="cc-blk" x="760" y="210" width="150" height="64" rx="8"/>
+            <text class="cc-blk-label" x="835" y="234" text-anchor="middle">Centrifuge</text>
+            <text class="cc-blk-sub" x="835" y="254" text-anchor="middle">+ microfilter</text>
           </g>
 
           <g class="cc-hit" data-hit="block-calc" data-title="Calcination and refining"
              data-vars="pd_recovered">
-            <rect class="cc-hit-pad" x="886" y="196" width="158" height="72" rx="10"/>
-            <rect class="cc-blk" x="890" y="200" width="150" height="64" rx="8"/>
-            <text class="cc-blk-label" x="965" y="224" text-anchor="middle">Calcination</text>
-            <text class="cc-blk-sub" x="965" y="244" text-anchor="middle">+ Pd refining</text>
+            <rect class="cc-hit-pad" x="1006" y="206" width="158" height="72" rx="10"/>
+            <rect class="cc-blk" x="1010" y="210" width="150" height="64" rx="8"/>
+            <text class="cc-blk-label" x="1085" y="234" text-anchor="middle">Calcination</text>
+            <text class="cc-blk-sub" x="1085" y="254" text-anchor="middle">+ Pd refining</text>
           </g>
 
           <!-- ══ STREAMS ══ -->
           <g class="cc-hit" data-hit="stream-tris" data-title="Tris-HCl buffer" data-vars="tris_t">
-            <rect class="cc-hit-pad" x="28" y="36" width="158" height="46" rx="7"/>
-            <path class="cc-flow" data-flow="tris_t" d="M30 56 H186" marker-end="url(#ccarr)"/>
-            <text class="cc-stream-name" x="108" y="46" text-anchor="middle">Tris-HCl</text>
-            <text class="cc-stream-label" id="fs_tris" x="108" y="76" text-anchor="middle">—</text>
+            <rect class="cc-hit-pad" x="20" y="26" width="180" height="48" rx="7"/>
+            <path class="cc-flow" data-flow="tris_t" d="M30 56 H250" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="100" y="44" text-anchor="middle">Tris-HCl</text>
+            <text class="cc-stream-label" id="fs_tris" x="100" y="68" text-anchor="middle">—</text>
           </g>
 
           <g class="cc-hit" data-hit="stream-nacl" data-title="Sodium chloride" data-vars="nacl_t">
-            <rect class="cc-hit-pad" x="28" y="84" width="158" height="46" rx="7"/>
-            <path class="cc-flow" data-flow="nacl_t" d="M30 104 H186" marker-end="url(#ccarr)"/>
-            <text class="cc-stream-name" x="108" y="94" text-anchor="middle">NaCl</text>
-            <text class="cc-stream-label" id="fs_nacl" x="108" y="124" text-anchor="middle">—</text>
+            <rect class="cc-hit-pad" x="20" y="84" width="180" height="48" rx="7"/>
+            <path class="cc-flow" data-flow="nacl_t" d="M30 114 H250" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="100" y="102" text-anchor="middle">NaCl</text>
+            <text class="cc-stream-label" id="fs_nacl" x="100" y="126" text-anchor="middle">—</text>
           </g>
 
-          <path class="cc-flow" d="M275 130 V170 H475 V196" marker-end="url(#ccarr)"/>
+          <path class="cc-flow" d="M335 130 V170 H555 V210" marker-end="url(#ccarr)"/>
 
           <g class="cc-hit" data-hit="stream-feed" data-title="Pd-bearing leachate feed"
              data-vars="throughput,feed_pd">
-            <rect class="cc-hit-pad" x="28" y="212" width="358" height="66" rx="7"/>
-            <path class="cc-flow" data-flow="throughput" d="M30 242 H386" marker-end="url(#ccarr)"/>
-            <text class="cc-stream-name" x="200" y="228" text-anchor="middle">Pd-bearing leachate</text>
-            <text class="cc-stream-label" id="fs_feed" x="200" y="260" text-anchor="middle">—</text>
-            <text class="cc-stream-label" id="fs_pdin" x="200" y="276" text-anchor="middle">—</text>
+            <rect class="cc-hit-pad" x="20" y="196" width="420" height="90" rx="7"/>
+            <path class="cc-flow" data-flow="throughput" d="M30 234 H470" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="225" y="214" text-anchor="middle">Pd-bearing leachate</text>
+            <text class="cc-stream-label" id="fs_feed" x="225" y="254" text-anchor="middle">—</text>
+            <text class="cc-stream-label" id="fs_pdin" x="225" y="276" text-anchor="middle">—</text>
           </g>
 
           <g class="cc-hit" data-hit="stream-biocat" data-title="Biocatalyst make-up" data-vars="biocat_kg">
-            <rect class="cc-hit-pad" x="440" y="292" width="200" height="52" rx="7"/>
-            <path class="cc-flow" data-flow="biocat_kg" d="M475 340 V268" marker-end="url(#ccarr)"/>
-            <text class="cc-stream-name" x="487" y="310">Biocatalyst make-up</text>
-            <text class="cc-stream-label" id="fs_biocat" x="487" y="328">—</text>
+            <rect class="cc-hit-pad" x="575" y="300" width="210" height="52" rx="7"/>
+            <path class="cc-flow" data-flow="biocat_kg" d="M555 350 V274" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="587" y="318">Biocatalyst make-up</text>
+            <text class="cc-stream-label" id="fs_biocat" x="587" y="342">—</text>
           </g>
 
           <g class="cc-hit" data-hit="stream-loaded" data-title="Pd loaded onto biomass" data-vars="pd_recovered">
-            <rect class="cc-hit-pad" x="562" y="212" width="84" height="52" rx="7"/>
-            <path class="cc-flow" data-flow="pd_recovered" d="M560 232 H646" marker-end="url(#ccarr)"/>
-            <text class="cc-stream-name" x="603" y="222" text-anchor="middle">Pd on biomass</text>
+            <rect class="cc-hit-pad" x="650" y="196" width="100" height="40" rx="7"/>
+            <path class="cc-flow" data-flow="pd_recovered" d="M640 242 H760" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="700" y="216" text-anchor="middle">Pd on biomass</text>
           </g>
 
           <g class="cc-hit" data-hit="stream-pdlost" data-title="Palladium lost to raffinate" data-vars="pd_lost">
-            <rect class="cc-hit-pad" x="700" y="330" width="176" height="52" rx="7"/>
-            <path class="cc-flow" data-flow="pd_lost" d="M725 264 V400" marker-end="url(#ccarr)"/>
-            <text class="cc-stream-name" x="737" y="348">Raffinate — Pd lost</text>
-            <text class="cc-stream-label" id="fs_pdlost" x="737" y="366">—</text>
+            <rect class="cc-hit-pad" x="850" y="350" width="190" height="52" rx="7"/>
+            <path class="cc-flow" data-flow="pd_lost" d="M835 274 V400" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="862" y="368">Raffinate — Pd lost</text>
+            <text class="cc-stream-label" id="fs_pdlost" x="862" y="392">—</text>
           </g>
 
-          <path class="cc-flow" d="M800 232 H886" marker-end="url(#ccarr)"/>
-          <text class="cc-stream-name" x="843" y="222" text-anchor="middle">Pd concentrate</text>
+          <path class="cc-flow" d="M910 242 H1010" marker-end="url(#ccarr)"/>
+          <text class="cc-stream-name" x="960" y="222" text-anchor="middle">Pd concentrate</text>
 
           <g class="cc-hit" data-hit="stream-pd" data-title="Refined palladium product" data-vars="pd_recovered">
-            <rect class="cc-hit-pad" x="1042" y="212" width="76" height="66" rx="7"/>
-            <path class="cc-flow" data-flow="pd_recovered" d="M1040 242 H1108" marker-end="url(#ccarr)"/>
-            <text class="cc-stream-name" x="1076" y="228" text-anchor="middle">Pd</text>
-            <text class="cc-stream-label" id="fs_pd" x="1076" y="262" text-anchor="middle">—</text>
+            <rect class="cc-hit-pad" x="1170" y="212" width="100" height="62" rx="7"/>
+            <path class="cc-flow" data-flow="pd_recovered" d="M1160 242 H1258" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="1220" y="230" text-anchor="middle">Pd</text>
+            <text class="cc-stream-label" id="fs_pd" x="1220" y="262" text-anchor="middle">—</text>
           </g>
         </svg>
       </div>
