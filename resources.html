@@ -48,6 +48,11 @@
         </button>
       </li>
       <li class="nav-item" role="presentation">
+        <button class="nav-link" id="step-by-step-tab" data-bs-toggle="pill" data-bs-target="#step-by-step" type="button" role="tab" aria-controls="step-by-step" aria-selected="false">
+          <i class="fa-solid fa-list-ol me-2"></i>Calculate LCA Step by Step
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
         <a class="nav-link" href="infographics/infographics.html">
           <i class="fa-solid fa-chart-pie me-2"></i>Infographics
         </a>
@@ -175,6 +180,103 @@
                 src="standalone/palladium-biorecovery-lca-tea.html"
                 loading="lazy"
                 style="background:#f8f8f5;"></iframe>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Calculate LCA Step by Step -->
+      <div class="tab-pane fade" id="step-by-step" role="tabpanel" aria-labelledby="step-by-step-tab">
+
+        <div class="cc-card" style="padding:22px 26px;margin-bottom:22px;">
+          <h3 style="margin-top:0;">Learn the method, not just the answer</h3>
+          <p style="margin-bottom:8px;">Each case study below walks through the same eight steps &mdash;
+             the four ISO 14040 phases with the techno-economic sequence interleaved. Click any stream
+             or unit on the flowsheet to see what it is, change the inputs, then run each step yourself
+             and watch what moves downstream.</p>
+          <p style="margin-bottom:0;font-size:13px;opacity:0.75;">Goal &amp; scope &middot; Mass balance &middot;
+             Inventory &middot; Impact assessment &middot; Capital cost &middot; Operating cost &middot;
+             Profitability &middot; Interpretation</p>
+        </div>
+
+        <ul class="nav nav-pills cc-tab-nav cc-case-study-tabs mb-4" id="sbsTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="sbs-flue2chem-tab" data-bs-toggle="pill" data-bs-target="#sbs-flue2chem-pane" type="button" role="tab" aria-controls="sbs-flue2chem-pane" aria-selected="true">
+              <i class="fa-solid fa-industry me-2"></i>Flue2Chem
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sbs-palladium-tab" data-bs-toggle="pill" data-bs-target="#sbs-palladium-pane" type="button" role="tab" aria-controls="sbs-palladium-pane" aria-selected="false">
+              <i class="fa-solid fa-atom me-2"></i>Palladium Bio-Recovery
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sbs-laterite-tab" data-bs-toggle="pill" data-bs-target="#sbs-laterite-pane" type="button" role="tab" aria-controls="sbs-laterite-pane" aria-selected="false">
+              <i class="fa-solid fa-mountain me-2"></i>Laterite to Metal
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="sbsTabContent">
+
+          <div class="tab-pane fade show active" id="sbs-flue2chem-pane" role="tabpanel" aria-labelledby="sbs-flue2chem-tab">
+            <div class="cc-card cc-case-study-shell">
+              <div class="cc-case-study-head">
+                <div>
+                  <h3 class="cc-case-study-title">Flue2Chem &mdash; CO&#8322; capture to surfactant</h3>
+                  <p class="cc-case-study-copy mb-0">Turning a flue gas stream into a surfactant that today comes from fossil feedstock. Functional unit: 1 kg surfactant.</p>
+                </div>
+                <a class="btn cc-btn-outline cc-btn-embed" href="case_studies/stepbystep/flue2chem.html" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
+                </a>
+              </div>
+              <iframe
+                class="cc-case-study-frame"
+                title="Flue2Chem step-by-step LCA and TEA"
+                src="case_studies/stepbystep/flue2chem.html"
+                loading="lazy"
+                style="background:#f4f8f5;min-height:1900px;"></iframe>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="sbs-palladium-pane" role="tabpanel" aria-labelledby="sbs-palladium-tab">
+            <div class="cc-card cc-case-study-shell">
+              <div class="cc-case-study-head">
+                <div>
+                  <h3 class="cc-case-study-title">Palladium bio-recovery</h3>
+                  <p class="cc-case-study-copy mb-0">Recovering a critical metal from dilute solution using a bacterial biocatalyst. Functional unit: 1 kg Pd recovered.</p>
+                </div>
+                <a class="btn cc-btn-outline cc-btn-embed" href="case_studies/stepbystep/palladium.html" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
+                </a>
+              </div>
+              <iframe
+                class="cc-case-study-frame"
+                title="Palladium bio-recovery step-by-step LCA and TEA"
+                src="case_studies/stepbystep/palladium.html"
+                loading="lazy"
+                style="background:#f4f8f5;min-height:1900px;"></iframe>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="sbs-laterite-pane" role="tabpanel" aria-labelledby="sbs-laterite-tab">
+            <div class="cc-card cc-case-study-shell">
+              <div class="cc-case-study-head">
+                <div>
+                  <h3 class="cc-case-study-title">Laterite to metal extraction</h3>
+                  <p class="cc-case-study-copy mb-0">Winning nickel, cobalt and manganese from low-grade laterite ore by bioleaching. Functional unit: 1 kg recovered metal.</p>
+                </div>
+                <a class="btn cc-btn-outline cc-btn-embed" href="case_studies/stepbystep/laterite.html" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
+                </a>
+              </div>
+              <iframe
+                class="cc-case-study-frame"
+                title="Laterite step-by-step LCA and TEA"
+                src="case_studies/stepbystep/laterite.html"
+                loading="lazy"
+                style="background:#f4f8f5;min-height:1900px;"></iframe>
             </div>
           </div>
 

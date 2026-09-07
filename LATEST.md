@@ -15,11 +15,11 @@ Live at clovecircle.com (custom domain via CNAME), likely GitHub Pages given `.n
 - GitHub Actions: `tests.yml` on every push/PR, `deploy-pages.yml` gates the Pages deploy on it
 
 ## Recently tried
+- 2026-09-07: Built "Calculate LCA Step by Step" — click a stream/block on a drafted SVG flowsheet to edit it, press "Do mass balance" etc. per stage; editing marks downstream stale. All 3 models reproduce their standalone dashboards exactly (verified against live KPIs). Existing case study files untouched.
 - 2026-09-07: Added tests/case_studies baseline calc tests (26 scenarios, 4 dashboards) + CI; mutation-verified they catch formula drift and ignore restyling
 - 2026-09-07: Fixed hardcoded `D:\S\...` paths in tests/*.py; they now run but 5 of 6 FAIL on stale HTML assertions — left out of the CI gate
 - 2026-09-07: Added Palladium bio-recovery case study (4th tab in resources.html + case_studies wrapper); source copied from jhumasadhukhan/Palladium-biorecovery-LCA-TEA, self-contained, no reset control so wrapper omits the reset button
 - 2026-08-20: Resources nav link became a "Try our sample calculators" pill button after Services; plain Resources link removed
-- 2026-08-20: Fixed playwright.config.js — `browser: 'chromium'` in `use` made the whole suite error out before running
 
 ## Next
 - Decide the fate of the stale markup tests (tests/*.py, tests/site.test.js): resources.html now links `standalone/*` directly, so the `case_studies/wrapper-*.html` pages look orphaned

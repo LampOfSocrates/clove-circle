@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Learn LCA and TEA step by step using the palladium bio-recovery case study.">
+<title>Calculate LCA Step by Step | Palladium bio-recovery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="../../css/cc-model.css" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f4f8f5; padding: 22px; }
+  @media (max-width: 640px) { body { padding: 12px; } }
+</style>
+</head>
+<body>
+
+<div class="cc-sbs" id="sbs">
+
+  <div class="cc-sbs-header">
+    <div class="cc-sbs-headrow">
+      <div>
+        <span class="cc-sbs-eyebrow">Calculate LCA step by step</span>
+        <h2>Palladium bio-recovery</h2>
+        <p>Work through a full life cycle assessment and techno-economic analysis one step at a
+           time. Click anything on the flowsheet to see what it is or to change it, then run each
+           step yourself and watch what moves.</p>
+      </div>
+      <div class="cc-sbs-chrome">
+        <button type="button" data-cc-solve-all>Run all steps</button>
+        <button type="button" data-cc-reset>Reset to published case</button>
+        <a href="../../standalone/palladium-biorecovery-lca-tea.html" target="_blank" rel="noopener">Full dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="cc-kpis" data-cc-kpis></div>
+
+  <div class="cc-sbs-grid">
+
+    <div class="cc-sbs-panel">
+      <span class="cc-slot-label">The eight steps</span>
+      <div class="cc-rail" data-cc-rail></div>
+    </div>
+
+    <div>
+      <p class="cc-diagram-hint">
+        <span><span class="cc-legend-swatch" style="background:#b57a17"></span><b>Amber</b> — you set this</span>
+        <span><span class="cc-legend-swatch" style="background:#8aa398"></span><b>Grey</b> — calculated; click to see the formula</span>
+        <span>Dashed means stale — re-run the step.</span>
+      </p>
+
+      <div class="cc-diagram-wrap" data-cc-diagram>
+        <svg viewBox="0 0 1120 450" role="img" aria-label="Simplified palladium bio-recovery flowsheet. Click a stream or unit to inspect it.">
+          <defs>
+            <marker id="ccarr" viewBox="0 0 10 10" refX="9" refY="5"
+                    markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M1 1 L9 5 L1 9" fill="none" stroke="#8aa398" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+
+          <!-- ══ UNIT BLOCKS ══ -->
+          <g class="cc-hit" data-hit="block-buffer" data-title="Buffer make-up"
+             data-vars="tris_mm,nacl_mm">
+            <rect class="cc-hit-pad" x="186" y="26" width="178" height="108" rx="10"/>
+            <rect class="cc-blk" x="190" y="30" width="170" height="100" rx="8"/>
+            <text class="cc-blk-label" x="275" y="70" text-anchor="middle">Buffer make-up</text>
+            <text class="cc-blk-sub" x="275" y="90" text-anchor="middle">Tris-HCl + NaCl</text>
+          </g>
+
+          <g class="cc-hit" data-hit="block-bioreactor" data-title="Bioreactor"
+             data-vars="recovery,biocat_cycles">
+            <rect class="cc-hit-pad" x="386" y="196" width="178" height="72" rx="10"/>
+            <rect class="cc-blk" x="390" y="200" width="170" height="64" rx="8"/>
+            <text class="cc-blk-label" x="475" y="224" text-anchor="middle">Bioreactor</text>
+            <text class="cc-blk-sub" x="475" y="244" text-anchor="middle">Shewanella reduction</text>
+          </g>
+
+          <g class="cc-hit" data-hit="block-sep" data-title="Solid–liquid separation"
+             data-vars="pd_recovered">
+            <rect class="cc-hit-pad" x="646" y="196" width="158" height="72" rx="10"/>
+            <rect class="cc-blk" x="650" y="200" width="150" height="64" rx="8"/>
+            <text class="cc-blk-label" x="725" y="224" text-anchor="middle">Centrifuge</text>
+            <text class="cc-blk-sub" x="725" y="244" text-anchor="middle">+ microfilter</text>
+          </g>
+
+          <g class="cc-hit" data-hit="block-calc" data-title="Calcination and refining"
+             data-vars="pd_recovered">
+            <rect class="cc-hit-pad" x="886" y="196" width="158" height="72" rx="10"/>
+            <rect class="cc-blk" x="890" y="200" width="150" height="64" rx="8"/>
+            <text class="cc-blk-label" x="965" y="224" text-anchor="middle">Calcination</text>
+            <text class="cc-blk-sub" x="965" y="244" text-anchor="middle">+ Pd refining</text>
+          </g>
+
+          <!-- ══ STREAMS ══ -->
+          <g class="cc-hit" data-hit="stream-tris" data-title="Tris-HCl buffer" data-vars="tris_t">
+            <rect class="cc-hit-pad" x="28" y="36" width="158" height="46" rx="7"/>
+            <path class="cc-flow" data-flow="tris_t" d="M30 56 H186" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="108" y="46" text-anchor="middle">Tris-HCl</text>
+            <text class="cc-stream-label" id="fs_tris" x="108" y="76" text-anchor="middle">—</text>
+          </g>
+
+          <g class="cc-hit" data-hit="stream-nacl" data-title="Sodium chloride" data-vars="nacl_t">
+            <rect class="cc-hit-pad" x="28" y="84" width="158" height="46" rx="7"/>
+            <path class="cc-flow" data-flow="nacl_t" d="M30 104 H186" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="108" y="94" text-anchor="middle">NaCl</text>
+            <text class="cc-stream-label" id="fs_nacl" x="108" y="124" text-anchor="middle">—</text>
+          </g>
+
+          <path class="cc-flow" d="M275 130 V170 H475 V196" marker-end="url(#ccarr)"/>
+
+          <g class="cc-hit" data-hit="stream-feed" data-title="Pd-bearing leachate feed"
+             data-vars="throughput,feed_pd">
+            <rect class="cc-hit-pad" x="28" y="212" width="358" height="66" rx="7"/>
+            <path class="cc-flow" data-flow="throughput" d="M30 242 H386" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="200" y="228" text-anchor="middle">Pd-bearing leachate</text>
+            <text class="cc-stream-label" id="fs_feed" x="200" y="260" text-anchor="middle">—</text>
+            <text class="cc-stream-label" id="fs_pdin" x="200" y="276" text-anchor="middle">—</text>
+          </g>
+
+          <g class="cc-hit" data-hit="stream-biocat" data-title="Biocatalyst make-up" data-vars="biocat_kg">
+            <rect class="cc-hit-pad" x="440" y="292" width="200" height="52" rx="7"/>
+            <path class="cc-flow" data-flow="biocat_kg" d="M475 340 V268" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="487" y="310">Biocatalyst make-up</text>
+            <text class="cc-stream-label" id="fs_biocat" x="487" y="328">—</text>
+          </g>
+
+          <g class="cc-hit" data-hit="stream-loaded" data-title="Pd loaded onto biomass" data-vars="pd_recovered">
+            <rect class="cc-hit-pad" x="562" y="212" width="84" height="52" rx="7"/>
+            <path class="cc-flow" data-flow="pd_recovered" d="M560 232 H646" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="603" y="222" text-anchor="middle">Pd on biomass</text>
+          </g>
+
+          <g class="cc-hit" data-hit="stream-pdlost" data-title="Palladium lost to raffinate" data-vars="pd_lost">
+            <rect class="cc-hit-pad" x="700" y="330" width="176" height="52" rx="7"/>
+            <path class="cc-flow" data-flow="pd_lost" d="M725 264 V400" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="737" y="348">Raffinate — Pd lost</text>
+            <text class="cc-stream-label" id="fs_pdlost" x="737" y="366">—</text>
+          </g>
+
+          <path class="cc-flow" d="M800 232 H886" marker-end="url(#ccarr)"/>
+          <text class="cc-stream-name" x="843" y="222" text-anchor="middle">Pd concentrate</text>
+
+          <g class="cc-hit" data-hit="stream-pd" data-title="Refined palladium product" data-vars="pd_recovered">
+            <rect class="cc-hit-pad" x="1042" y="212" width="76" height="66" rx="7"/>
+            <path class="cc-flow" data-flow="pd_recovered" d="M1040 242 H1108" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="1076" y="228" text-anchor="middle">Pd</text>
+            <text class="cc-stream-label" id="fs_pd" x="1076" y="262" text-anchor="middle">—</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="cc-sbs-panel" data-cc-card></div>
+    </div>
+
+    <div>
+      <div class="cc-sbs-panel" style="margin-bottom:16px;" data-cc-fields></div>
+      <div class="cc-sbs-panel" data-cc-inspector></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../../js/cc-model/units.js"></script>
+<script src="../../js/cc-model/engine.js"></script>
+<script src="../../js/cc-model/diagram.js"></script>
+<script src="../../js/cc-model/inspector.js"></script>
+<script src="../../js/cc-model/steps.js"></script>
+<script src="../models/palladium.model.js"></script>
+<script>
+  new CCSteps({ root: document.getElementById('sbs'), model: CC_MODELS.palladium });
+</script>
+</body>
+</html>
