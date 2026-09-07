@@ -24,12 +24,12 @@
       units: { 'kg/h': 1, 't/h': 1000, 't/d': 1000 / 24, 'g/h': 0.001 }
     },
     volume_flow: {
-      canonical: 'm3/y',
-      units: { 'm3/y': 1, 'L/y': 0.001, 'ML/y': 1000 }
+      canonical: 'm³/y',
+      units: { 'm³/y': 1, 'L/y': 0.001, 'ML/y': 1000 }
     },
     volume_intensity: {
-      canonical: 'm3/kg',
-      units: { 'm3/kg': 1, 'L/kg': 0.001 }
+      canonical: 'm³/kg',
+      units: { 'm³/kg': 1, 'L/kg': 0.001 }
     },
     mass_intensity: {
       canonical: 'kg/kg',

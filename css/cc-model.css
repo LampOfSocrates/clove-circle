@@ -251,8 +251,11 @@
 .cc-diagram-wrap {
   background: var(--sbs-wash); border: 1px solid var(--sbs-line);
   border-radius: 12px; padding: 12px; margin-bottom: 18px; overflow-x: auto;
+  /* Half width: the flowsheet is a reference, not the main event. */
+  max-width: 50%;
 }
-.cc-diagram-wrap svg { display: block; width: 100%; min-width: 640px; height: auto; }
+@media (max-width: 1100px) { .cc-diagram-wrap { max-width: 100%; } }
+.cc-diagram-wrap svg { display: block; width: 100%; min-width: 0; height: auto; }
 .cc-diagram-hint {
   font-size: 12px; color: var(--sbs-muted);
   margin: 0 0 10px; display: flex; gap: 16px; flex-wrap: wrap;
@@ -264,14 +267,22 @@
 }
 
 .cc-blk { fill: #fff; stroke: var(--sbs-green); stroke-width: 1.5; }
-.cc-blk-label { font: 600 13px Inter, system-ui, sans-serif; fill: var(--sbs-ink); }
-.cc-blk-sub { font: 400 10.5px Inter, system-ui, sans-serif; fill: var(--sbs-muted); }
+/* Sized in viewBox units. The sheet renders at about half scale, so these are
+   roughly 1.8x what they would be at 1:1 to keep the text legible. */
+.cc-blk-label { font: 600 23px Inter, system-ui, sans-serif; fill: var(--sbs-ink); }
+.cc-blk-sub { font: 400 19px Inter, system-ui, sans-serif; fill: var(--sbs-muted); }
 .cc-flow { fill: none; stroke: #8aa398; stroke-width: 2; stroke-linejoin: round; }
 .cc-flow.is-stale { stroke-dasharray: 5 4; opacity: .45; }
-.cc-stream-label {
-  font: 600 11px Inter, system-ui, sans-serif; fill: var(--sbs-ink);
+/* Flow arrows are drawn thick in proportion to their mass flow, so labels get a
+   halo in the sheet's own background colour to stay readable over them. */
+.cc-stream-label, .cc-stream-name {
+  paint-order: stroke fill;
+  stroke: var(--sbs-wash); stroke-width: 5px; stroke-linejoin: round;
 }
-.cc-stream-name { font: 400 10px Inter, system-ui, sans-serif; fill: var(--sbs-muted); }
+.cc-stream-label {
+  font: 600 20px Inter, system-ui, sans-serif; fill: var(--sbs-ink);
+}
+.cc-stream-name { font: 400 18px Inter, system-ui, sans-serif; fill: var(--sbs-muted); }
 .cc-stream-label.is-stale { fill: #9aa8a0; }
 .cc-stream-label.is-changed { fill: var(--sbs-amber); }
 

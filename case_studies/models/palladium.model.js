@@ -29,7 +29,7 @@
 
   /* -- Stage 1: mass balance ------------------------------------------- */
   input('throughput', {
-    label: 'Leachate throughput', stage: 'mass', dim: 'volume_flow', unit: 'm3/y',
+    label: 'Leachate throughput', stage: 'mass', dim: 'volume_flow', unit: 'm³/y',
     default: 10000, range: [1000, 100000], svgId: 'fs_feed', hit: 'stream-feed',
     source: 'Volume of Pd-bearing solution treated per year - spent catalyst leachate or e-waste liquor.'
   });
@@ -108,7 +108,7 @@
     fn: function (v) { return v.nacl_t * 1000 / v.pd_recovered; }
   });
   computed('water_per_kg', {
-    label: 'Process water per kg Pd', stage: 'lci', dim: 'volume_intensity', unit: 'm3/kg',
+    label: 'Process water per kg Pd', stage: 'lci', dim: 'volume_intensity', unit: 'm³/kg',
     deps: ['throughput', 'pd_recovered'], expr: 'throughput ÷ pd_recovered',
     fn: function (v) { return v.throughput / v.pd_recovered; }
   });

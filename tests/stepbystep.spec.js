@@ -103,6 +103,97 @@ for (const c of CASES) {
       expect(rail.height).toBeLessThan(90);
     });
 
+    test('the flowsheet sits at half the column width', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await page.goto(page_(c.file));
+      const pct = await page.evaluate(() => {
+        const wrap = document.querySelector('[data-cc-diagram]');
+        return wrap.getBoundingClientRect().width / wrap.parentElement.clientWidth;
+      });
+      expect(pct).toBeGreaterThan(0.4);
+      expect(pct).toBeLessThanOrEqual(0.51);
+    });
+
+    test('diagram text stays legible at that size', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await page.goto(page_(c.file));
+      const px = await page.evaluate(() => {
+        const svg = document.querySelector('[data-cc-diagram] svg');
+        return {
+          block: svg.querySelector('.cc-blk-label').getBoundingClientRect().height,
+          stream: svg.querySelector('.cc-stream-label').getBoundingClientRect().height
+        };
+      });
+      // Rendered, not viewBox, size: the sheet is drawn at about half scale.
+      expect(px.block).toBeGreaterThanOrEqual(11);
+      expect(px.stream).toBeGreaterThanOrEqual(9);
+    });
+
+    test('no rectangles or labels overlap on the flowsheet', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await page.goto(page_(c.file));
+      // Solve first, so labels carry real values rather than the placeholder dash.
+      await page.locator('[data-cc-solve-all]').click();
+
+      const bad = await page.evaluate(() => {
+        const svg = document.querySelector('[data-cc-diagram] svg');
+        const items = [];
+        svg.querySelectorAll('rect, text').forEach(el => {
+          const g = el.closest('.cc-hit');
+          const bb = el.getBBox();
+          if (!bb.width || !bb.height) return;
+          items.push({
+            kind: el.tagName.toLowerCase(), cls: el.getAttribute('class') || '',
+            group: g ? g.getAttribute('data-hit') : null,
+            text: el.tagName.toLowerCase() === 'text' ? el.textContent.trim().slice(0, 22) : '',
+            x: bb.x, y: bb.y, w: bb.width, h: bb.height
+          });
+        });
+        const ov = (a, c) => {
+          const ox = Math.min(a.x + a.w, c.x + c.w) - Math.max(a.x, c.x);
+          const oy = Math.min(a.y + a.h, c.y + c.h) - Math.max(a.y, c.y);
+          return ox > 1 && oy > 1;
+        };
+        const pad = x => x.cls.includes('cc-hit-pad');
+        const blk = x => x.cls.includes('cc-blk') && x.kind === 'rect';
+        const txt = x => x.kind === 'text';
+        const out = [];
+        for (let i = 0; i < items.length; i++) {
+          for (let j = i + 1; j < items.length; j++) {
+            const a = items[i], c = items[j];
+            if (a.group && c.group && a.group === c.group) continue;
+            const interesting = (pad(a) && blk(c)) || (blk(a) && pad(c)) || (pad(a) && pad(c)) ||
+              (txt(a) && blk(c)) || (blk(a) && txt(c)) || (txt(a) && txt(c));
+            if (interesting && ov(a, c)) {
+              out.push((a.group || '-') + ':' + (a.text || a.cls) +
+                ' >< ' + (c.group || '-') + ':' + (c.text || c.cls));
+            }
+          }
+        }
+        return out;
+      });
+      expect(bad).toEqual([]);
+    });
+
+    test('nothing is drawn outside the viewBox', async ({ page }) => {
+      await page.goto(page_(c.file));
+      await page.locator('[data-cc-solve-all]').click();
+      const outside = await page.evaluate(() => {
+        const svg = document.querySelector('[data-cc-diagram] svg');
+        const vb = svg.viewBox.baseVal;
+        const out = [];
+        svg.querySelectorAll('rect, text').forEach(el => {
+          const b = el.getBBox();
+          if (!b.width || !b.height) return;
+          if (b.x < -1 || b.y < -1 || b.x + b.w > vb.width + 1 || b.y + b.height > vb.height + 1) {
+            out.push(el.textContent.trim().slice(0, 20) || el.getAttribute('class'));
+          }
+        });
+        return out;
+      });
+      expect(outside).toEqual([]);
+    });
+
     test('the flowsheet is not cut off at desktop width', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
       await page.goto(page_(c.file));
@@ -218,7 +309,7 @@ test.describe('Resources page', () => {
     await expect(frame.locator('.cc-card-try')).toBeVisible();
   });
 
-  test('uses the full page width for the flowsheet', async ({ page }) => {
+  test('the step-by-step pane breaks out to full page width', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1000 });
     await page.goto(resources);
     await page.click('#step-by-step-tab');
