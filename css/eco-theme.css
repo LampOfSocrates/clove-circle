@@ -194,8 +194,24 @@ img { max-width: 100%; height: auto; }
   box-shadow: 0 2px 24px rgba(26, 61, 46, 0.1);
 }
 
+.cc-navbar .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .cc-navbar .navbar-brand img {
   height: 73px;
+}
+
+.cc-brand-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--cc-green-darkest);
+  white-space: nowrap;
 }
 
 .cc-navbar .nav-link {
@@ -1236,4 +1252,14 @@ img { max-width: 100%; height: auto; }
     text-align: center;
   }
   .cc-footer-social a { margin: 0 8px; }
+
+  /* Keep the wordmark next to the mark without crowding the toggler */
+  .cc-navbar .navbar-brand { gap: 10px; }
+  .cc-navbar .navbar-brand img { height: 52px; }
+  .cc-brand-name { font-size: 20px; }
+}
+
+@media (max-width: 400px) {
+  .cc-navbar .navbar-brand img { height: 44px; }
+  .cc-brand-name { font-size: 17px; }
 }
