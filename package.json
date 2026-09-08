@@ -13,7 +13,7 @@
     "test:case-studies": "playwright test tests/case_studies",
     "test:case-studies:update": "node tests/case_studies/update-baselines.js",
     "test:legacy-markup": "node tests/site.test.js",
-    "test:lcagraph": "cd lcagraph && node --test \"tests/*.test.js\""
+    "test:lcagraph": "cd lcagraph && node --test"
   },
   "repository": {
     "type": "git",
