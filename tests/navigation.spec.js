@@ -44,10 +44,11 @@ function linksFrom(page) {
     .filter((t) => PAGES.includes(t));
 }
 
-// The wrappers are reachable only by URL: resources.html embeds the standalone
-// dashboards directly rather than linking these. Listed so the reachability
-// assertion below stays honest about what is actually orphaned.
-const KNOWN_ORPHANS = PAGES.filter((p) => /wrapper-.*\.html$/.test(p));
+// Nothing on the site should be reachable by URL alone. The four case-study
+// wrappers used to be, and were deleted rather than linked: resources.html
+// already frames the same dashboards, and two routes to one thing is how the
+// pages drifted apart in the first place.
+const KNOWN_ORPHANS = [];
 
 test.describe('site navigation', () => {
   test('every internal link points at a file that exists', () => {
@@ -64,7 +65,7 @@ test.describe('site navigation', () => {
     expect(broken).toEqual([]);
   });
 
-  test('every page except the known orphans is reachable from the homepage', () => {
+  test('every page is reachable from the homepage', () => {
     const seen = new Set(['index.html']);
     const queue = ['index.html'];
     while (queue.length) {

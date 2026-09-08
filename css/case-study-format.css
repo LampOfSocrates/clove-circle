@@ -1,28 +1,12 @@
-/* Shared styling for embedded case-study wrappers.
+/* Shell for a dashboard embedded in the site.
  *
- * All four wrappers are the same page with a different dashboard in the frame,
- * so everything visual lives here. A wrapper's only permitted local styling is
- * the frame-tuning custom properties listed under "Per-wrapper tuning" below —
- * anything else belongs in this file. */
-
-.cc-page-header.cc-case-study-header p {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.cc-page-header.cc-case-study-header p.cc-readable-copy {
-  font-size: 18px;
-  line-height: 1.75;
-  max-width: 760px;
-}
-
-.cc-readable-copy {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.cc-case-study-section {
-  background:
-    linear-gradient(180deg, rgba(212, 237, 223, 0.38) 0%, rgba(244, 248, 245, 0.96) 100%);
-}
+ * Every framed dashboard on resources.html — the case studies, the step-by-step
+ * pages, the LCA Graph app — is the same dark shell with a different thing in
+ * the frame, so everything visual lives here rather than in the page.
+ *
+ * This file once also served four standalone wrapper pages, one per case study.
+ * They were deleted: resources.html already framed the same dashboards, and two
+ * routes to one thing is how the pages drifted apart. */
 
 .cc-case-study-shell {
   background: linear-gradient(180deg, #13211a 0%, #101514 100%);
@@ -58,39 +42,11 @@
   color: rgba(255, 255, 255, 0.72);
 }
 
-.cc-case-study-shell .cc-case-study-copy.cc-readable-copy {
-  font-size: 16px;
-  line-height: 1.7;
-}
-
-/* The "Product · Method · Functional unit" line under the dashboard title. */
-.cc-case-study-shell .cc-case-study-meta {
-  font-size: 13px;
-  opacity: 0.7;
-}
-
 .cc-footer,
 .cc-footer ul li a,
 .cc-footer-bottom,
 .cc-footer-social a {
   color: rgba(255, 255, 255, 0.7);
-}
-
-/* Back-to-case-studies link inside the header eyebrow. */
-.cc-case-study-back,
-.cc-case-study-back:hover,
-.cc-case-study-back:focus {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Standalone / reset buttons, stacked to the right of the dashboard title. */
-.cc-case-study-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex-shrink: 0;
-  min-width: 180px;
 }
 
 .cc-btn-embed {
@@ -105,36 +61,11 @@
   color: var(--cc-ink);
 }
 
-.cc-btn-reset {
-  display: block;
-  width: 100%;
-  padding: 9px 16px;
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.45);
-  border-radius: var(--cc-radius);
-  color: #f87171;
-  font-family: var(--cc-mono, 'IBM Plex Mono', monospace);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-  text-align: center;
-}
-
-.cc-btn-reset:hover,
-.cc-btn-reset:focus {
-  background: rgba(248, 113, 113, 0.18);
-  border-color: rgba(248, 113, 113, 0.75);
-}
-
 /* ---- Frame ----
-   Per-wrapper tuning: set --cc-frame-h / --cc-frame-h-md / --cc-frame-h-sm on
-   the iframe for a dashboard whose natural height is known, and --cc-frame-bg
-   for one with a light palette of its own. These heights are a FLOOR — the
-   shared auto-fit script only ever grows the frame past them. A wrapper whose
-   dashboard sizes itself sets them to 0. */
+   Per-embed tuning: set --cc-frame-h / --cc-frame-h-md / --cc-frame-h-sm on the
+   iframe for a dashboard whose natural height is known, and --cc-frame-bg for
+   one with a light palette of its own. A dashboard that reports its own height
+   to the host page sets them to 0 and is sized from that message instead. */
 .cc-case-study-frame {
   width: 100%;
   min-height: var(--cc-frame-h, 1600px);

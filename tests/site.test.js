@@ -35,16 +35,6 @@ assert.doesNotMatch(
   /case_studies\/case-study-laterite-lca-tea\.html/,
   'resources page should not link to the removed laterite case study'
 );
-assert.match(
-  resourcesHtml,
-  /case_studies\/wrapper-laterite-lca-tea\.html/,
-  'resources page should link to the original Jhuma case study'
-);
-assert.match(
-  resourcesHtml,
-  /case_studies\/wrapper-pha-lca-tea\.html/,
-  'resources page should link to the original Jhuma PHA case study'
-);
 assert.doesNotMatch(
   resourcesHtml,
   /Laterite NHM Processing/i,
@@ -78,65 +68,30 @@ assert.ok(
   'interactive laterite script should be removed'
 );
 
-const jhumaCaseStudyPath = path.join(
-  __dirname,
-  '..',
-  'case_studies',
-  'wrapper-laterite-lca-tea.html'
-);
-assert.ok(
-  fs.existsSync(jhumaCaseStudyPath),
-  'original Jhuma case study wrapper page should exist'
-);
+/* The four case-study wrapper pages were deleted: resources.html frames the
+   same dashboards itself, so the wrappers were a second route to one thing and
+   nothing linked them. Assert they are gone rather than that they are correct. */
+for (const gone of [
+  'wrapper-laterite-lca-tea.html',
+  'wrapper-pha-lca-tea.html',
+  'wrapper-flue2chem-lca-tea.html',
+  'wrapper-palladium-lca-tea.html',
+]) {
+  assert.ok(
+    !fs.existsSync(path.join(__dirname, '..', 'case_studies', gone)),
+    `${gone} should be gone; resources.html frames the dashboard instead`
+  );
+}
 
-const jhumaCaseStudyHtml = fs.readFileSync(jhumaCaseStudyPath, 'utf8');
 assert.match(
-  jhumaCaseStudyHtml,
-  /Clove Circle \| Laterite to Metal Extraction/i,
-  'original Jhuma wrapper should use a case-study page title'
-);
-assert.match(
-  jhumaCaseStudyHtml,
-  /href="\.\.\/resources\.html"/,
-  'original Jhuma wrapper should link back to resources'
-);
-assert.match(
-  jhumaCaseStudyHtml,
+  resourcesHtml,
   /standalone\/laterite-lca-tea\.html/,
-  'original Jhuma wrapper should embed or reference the source model'
+  'resources page should frame the laterite dashboard directly'
 );
 assert.match(
-  jhumaCaseStudyHtml,
-  /cc-page-header/,
-  'original Jhuma wrapper should use the site page header shell'
-);
-
-const jhumaPhaCaseStudyPath = path.join(
-  __dirname,
-  '..',
-  'case_studies',
-  'wrapper-pha-lca-tea.html'
-);
-assert.ok(
-  fs.existsSync(jhumaPhaCaseStudyPath),
-  'original Jhuma PHA wrapper page should exist'
-);
-
-const jhumaPhaCaseStudyHtml = fs.readFileSync(jhumaPhaCaseStudyPath, 'utf8');
-assert.match(
-  jhumaPhaCaseStudyHtml,
-  /Clove Circle \| PHA from Lignocellulose/i,
-  'original Jhuma PHA wrapper should use a case-study page title'
-);
-assert.match(
-  jhumaPhaCaseStudyHtml,
-  /href="\.\.\/resources\.html"/,
-  'original Jhuma PHA wrapper should link back to resources'
-);
-assert.match(
-  jhumaPhaCaseStudyHtml,
+  resourcesHtml,
   /standalone\/PHA-from-lignocellulose-lca-tea\.html/,
-  'original Jhuma PHA wrapper should embed or reference the source model'
+  'resources page should frame the PHA dashboard directly'
 );
 
 console.log('site domain tests passed');
