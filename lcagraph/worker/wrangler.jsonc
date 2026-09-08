@@ -1,0 +1,25 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "lcagraph-beta",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-01",
+  "observability": { "enabled": true },
+  "workers_dev": true,
+  "preview_urls": false,
+
+  // Non-secret settings. Secrets (OPENROUTER_API_KEY, BETA_MASTER_CODE) are set with
+  // `wrangler secret put` and never appear here or in git.
+  "vars": {
+    "ALLOWED_ORIGINS": "https://clovecircle.com,https://www.clovecircle.com,http://127.0.0.1:8123,http://localhost:8123",
+    "MODEL": "anthropic/claude-sonnet-4",
+    "DAILY_CAP_PER_CODE": "40",
+    "DAILY_CAP_GLOBAL": "200",
+    "MAX_PROMPT_CHARS": "20000"
+  },
+
+  // Beta access codes and daily usage counters. Create with
+  // `wrangler kv namespace create BETA` and paste the id here.
+  "kv_namespaces": [
+    { "binding": "BETA", "id": "1c2d2dcf10d445aeb0f6e13afe604556" }
+  ]
+}

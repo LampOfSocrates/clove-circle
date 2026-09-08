@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>LCA Graph Beta | Clove Circle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f4f8f5; padding: 22px; }
+  .lg-gate { max-width: 720px; margin: 40px auto; }
+  .lg-gate .lg-panel { padding: 26px 28px; }
+  .lg-gate h1 { font-size: 30px; margin: 6px 0 10px; }
+  .lg-gate p { font-size: 14.5px; margin: 0 0 12px; }
+  .lg-gate ul { font-size: 14px; padding-left: 20px; margin: 0 0 14px; }
+  .lg-gate li { margin: 4px 0; }
+  .lg-pill { display: inline-block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: #b57a17; background: #fbeed3; border: 1px solid #e2b95c; border-radius: 999px; padding: 2px 10px; vertical-align: middle; margin-left: 8px; }
+  .lg-gate form { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 6px; }
+  .lg-gate input[type=text] { flex: 1; min-width: 220px; padding: 11px 13px; border: 1px solid #d3ddd6; border-radius: 8px; font: inherit; letter-spacing: .04em; }
+  .lg-gate button { background: #3d8b68; color: #fff; border: 0; border-radius: 8px; padding: 11px 18px; font: 600 13px Inter, system-ui, sans-serif; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; }
+  .lg-gate button[disabled] { background: #d3ddd6; color: #5e7a6a; cursor: wait; }
+  .lg-gate .lg-status { min-height: 20px; }
+  .lg-gate .lg-mini a { color: #3d8b68; }
+  .lg-hello textarea { width: 100%; min-height: 90px; padding: 10px 12px; border: 1px solid #d3ddd6; border-radius: 8px; font: inherit; }
+  .lg-hello .lg-reply { white-space: pre-wrap; background: #f4f8f5; border-radius: 8px; padding: 12px 14px; font-size: 14px; margin-top: 10px; min-height: 40px; }
+  .lg-banner { background: #fbeed3; border: 1px solid #e2b95c; border-radius: 10px; padding: 8px 14px; font-size: 13px; margin-bottom: 14px; }
+  .lg-banner b { color: #b57a17; }
+  .lg-signed { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: #5e7a6a; margin-bottom: 8px; }
+  .lg-signed button { background: #fff; color: #3d8b68; border: 1px solid #3d8b68; padding: 6px 12px; text-transform: none; letter-spacing: 0; font-size: 12.5px; }
+
+  /* Every menu links this page with target="_blank", so the tab has no history
+     to go back through and the page needs its own way out. */
+  body.in-frame .cc-back-home { display: none; }
+  @media print { .cc-back-home { display: none; } }
+</style>
+</head>
+<body>
+<div class="lg lg-gate" id="gate">
+
+  <p class="lg-mini"><a class="cc-back-home" href="../../resources.html#lca-graph">&larr; Clove Circle</a></p>
+
+  <div class="lg-panel" data-gate>
+    <span class="lg-eyebrow">LCA Graph</span>
+    <h1>LCA Graph Beta <span class="lg-pill">beta · invitation only</span></h1>
+    <p>This is an experimental service. It uses an AI model to draft a complete process model
+       for LCA Graph from a flowsheet you upload and the data you supply: the units and
+       streams, the parameters with their sources, the equations for mass balance, inventory,
+       impacts and costs.</p>
+    <ul>
+      <li>The draft is checked by the same calculation engine that runs the published case
+          studies, so it cannot contain undefined quantities or circular logic. It can still
+          contain a wrong number. <b>Every draft must be reviewed by a person before it is used.</b></li>
+      <li>What you upload is sent to a third-party model provider (OpenRouter) to produce the
+          draft. Do not upload anything confidential during the beta.</li>
+      <li>Access is by invitation while the service is in beta. Each code has a daily limit.</li>
+    </ul>
+    <form data-form>
+      <input type="text" data-code placeholder="Access code" autocomplete="off" spellcheck="false" aria-label="Access code" required>
+      <button type="submit" data-submit>Enter beta</button>
+    </form>
+    <div class="lg-status" data-status></div>
+    <p class="lg-mini">No code? <a href="../../contact.html">Ask us for one</a>. The public,
+       AI-free LCA Graph with four verified case studies is <a href="index.html">here</a>.</p>
+  </div>
+
+  <div class="lg-panel lg-hello" data-app hidden>
+    <div class="lg-banner"><b>Beta.</b> AI-drafted content is unverified until a person has checked it. Nothing you type here is stored by Clove Circle; it is sent to the model provider once and the reply shown to you.</div>
+    <div class="lg-signed"><span data-who></span><button type="button" data-signout>Leave beta</button></div>
+    <h2>Hello, model</h2>
+    <p>A first exchange to prove the connection. The flowsheet upload and model drafting arrive in the next step.</p>
+    <textarea data-prompt placeholder="Ask something short, for example: what is a functional unit?"></textarea>
+    <div class="lg-inline"><button type="button" data-send>Send</button><span class="lg-mini" data-remaining></span></div>
+    <div class="lg-reply" data-reply></div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  /* Where the beta Worker lives. Locally, wrangler dev on 8787; in production the deployed
+     Worker. Replace the workers.dev host after the first `wrangler deploy`. */
+  var local = /^(127\.0\.0\.1|localhost)$/.test(location.hostname);
+  var WORKER_URL = window.LCAG_WORKER_URL || (local ? 'http://127.0.0.1:8787' : 'https://lcagraph-beta.lampofsocrates.workers.dev');
+  var KEY = 'lcagraph-beta-code';
+
+  var $ = function (s) { return document.querySelector(s); };
+  var status = $('[data-status]');
+  var gate = $('[data-gate]');
+  var app = $('[data-app]');
+
+  function say(msg, isError) { status.textContent = msg || ''; status.classList.toggle('is-error', !!isError); }
+
+  function post(path, body, code) {
+    var headers = { 'Content-Type': 'application/json' };
+    if (code) headers['X-Beta-Code'] = code;
+    return fetch(WORKER_URL + path, { method: 'POST', headers: headers, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { j.__status = r.status; return j; }); });
+  }
+
+  function enter(code, info) {
+    try { sessionStorage.setItem(KEY, code); } catch (e) {}
+    gate.hidden = true;
+    app.hidden = false;
+    $('[data-who]').textContent = 'Signed in as ' + info.name + ' · ' + info.remainingToday + ' requests left today';
+    $('[data-remaining]').textContent = '';
+  }
+
+  function leave() {
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+    app.hidden = true;
+    gate.hidden = false;
+    $('[data-code]').value = '';
+    say('');
+  }
+
+  function verify(code) {
+    var btn = $('[data-submit]');
+    btn.disabled = true;
+    say('Checking…');
+    return post('/verify', { code: code }).then(function (j) {
+      btn.disabled = false;
+      if (j.ok) { say(''); enter(code, j); }
+      else say(j.error || 'That code was not accepted.', true);
+    }).catch(function () {
+      btn.disabled = false;
+      say('Could not reach the beta service. Try again in a moment.', true);
+    });
+  }
+
+  $('[data-form]').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var code = $('[data-code]').value.trim();
+    if (!code) return;
+    verify(code);
+  });
+  $('[data-signout]').addEventListener('click', leave);
+
+  $('[data-send]').addEventListener('click', function () {
+    var code = sessionStorage.getItem(KEY);
+    var prompt = $('[data-prompt]').value.trim();
+    var reply = $('[data-reply]');
+    if (!prompt || !code) return;
+    reply.textContent = 'Thinking…';
+    post('/chat', { prompt: prompt }, code).then(function (j) {
+      if (j.ok) {
+        reply.textContent = j.text;
+        $('[data-remaining]').textContent = j.remainingToday + ' requests left today · ' + (j.model || '');
+      } else {
+        reply.textContent = 'Error: ' + (j.error || 'unknown');
+        if (j.__status === 403) leave();
+      }
+    }).catch(function () { reply.textContent = 'Could not reach the beta service.'; });
+  });
+
+  if (window.self !== window.top) document.body.classList.add('in-frame');
+
+  var saved = null;
+  try { saved = sessionStorage.getItem(KEY); } catch (e) {}
+  if (saved) verify(saved);
+})();
+</script>
+</body>
+</html>

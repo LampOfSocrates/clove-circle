@@ -267,7 +267,34 @@ Note: `node --test tests/` (a bare directory) fails in this node version; use th
 - The expression language is a small compiler, kept tiny on purpose (no loops, no user
   functions) so it stays verifiable.
 
-## 11. TODO (future, out of scope for this round)
+## 11. Agentic beta (in progress, 2026-09-08)
+
+Decisions: the site stays on GitHub Pages; the only server piece is one Cloudflare Worker
+(`lcagraph/worker/`) that holds the OpenRouter key, checks beta access codes stored in KV
+(one per person, daily caps, revocable) or a master-code secret, and forwards prompts.
+The public LCA Graph stays AI-free. Entry is the "LCA Graph Beta" item in every page's
+Resources menu -> `lcagraph/app/beta.html`, a noindex gate page that explains the beta,
+asks for a code, verifies it against the Worker's `/verify`, and only then reveals the tool.
+
+Done: Worker (`/`, `/verify`, `/chat` hello world; CORS allowlist; per-code and global daily
+caps; prompt size cap), tested locally with `wrangler dev`; gate page; menu entry on 9
+pages; `tests/lcagraph-beta.spec.js` (Worker-backed cases skip when 8787 is down).
+
+Owner actions still needed: `npx wrangler login`, `wrangler kv namespace create BETA` and
+paste the id into `wrangler.jsonc`, `wrangler secret put OPENROUTER_API_KEY`,
+`wrangler secret put BETA_MASTER_CODE`, `wrangler deploy`, then put the printed workers.dev
+URL into `beta.html` (`WORKER_URL`). See `lcagraph/worker/README.md`.
+
+Next steps in order:
+1. `/draft` route: system prompt built from `docs/pml-spec.md` + `docs/authoring.md`, JSON
+   response constrained to the schema, then compile + lint in the browser, feed errors back,
+   retry up to N times. Vision input for the flowsheet image via OpenRouter multimodal.
+2. Contribution analysis in the engine (`src/contributions.js`) and a panel in the app.
+3. PML editor in the app (add/edit params, streams, expressions with live compile errors).
+4. "AI-drafted, unverified" badges per node until a person confirms; draft versions.
+5. Reference library tables (emission factors, CEPCI, cost bases) the model must cite.
+
+## 12. TODO (future, out of scope for this round)
 
 - **Agentic LCA Graph builder.** A mode where a user uploads a flowsheet image/PDF plus
   loose data (spreadsheets, papers, notes) and an LLM reached through OpenRouter drafts

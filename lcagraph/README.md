@@ -50,6 +50,13 @@ app/                 the generic step-by-step web app
 tests/               node --test suites and the golden replay harness
 ```
 
+## Beta (AI-assisted authoring)
+
+`app/beta.html` is an invitation-only gate in front of the AI-assisted builder. The only
+server piece is the Cloudflare Worker in `worker/`, which holds the OpenRouter key and
+checks access codes; see `worker/README.md` for setup and issuing codes. The public app
+above never calls it.
+
 ## Test
 
 ```

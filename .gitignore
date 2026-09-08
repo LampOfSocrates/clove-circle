@@ -3,3 +3,7 @@
 node_modules/*
 test-results/*
 playwright-report/
+
+# Cloudflare Worker local state and secrets
+lcagraph/worker/.dev.vars
+lcagraph/worker/.wrangler/
