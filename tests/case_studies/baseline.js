@@ -23,7 +23,7 @@ const UPDATE = process.env.UPDATE_BASELINE === '1';
  * @typedef {Object} DashboardConfig
  * @property {string} key                 slug used for the baseline filename
  * @property {string} title               human-readable suite name
- * @property {string} url                 file:// URL of the standalone dashboard
+ * @property {string} url                 site-relative URL of the standalone dashboard
  * @property {string} readySelector       element that is populated once the model has run
  * @property {string|null} recalc         JS expression that re-runs the model, or null if inputs auto-recalc
  * @property {string[]} [visitTabs]       selectors to click so lazily-built panels exist

@@ -1,8 +1,11 @@
 const { test, expect } = require('@playwright/test');
-const path = require('path');
 
-const page_ = name => 'file://' + path.resolve(__dirname, '..', 'case_studies', 'stepbystep', name).replace(/\\/g, '/');
-const resources = 'file://' + path.resolve(__dirname, '..', 'resources.html').replace(/\\/g, '/');
+/* Site-relative, resolved against the config's baseURL. Not file://: Chromium
+   gives every local file an opaque origin, so localStorage throws and an
+   iframe cannot read its own contentDocument — a file:// run exercises a
+   weaker environment than the one users get. */
+const page_ = name => '/case_studies/stepbystep/' + name;
+const resources = '/resources.html';
 
 // Values published by each standalone dashboard at its default inputs. The
 // step-by-step models must keep reproducing them.

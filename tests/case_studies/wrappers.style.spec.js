@@ -21,8 +21,10 @@ const WRAPPERS = [
 ];
 
 const read = (name) => fs.readFileSync(path.join(ROOT, 'case_studies', name), 'utf8');
-const url = (name) =>
-  'file:///' + path.join(ROOT, 'case_studies', name).split(path.sep).join('/');
+/* Site-relative, resolved against baseURL. Over file:// the wrappers cannot
+   read their own iframe, so auto-fit never runs and the frames sit at their
+   min-height floor — the page under test would not be the page users load. */
+const url = (name) => '/case_studies/' + name;
 
 test.describe('case-study wrappers stay aligned', () => {
   for (const name of WRAPPERS) {
@@ -84,6 +86,34 @@ test.describe('case-study wrappers stay aligned', () => {
       expect(shellBg).toContain('gradient');
     });
   }
+
+  test('auto-fit sizes every frame to its dashboard', async ({ page }) => {
+    // Only assertable over HTTP: under file:// the wrapper cannot read its own
+    // iframe, auto-fit never runs, and every frame sits at its min-height
+    // floor — which is exactly the bug this test exists to catch.
+    await page.setViewportSize({ width: 1280, height: 900 });
+    for (const name of WRAPPERS) {
+      await page.goto(url(name));
+      await expect(page.locator('#caseStudyFrame')).toBeVisible();
+
+      const content = await page
+        .frameLocator('#caseStudyFrame')
+        .locator('body')
+        .evaluate((b) => b.scrollHeight);
+
+      await expect
+        .poll(
+          () => page.locator('#caseStudyFrame').evaluate((el) => el.getBoundingClientRect().height),
+          { message: `${name}: frame never grew to its content`, timeout: 8000 }
+        )
+        .toBeGreaterThanOrEqual(Math.min(content, 400));
+
+      // The frame must never be left at the bare 150px default an unsized
+      // iframe collapses to.
+      const h = await page.locator('#caseStudyFrame').evaluate((el) => el.getBoundingClientRect().height);
+      expect(h, `${name}: frame collapsed`).toBeGreaterThan(400);
+    }
+  });
 
   test('a reset button, where present, is wired through the shared module', () => {
     for (const name of WRAPPERS) {

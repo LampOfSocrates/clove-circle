@@ -8,11 +8,11 @@
  * baseline; changing a formula must.
  */
 
-const path = require('path');
-
-/** file:// URL for a standalone dashboard (Playwright cannot load bare Windows paths). */
-const fileUrl = (name) =>
-  'file:///' + path.resolve(__dirname, '..', '..', 'standalone', name).replace(/\\/g, '/');
+/* Site-relative URL, resolved against the config's baseURL so the dashboard
+   loads over HTTP. Not file://: Chromium gives every local file an opaque
+   origin, under which same-origin reads and localStorage silently fail, so a
+   file:// run tests a weaker environment than the one users get. */
+const fileUrl = (name) => '/standalone/' + name;
 
 /** @type {import('./baseline').DashboardConfig[]} */
 const DASHBOARDS = [

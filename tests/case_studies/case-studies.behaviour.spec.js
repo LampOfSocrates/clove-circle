@@ -4,17 +4,17 @@
  * Purpose: confirm that visual/style changes do not break any calculation logic.
  *
  * Each suite:
- *  1. Loads the standalone HTML via file:// URL
+ *  1. Loads the standalone HTML over HTTP (see playwright.config.js)
  *  2. Records baseline output values with default inputs
  *  3. Changes one or more inputs
  *  4. Asserts outputs changed in the expected direction / to the expected value
  */
 
 const { test, expect } = require('@playwright/test');
-const path = require('path');
 
-const file = (name) =>
-  'file:///' + path.resolve(__dirname, '..', '..', 'standalone', name).replace(/\\/g, '/');
+/* Site-relative, resolved against baseURL. See dashboards.config.js for why
+   these no longer load over file://. */
+const file = (name) => '/standalone/' + name;
 
 // ─────────────────────────────────────────────────────────────
 // LATERITE LCA + TEA
