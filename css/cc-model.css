@@ -458,3 +458,117 @@ body.is-embedded .cc-sbs-headrow { justify-content: flex-end; }
   .cc-stream-label.is-changed { animation: cc-flash 1.6s ease-out; }
   @keyframes cc-flash { 0%, 30% { fill: var(--sbs-amber); } 100% { fill: var(--sbs-ink); } }
 }
+
+/* ── Guided / Expert mode ─────────────────────────────────────────────────
+   Guided mode removes choices rather than adding explanation: the sandbox
+   affordances are hidden, the flowsheet dims everything the current task is
+   not about, and the rail becomes progress rather than free navigation. */
+.cc-mode {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+  margin: 0 0 14px;
+}
+.cc-mode-toggle {
+  display: inline-flex; background: var(--sbs-wash);
+  border: 1px solid var(--sbs-line); border-radius: 999px; padding: 3px;
+}
+.cc-mode-btn {
+  border: none; background: none; cursor: pointer;
+  padding: 8px 18px; border-radius: 999px; color: var(--sbs-muted);
+  font: 700 12px/1 Inter, system-ui, sans-serif;
+  letter-spacing: .05em; text-transform: uppercase; transition: all .15s;
+}
+.cc-mode-btn:hover { color: var(--sbs-ink); }
+.cc-mode-btn.is-on {
+  background: var(--sbs-green); color: #fff;
+  box-shadow: 0 1px 3px rgba(26, 61, 46, .25);
+}
+.cc-mode-hint { margin: 0; font-size: 12.5px; color: var(--sbs-muted); }
+
+/* What guided mode takes away. */
+.cc-sbs[data-mode="guided"] [data-cc-solve-all],
+.cc-sbs[data-mode="guided"] .cc-diagram-hint,
+.cc-sbs[data-mode="guided"] .cc-tc-delta { display: none; }
+
+/* Out-of-scope flowsheet parts: visible for context, not clickable. */
+.cc-sbs[data-mode="guided"] .cc-hit.is-out-of-scope {
+  opacity: .28;
+  pointer-events: none;
+}
+
+.cc-sbs[data-mode="guided"] .cc-step.is-locked { opacity: .35; cursor: default; }
+.cc-sbs[data-mode="guided"] .cc-step.is-locked:hover { background: none; }
+
+/* ── the one task ───────────────────────────────────────────────────────── */
+.cc-task {
+  background: var(--sbs-wash); border: 1px solid var(--sbs-line);
+  border-left: 3px solid var(--sbs-green);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;
+}
+.cc-task.is-done { border-left-color: var(--sbs-green); background: var(--sbs-green-pale); }
+.cc-task-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+}
+.cc-task-tick {
+  font: 700 11px/1 Inter, system-ui, sans-serif;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--sbs-amber);
+}
+.cc-task.is-done .cc-task-tick { color: var(--sbs-green); }
+.cc-task-text {
+  margin: 6px 0 0; font-size: 15px; font-weight: 500; color: var(--sbs-ink);
+  max-width: 68ch;
+}
+.cc-task-expect {
+  margin: 10px 0 0; font-size: 13.5px; color: var(--sbs-muted); max-width: 68ch;
+}
+.cc-task-nav { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.cc-task-back, .cc-task-ack, .cc-task-next {
+  border-radius: 8px; padding: 10px 18px; cursor: pointer;
+  font: 700 12px/1 Inter, system-ui, sans-serif;
+  letter-spacing: .05em; text-transform: uppercase; transition: all .15s;
+}
+.cc-task-back {
+  background: none; border: 1px solid var(--sbs-line); color: var(--sbs-muted);
+}
+.cc-task-back:hover { border-color: var(--sbs-green); color: var(--sbs-green); }
+.cc-task-ack, .cc-task-next {
+  background: var(--sbs-green); color: #fff; border: 1px solid var(--sbs-green);
+}
+.cc-task-ack:hover, .cc-task-next:hover:not(:disabled) { background: #2f6f52; }
+.cc-task-next:disabled {
+  background: var(--sbs-paper); color: var(--sbs-muted);
+  border-color: var(--sbs-line); cursor: not-allowed;
+}
+.cc-task-fin { font-size: 13px; font-weight: 600; color: var(--sbs-green); }
+
+/* ── practice questions (expert mode, under Goal & scope) ───────────────── */
+.cc-questions {
+  background: var(--sbs-wash); border: 1px solid var(--sbs-line);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;
+}
+.cc-questions-lead { margin: 4px 0 10px; font-size: 13px; color: var(--sbs-muted); }
+.cc-question-list { margin: 0; padding-left: 20px; }
+.cc-question-list li { margin-bottom: 8px; }
+.cc-question summary {
+  cursor: pointer; font-weight: 600; color: var(--sbs-ink);
+  font-size: 14px; list-style: revert;
+}
+.cc-question summary:hover { color: var(--sbs-green); }
+.cc-question[open] summary { color: var(--sbs-green); }
+.cc-question-how {
+  margin: 8px 0 4px; padding-left: 2px;
+  font-size: 13.5px; color: var(--sbs-text); max-width: 68ch;
+}
+.cc-question-how p { margin: 0 0 6px; }
+.cc-question-watch { color: var(--sbs-muted); }
+
+/* Guided mode: two panels that are pure noise when there is one prescribed
+   task. The inspector reappears the moment the learner clicks the flowsheet. */
+.cc-sbs[data-mode="guided"] .cc-sbs-header p,
+.cc-sbs[data-mode="guided"] .cc-inspector-panel:has(.cc-insp-empty) { display: none; }
+
+/* The solve button lives inside the task block, so it needs no margin of its own. */
+.cc-task .cc-card-actions { margin: 12px 0 0; }
+
+/* The task text already says what to do; the stale/locked note beside the
+   button just contradicts it on a step that has simply never been run. */
+.cc-sbs[data-mode="guided"] .cc-card-lock { display: none; }

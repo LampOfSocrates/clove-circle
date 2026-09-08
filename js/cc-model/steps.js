@@ -125,6 +125,15 @@
     this.$inspector = this.root.querySelector('[data-cc-inspector]');
     this.$tryit = this.root.querySelector('[data-cc-tryit]');
     this.$svg = this.root.querySelector('[data-cc-diagram] svg');
+    this.$mode = this.root.querySelector('[data-cc-mode]');
+
+    /* Guided mode gates the page to one prescribed task at a time; expert mode
+       is the original sandbox. Only a case that ships a guided script can offer
+       the choice, so the toggle is absent everywhere else. */
+    this.hasGuided = !!this.model.guided;
+    this.mode = this.hasGuided ? (opts.mode || readMode() || 'guided') : 'expert';
+    this.reached = 0;   // furthest step index unlocked in guided mode
+    this.acked = {};    // steps whose read-only task has been acknowledged
 
     var self = this;
     this.inspector = new global.CCInspector(this.$inspector, this.engine, {
@@ -144,12 +153,215 @@
     if (window.parent !== window) document.body.classList.add('is-embedded');
 
     this.bindChrome();
+    this.applyMode();
     this.render();
 
     var self = this;
     window.addEventListener('resize', function () { self.postHeight(); });
     window.addEventListener('load', function () { self.postHeight(); });
   }
+
+  /* -- mode ------------------------------------------------------------
+     Guided mode is the classroom path: one prescribed task per step, nothing
+     else reachable. Expert mode is the sandbox the page started as. The choice
+     is remembered per browser, because a learner who switches to expert does
+     not want to be put back at step 0 on the next page load. */
+  var MODE_KEY = 'cc-sbs-mode';
+
+  function readMode() {
+    try {
+      var m = window.localStorage.getItem(MODE_KEY);
+      return (m === 'guided' || m === 'expert') ? m : null;
+    } catch (e) { return null; }
+  }
+
+  function writeMode(m) {
+    try { window.localStorage.setItem(MODE_KEY, m); } catch (e) {}
+  }
+
+  CCSteps.prototype.applyMode = function () {
+    this.root.setAttribute('data-mode', this.mode);
+  };
+
+  CCSteps.prototype.setMode = function (mode) {
+    if (mode === this.mode) return;
+    this.mode = mode;
+    writeMode(mode);
+    this.applyMode();
+    this.clearPick();
+    if (mode === 'guided') {
+      // Re-enter the guided path at the furthest point already reached.
+      this.reached = Math.max(this.reached, this.steps.indexOf(this.active));
+      this.active = this.steps[Math.min(this.reached, this.steps.length - 1)];
+    }
+    this.render();
+  };
+
+  CCSteps.prototype.renderModeToggle = function () {
+    if (!this.$mode) return;
+    this.$mode.innerHTML = '';
+    if (!this.hasGuided) return;
+    var self = this;
+    var wrap = el('div', 'cc-mode-toggle');
+    wrap.setAttribute('role', 'group');
+    wrap.setAttribute('aria-label', 'How much of the model is available');
+    var OPTS = [
+      ['guided', 'Guided Mode', 'One task at a time, nothing else to click'],
+      ['expert', 'Expert Mode', 'The whole model, free to explore']
+    ];
+    OPTS.forEach(function (opt) {
+      var on = self.mode === opt[0];
+      var b = el('button', 'cc-mode-btn' + (on ? ' is-on' : ''), opt[1]);
+      b.type = 'button';
+      b.title = opt[2];
+      b.setAttribute('aria-pressed', String(on));
+      b.addEventListener('click', function () { self.setMode(opt[0]); });
+      wrap.appendChild(b);
+    });
+    this.$mode.appendChild(wrap);
+    this.$mode.appendChild(el('p', 'cc-mode-hint', this.mode === 'guided'
+      ? 'Follow the task on each card. Switch to Expert Mode to explore freely.'
+      : 'Everything is editable. Switch to Guided Mode for a step-by-step tutorial.'));
+  };
+
+  /* The guided script for a step, if this case study ships one. */
+  CCSteps.prototype.guidedFor = function (stepId) {
+    return (this.model.guided || {})[stepId] || null;
+  };
+
+  /* Has the learner done what the step asked? This drives the Next button, so
+     it must be answerable from engine state alone -- never from "did they
+     click", which would let someone advance without the number moving. */
+  CCSteps.prototype.taskDone = function (stepId) {
+    var g = this.guidedFor(stepId);
+    if (!g) return true;
+    if (g.set) {
+      var v = this.model.vars[g.set.var];
+      var target = U.toCanonical(g.set.to, v.dim, g.set.unit || v.unit);
+      var now = this.engine.get(g.set.var);
+      var tol = Math.max(Math.abs(target) * 0.005, 1e-9);
+      if (!(Math.abs(now - target) <= tol)) return false;
+    }
+    if (g.check === 'solved') return !!this.stageMeta(stepId) && !this.engine.isStale(stepId);
+    if (g.ackRequired) return this.acked[stepId] === true;
+    return true;
+  };
+
+  /* Variables this step is about; everything else is put out of reach. */
+  CCSteps.prototype.focusVars = function (stepId) {
+    var g = this.guidedFor(stepId);
+    if (!g) return null;
+    var f = (g.focus || []).slice();
+    if (g.set && f.indexOf(g.set.var) === -1) f.push(g.set.var);
+    return f;
+  };
+
+  /* Dim the parts of the flowsheet this step is not about, so "what am I
+     allowed to touch" has one answer instead of twelve. */
+  CCSteps.prototype.applyGuidedFocus = function () {
+    if (!this.$svg) return;
+    var focus = this.mode === 'guided' ? this.focusVars(this.active) : null;
+    var hits = this.$svg.querySelectorAll('.cc-hit');
+    Array.prototype.forEach.call(hits, function (g) {
+      if (!focus || !focus.length) { g.classList.remove('is-out-of-scope'); return; }
+      var vars = (g.getAttribute('data-vars') || '').split(',')
+        .map(function (x) { return x.trim(); }).filter(Boolean);
+      var inScope = vars.some(function (id) { return focus.indexOf(id) !== -1; });
+      g.classList.toggle('is-out-of-scope', !inScope);
+    });
+  };
+
+  /* The task block: one instruction, and a Next that will not light up until
+     the engine agrees the instruction was carried out. */
+  CCSteps.prototype.renderTask = function () {
+    var self = this;
+    var g = this.guidedFor(this.active);
+    if (!g) return null;
+
+    var idx = this.steps.indexOf(this.active);
+    var done = this.taskDone(this.active);
+    var wrap = el('div', 'cc-task' + (done ? ' is-done' : ''));
+
+    var head = el('div', 'cc-task-head');
+    head.appendChild(el('span', 'cc-slot-label',
+      'Step ' + (idx + 1) + ' of ' + this.steps.length));
+    head.appendChild(el('span', 'cc-task-tick', done ? '✓ Done' : 'To do'));
+    wrap.appendChild(head);
+
+    wrap.appendChild(el('p', 'cc-task-text', g.task));
+
+    // The button the task names, right where the task names it.
+    var act = this.renderActions(this.active);
+    if (act) wrap.appendChild(act);
+
+    if (g.expect && done) wrap.appendChild(el('p', 'cc-task-expect', g.expect));
+
+    var nav = el('div', 'cc-task-nav');
+    if (idx > 0) {
+      var back = el('button', 'cc-task-back', 'Back');
+      back.type = 'button';
+      back.addEventListener('click', function () { self.go(self.steps[idx - 1]); });
+      nav.appendChild(back);
+    }
+
+    if (g.ackRequired && !this.acked[this.active]) {
+      var ack = el('button', 'cc-task-ack', g.ackLabel || 'I have read this');
+      ack.type = 'button';
+      ack.addEventListener('click', function () {
+        self.acked[self.active] = true;
+        self.render();
+      });
+      nav.appendChild(ack);
+    }
+
+    if (idx < this.steps.length - 1) {
+      var next = el('button', 'cc-task-next', 'Next step →');
+      next.type = 'button';
+      next.disabled = !done;
+      if (!done) next.title = 'Finish the task above first.';
+      next.addEventListener('click', function () {
+        self.reached = Math.max(self.reached, idx + 1);
+        self.go(self.steps[idx + 1]);
+      });
+      nav.appendChild(next);
+    } else if (done) {
+      nav.appendChild(el('span', 'cc-task-fin',
+        'That is the whole method — you have run it end to end.'));
+    }
+    wrap.appendChild(nav);
+    return wrap;
+  };
+
+  /* Practice questions, shown under Goal & scope. Expert mode only: in guided
+     mode the task IS the question, and offering both at once is exactly the
+     confusion that mode exists to remove. */
+  CCSteps.prototype.renderQuestions = function () {
+    var qs = this.model.questions || [];
+    if (!qs.length) return null;
+    var wrap = el('div', 'cc-questions');
+    wrap.appendChild(el('span', 'cc-slot-label', 'Questions to answer with this model'));
+    wrap.appendChild(el('p', 'cc-questions-lead',
+      'Each is answerable by changing one input and re-running the steps it feeds.'));
+    var list = el('ol', 'cc-question-list');
+    qs.forEach(function (q) {
+      var d = el('details', 'cc-question');
+      d.appendChild(el('summary', null, q.ask));
+      var how = el('div', 'cc-question-how');
+      how.appendChild(el('p', null, q.how));
+      if (q.watch) {
+        var w = el('p', 'cc-question-watch');
+        w.appendChild(el('strong', null, 'Watch: '));
+        w.appendChild(document.createTextNode(q.watch));
+        how.appendChild(w);
+      }
+      d.appendChild(how);
+      var li = el('li');
+      li.appendChild(d);
+      list.appendChild(li);
+    });
+    wrap.appendChild(list);
+    return wrap;
+  };
 
   CCSteps.prototype.bindChrome = function () {
     var self = this;
@@ -255,7 +467,20 @@
       btn.appendChild(body);
 
       if (id === self.active) btn.classList.add('is-active');
-      btn.addEventListener('click', function () { self.go(id); });
+
+      // Guided: the rail reports progress. Steps ahead of the learner are not
+      // reachable, so there is no way to arrive somewhere without the context.
+      if (self.mode === 'guided') {
+        if (i > self.reached) {
+          btn.disabled = true;
+          btn.classList.add('is-locked');
+          state.textContent = i === self.reached + 1 ? 'Next' : 'Later';
+        } else if (i < self.steps.indexOf(self.active)) {
+          state.textContent = self.taskDone(id) ? 'Done' : 'Revisit';
+        }
+      }
+
+      if (!btn.disabled) btn.addEventListener('click', function () { self.go(id); });
       self.$rail.appendChild(btn);
     });
   };
@@ -273,6 +498,13 @@
     head.appendChild(el('span', 'cc-card-phase', lib.phase));
     head.appendChild(el('h3', null, meta ? meta.title : (id === 'scope' ? 'Goal & scope' : 'Interpretation')));
     this.$card.appendChild(head);
+
+    // Guided: what to do comes before why it matters. A learner reading three
+    // paragraphs before finding the instruction is a learner who is lost.
+    if (this.mode === 'guided') {
+      var leadTask = this.renderTask();
+      if (leadTask) this.$card.appendChild(leadTask);
+    }
 
     this.$card.appendChild(el('p', 'cc-card-question', lib.question));
     this.$card.appendChild(el('p', 'cc-card-concept', lib.concept));
@@ -294,6 +526,11 @@
       bd.appendChild(el('p', null, this.model.boundary));
       s.appendChild(bd);
       this.$card.appendChild(s);
+
+      if (this.mode === 'expert') {
+        var qs = this.renderQuestions();
+        if (qs) this.$card.appendChild(qs);
+      }
     }
 
     if (meta) {
@@ -304,32 +541,14 @@
         this.$card.appendChild(this.renderClosure(closure));
       }
 
-      var act = el('div', 'cc-card-actions');
-      var btn = el('button', 'cc-solve-btn', meta.verb);
-      btn.type = 'button';
-      btn.setAttribute('data-cc-solve', id);
-      var unlocked = this.engine.isUnlocked(id);
-      btn.disabled = !unlocked;
-      if (!unlocked) btn.title = 'Run the earlier steps first.';
-      if (!this.engine.isStale(id)) btn.classList.add('is-done');
-      btn.addEventListener('click', function () {
-        var r = self.engine.solve(id);
-        if (!r.ok) { window.alert(r.error); return; }
-        self.render();
-      });
-      act.appendChild(btn);
-
-      if (!unlocked) {
-        act.appendChild(el('span', 'cc-card-lock', 'Locked until the previous step has been run.'));
-      } else if (this.engine.isStale(id)) {
-        act.appendChild(el('span', 'cc-card-lock', 'Inputs have changed — this step needs running.'));
-      }
-      this.$card.appendChild(act);
+      // In guided mode the solve button belongs inside the task that asks for
+      // it; a button three paragraphs below the instruction is the old problem.
+      if (this.mode !== 'guided') this.$card.appendChild(this.renderActions(id));
     }
 
     // "Try it" tells you what to poke on the flowsheet, so it sits under the
     // flowsheet rather than at the bottom of the card.
-    var tryIt = copy.tryIt;
+    var tryIt = this.mode === 'guided' ? null : copy.tryIt;
     var host = this.$tryit || this.$card;
     if (this.$tryit) this.$tryit.innerHTML = '';
     if (tryIt) {
@@ -340,6 +559,35 @@
     }
 
     if (id === 'interpret') this.$card.appendChild(this.renderSummary());
+  };
+
+  /* The solve button for a stage, plus why it is disabled when it is. */
+  CCSteps.prototype.renderActions = function (id) {
+    var self = this;
+    var meta = this.stageMeta(id);
+    if (!meta) return null;
+
+    var act = el('div', 'cc-card-actions');
+    var btn = el('button', 'cc-solve-btn', meta.verb);
+    btn.type = 'button';
+    btn.setAttribute('data-cc-solve', id);
+    var unlocked = this.engine.isUnlocked(id);
+    btn.disabled = !unlocked;
+    if (!unlocked) btn.title = 'Run the earlier steps first.';
+    if (!this.engine.isStale(id)) btn.classList.add('is-done');
+    btn.addEventListener('click', function () {
+      var r = self.engine.solve(id);
+      if (!r.ok) { window.alert(r.error); return; }
+      self.render();
+    });
+    act.appendChild(btn);
+
+    if (!unlocked) {
+      act.appendChild(el('span', 'cc-card-lock', 'Locked until the previous step has been run.'));
+    } else if (this.engine.isStale(id)) {
+      act.appendChild(el('span', 'cc-card-lock', 'Inputs have changed — this step needs running.'));
+    }
+    return act;
   };
 
   /* Worked numbers for this case, straight from the engine so they stay true. */
@@ -445,7 +693,13 @@
     var self = this;
     this.$fields.innerHTML = '';
     var stageId = this.active;
-    if (!this.stageMeta(stageId)) {
+    var focus = this.mode === 'guided' ? this.focusVars(stageId) : null;
+    var guidedFocus = focus && focus.length ? focus : null;
+
+    // 'scope' and 'interpret' own no stage, so normally they have no fields.
+    // A guided task on one of them still names inputs to change, and telling a
+    // learner to set a value they cannot reach is the worst of both modes.
+    if (!this.stageMeta(stageId) && !guidedFocus) {
       this.$fields.appendChild(el('p', 'cc-fields-empty',
         'This step has no inputs of its own — it reads what the earlier steps produced.'));
       return;
@@ -453,7 +707,10 @@
 
     var ids = Object.keys(this.model.vars).filter(function (id) {
       var v = self.model.vars[id];
-      return v.stage === stageId && v.kind === 'input';
+      if (v.kind !== 'input') return false;
+      // Guided: exactly the inputs this step's task asks for, wherever they live.
+      if (guidedFocus) return guidedFocus.indexOf(id) !== -1;
+      return v.stage === stageId;
     });
 
     if (!ids.length) {
@@ -461,7 +718,8 @@
       return;
     }
 
-    this.$fields.appendChild(el('span', 'cc-slot-label', 'Inputs for this step'));
+    this.$fields.appendChild(el('span', 'cc-slot-label',
+      (guidedFocus && !this.stageMeta(stageId)) ? 'Change this' : 'Inputs for this step'));
     ids.forEach(function (id) {
       var v = self.model.vars[id];
       var row = el('div', 'cc-mini-field');
@@ -540,11 +798,13 @@
   };
 
   CCSteps.prototype.render = function () {
+    this.renderModeToggle();
     this.renderRail();
     this.renderCard();
     this.renderFields();
     this.renderKpis();
     this.diagram.render();
+    this.applyGuidedFocus();
     if (this.picked) this.diagram.highlight([this.picked]);
     if (this.inspector.current) this.inspector.show(this.inspector.current);
 

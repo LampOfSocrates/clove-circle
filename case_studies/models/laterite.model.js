@@ -491,6 +491,121 @@
           'properties of the deposit, not choices the designer gets to make.'
       }
     },
+    /* Guided Mode script. One prescribed task per step, each checkable from
+       engine state so "Next" cannot be reached by clicking around it:
+         check: 'solved'  -- the stage must have been run and not be stale
+         set:             -- a value the learner must enter first
+         focus:           -- the only inputs and flowsheet parts left reachable
+       Keep every task to a single action; two actions in one step is the
+       confusion this mode exists to remove. */
+    guided: {
+      scope: {
+        task: 'Read the functional unit and the system boundary below. Every number ' +
+          'you are about to calculate is "per 1 kg of recovered metal, cradle to gate" — ' +
+          'change either line and every result changes with it.',
+        ackRequired: true,
+        ackLabel: 'I have read the scope',
+        expect: 'Good. Those two declarations are what make this study comparable to another.'
+      },
+      mass: {
+        task: 'Press "Do mass balance" to split the ore feed into its size fractions.',
+        check: 'solved',
+        focus: ['ncl', 'moist'],
+        expect: 'The ore balance closure below should read close to 0% error — every ' +
+          'kilogram in has been accounted for on the way out.'
+      },
+      lci: {
+        task: 'Press "Build inventory" to divide the plant-scale flows down to one ' +
+          'functional unit.',
+        check: 'solved',
+        focus: ['solidc'],
+        expect: 'These are now per-kilogram numbers, which is what makes this plant ' +
+          'comparable with a laboratory process.'
+      },
+      lcia: {
+        task: 'Press "Run impact assessment" to turn that inventory into kg CO₂ eq.',
+        check: 'solved',
+        focus: ['feso4m'],
+        expect: 'Note how much of the total sits in one reagent rather than in energy.'
+      },
+      capex: {
+        task: 'Press "Estimate CAPEX" to scale the equipment cost from the reference plant.',
+        check: 'solved',
+        focus: ['ncl'],
+        expect: 'Capital rose less than proportionally with size — that gap is the ' +
+          'economy of scale the six-tenths rule describes.'
+      },
+      opex: {
+        task: 'Press "Cost the operation" to add up a year of running cost and revenue.',
+        check: 'solved',
+        focus: ['pmet', 'plat'],
+        expect: 'Feedstock price is doing a lot of the work here. Hold that thought.'
+      },
+      dcf: {
+        task: 'Press "Run cash flow" to discount those cash flows and get NPV and a ' +
+          'minimum selling price.',
+        check: 'solved',
+        focus: ['irr'],
+        expect: 'The minimum selling price is the number to quote: it compares directly ' +
+          'against the market price of the metal.'
+      },
+      interpret: {
+        task: 'Now test one assumption. Set the moisture content to 40% — go back to the ' +
+          'mass balance step and re-run every step from there — then come back and see ' +
+          'which results moved.',
+        set: { var: 'moist', to: 40, unit: '%' },
+        focus: ['moist'],
+        expect: 'Drying energy climbed, and the footprint with it, for exactly the same ' +
+          'metal out. That is what a sensitivity analysis is: one input at a time.'
+      }
+    },
+
+    /* Practice questions, listed under Goal & scope in Expert Mode. Each one is
+       answerable by changing a single input and re-running. */
+    questions: [
+      {
+        ask: 'What happens to the carbon footprint if the ore arrives wetter — 40% moisture instead of 25%?',
+        how: 'Set Moisture content to 40% on the mass balance step, then re-run every step ' +
+          'from the mass balance onwards.',
+        watch: 'GWP per kg of metal. The dry flows are untouched, so the whole change comes ' +
+          'from evaporating water that was never going to become product.'
+      },
+      {
+        ask: 'How much of the footprint is one reagent?',
+        how: 'On the inventory step, cut the FeSO₄ dose to the Mn oxide bioleach from 25 to ' +
+          '10 g/L, then re-run the inventory and the impact assessment.',
+        watch: 'GWP per kg of metal against the reagent contribution — if the total moves ' +
+          'sharply, the study is really a study of that reagent.'
+      },
+      {
+        ask: 'Does bioleaching more dilute slurry cost anything?',
+        how: 'Drop the bioleach solid concentration from 50 to 20 g/L and re-run from the ' +
+          'inventory step.',
+        watch: 'Heat demand. More water per kilogram of ore means more slurry to hold at ' +
+          '46 °C, for no extra metal.'
+      },
+      {
+        ask: 'Is this process viable at ten times the scale?',
+        how: 'Multiply the raw laterite feed by ten on the mass balance step and re-run ' +
+          'every step.',
+        watch: 'TCI against throughput. Capital should rise roughly six-fold, not ten-fold.'
+      },
+      {
+        ask: 'What if the ore were a mine waste stream rather than a purchased feed?',
+        how: 'Set the raw laterite price to 0 $/kg on the operating cost step and re-run ' +
+          'the operating cost and cash flow steps.',
+        watch: 'Minimum selling price. For a low-grade resource this single assumption ' +
+          'often decides the whole case.'
+      },
+      {
+        ask: 'At what metal price does this process break even?',
+        how: 'Run every step, then compare the minimum selling price against the $18.50/kg ' +
+          'assumed market price.',
+        watch: 'If break-even sits above the market price, the process needs a richer ore ' +
+          'or a cheaper feed — not a better plant.'
+      }
+    ],
+
     closure: {
       mass: {
         label: 'Ore balance closure',
