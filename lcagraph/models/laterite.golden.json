@@ -1,0 +1,99 @@
+{
+  "baseline": "laterite",
+  "notes": [
+    "Baseline table lists were captured by regex over row text, so cells written on one HTML line ran together (capex n+size, opex labels' cell numbers, mnox total wt+kg/h). Only cleanly separated numbers are mapped; each table gets one stride/offset progression.",
+    "mnox_tbl[21] is '0.29541' with its leading '0.' swallowed by the preceding '55.70' cell, hence the 1e5 scale on the metal stream."
+  ],
+  "inputs": {
+    "i_ncl": "ncl",
+    "i_moist": { "param": "moist", "unit": "%" },
+    "i_solidc": "solidc",
+    "i_na2so4": "na2so4",
+    "i_feso4b": "feso4b",
+    "i_feso4m": "feso4m",
+    "i_acc": "acc",
+    "i_irr": "irr",
+    "i_preag": { "param": "preag", "unit": "$/kg" },
+    "i_pelec": { "param": "pelec", "unit": "$/MJ" },
+    "i_pheat": { "param": "pheat", "unit": "$/MJ" },
+    "i_pmet": { "param": "pmet", "unit": "$/kg" },
+    "i_plat": { "param": "plat", "unit": "$/dry t" },
+    "i_plab": { "param": "plab", "unit": "$/y" }
+  },
+  "outputs": {
+    "v_nclwet": "ncl_wet",
+    "v_ncldry": "ncl_dry",
+    "v_bcl": "bcl",
+    "v_bfl": "bfl",
+    "v_mnox": "mnox",
+    "v_stor": "bcl_stor",
+    "v_attr": "bcl_attr",
+    "v_fine": "bcl_fine",
+    "v_mozl": "bcl_mozl",
+    "v_heav": "heav",
+    "v_mnox2": "mnox",
+    "v_qoven": "q_oven",
+    "v_ealloc": "ealloc",
+    "v_bvol": "liquor_mn",
+    "v_fmkg": "feso4_mn",
+    "v_gwpfe": "gwp_fe",
+    "v_gwpel": "gwp_el",
+    "v_gwpht": "gwp_ht",
+    "v_gwpnu": "gwp_nu",
+    "v_gwpncl": "gwp_ncl",
+    "v_gwpmet": "gwp_metal",
+    "v_c43": "gwp_mn",
+    "v_c46": "gwp_ni",
+    "v_c47": "gwp_co",
+    "v_mnrec": "mnox_comp.mn.rec_kgh",
+    "v_c43v": "gwp_mn",
+    "v_nirec": "mnox_comp.ni.rec_kgh",
+    "v_c46v": "gwp_ni",
+    "v_corec": "mnox_comp.co.rec_kgh",
+    "v_c47v": "gwp_co",
+    "v_alrec": "mnox_comp.al.rec_kgh",
+    "v_totrec": "metal",
+    "v_dcost": "dcost",
+    "v_tci": "tci",
+    "v_pval": "prod_val",
+    "v_margin": "net_margin",
+    "v_opex": "tot_opex",
+    "v_tcost": "tot_cost"
+  },
+  "tables": {
+    "mnox_tbl": { "stride": 1, "offset": 0, "nodes": [
+      "mnox_comp.fe.wt",
+      "mnox_comp.al.wt", "mnox_comp.al.rec", "mnox_comp.al.n", "mnox_comp.al.rec_kgh",
+      "mnox_comp.mn.wt", "mnox_comp.mn.rec", "mnox_comp.mn.n", "mnox_comp.mn.rec_kgh",
+      "mnox_comp.cr.wt",
+      "mnox_comp.mg.wt",
+      "mnox_comp.ni.wt", "mnox_comp.ni.rec", "mnox_comp.ni.n", "mnox_comp.ni.rec_kgh",
+      "mnox_comp.co.wt", "mnox_comp.co.rec", "mnox_comp.co.n", "mnox_comp.co.rec_kgh",
+      "mnox_comp.si.wt",
+      "mnox_wt_total",
+      { "node": "metal", "scale": 100000 }
+    ] },
+    "bfl_tbl": { "stride": 1, "offset": 0, "nodes": [
+      "bfl_comp.fe.wt",
+      "bfl_comp.al.wt", "bfl_comp.al.rec", "bfl_comp.al.n", "bfl_comp.al.rec_kgh",
+      "bfl_comp.mn.wt", "bfl_comp.mn.rec", "bfl_comp.mn.n", "bfl_comp.mn.rec_kgh",
+      "bfl_comp.cr.wt", "bfl_comp.cr.rec", "bfl_comp.cr.n", "bfl_comp.cr.rec_kgh",
+      "bfl_comp.mg.wt",
+      "bfl_comp.ni.wt", "bfl_comp.ni.rec", "bfl_comp.ni.n", "bfl_comp.ni.rec_kgh",
+      "bfl_comp.co.wt", "bfl_comp.co.rec", "bfl_comp.co.n", "bfl_comp.co.rec_kgh",
+      "bfl_comp.si.wt",
+      "bfl_wt_total"
+    ] },
+    "capex_tbl": { "stride": 4, "offset": 13, "nodes": [
+      "capex.crushing.cost", "capex.disk_mill.cost", "capex.attrition.cost", "capex.mozley.cost", "capex.storage.cost", "capex.bioleach.cost"
+    ] },
+    "opex_tbl": { "stride": 6, "offset": 1, "nodes": [
+      "reag_tpa", "elec_tjy", "vop_heat", "capex_ann", "lab_overhead", "lat_tpa"
+    ] },
+    "npv_tbl": { "stride": 3, "offset": 2, "nodes": [
+      "years.y0.cum", "years.y1.cum", "years.y2.cum", "years.y3.cum", "years.y4.cum", "years.y5.cum",
+      "years.y6.cum", "years.y7.cum", "years.y8.cum", "years.y9.cum", "years.y10.cum"
+    ] }
+  },
+  "skip": {}
+}

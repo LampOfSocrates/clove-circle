@@ -1,0 +1,86 @@
+{
+  "baseline": "palladium-biorecovery",
+  "inputs": {
+    "i_throughput": "throughput",
+    "i_feed_pd": "feed_pd",
+    "i_recovery": "recovery",
+    "i_tris_mm": "tris_mm",
+    "i_nacl_mm": "nacl_mm",
+    "i_biocat_cycles": "biocat_cycles",
+    "i_biocat_price": "biocat_price",
+    "i_tris_price": "tris_price",
+    "i_nacl_price": "nacl_price",
+    "i_pd_price": "pd_price",
+    "i_lang": "lang",
+    "i_discount": "discount",
+    "i_life": "life",
+    "i_tax": "tax",
+    "i_dep": "dep"
+  },
+  "outputs": {
+    "m_pd_kg": "pd_recovered",
+    "m_volume": "throughput",
+    "m_tris_t": "tris_feed",
+    "m_nacl_t": "nacl_feed",
+    "m_biocat_kg": "biocat_makeup",
+    "m_pd_lost": "pd_lost",
+    "lca_gwp": "gwp_total",
+    "lca_vs_ipa": "gwp_vs_ipa",
+    "lca_vs_za": "gwp_vs_za",
+    "lca_vs_ru": "gwp_vs_ru",
+    "lca_table_body": "gwp_tris",
+    "tea_npv": "npv",
+    "tea_npv_sub": "discount",
+    "tea_irr": "irr",
+    "tea_payback": "payback",
+    "tea_msp": "msp",
+    "tea_tci": "tci",
+    "tea_opex": "opex_total",
+    "tea_revenue": "revenue",
+    "tea_cf": "cash_flow"
+  },
+  "tables": {
+    "mb_table_body": {
+      "stride": 1,
+      "offset": 0,
+      "nodes": [
+        "throughput",
+        "leachate.pd",
+        "pd_recovered",
+        "pd_lost.pd"
+      ]
+    },
+    "lca_table_body": {
+      "stride": 1,
+      "offset": 0,
+      "nodes": [
+        "gwp_tris",
+        "gwp_nacl",
+        "gwp_total",
+        "gwp_share_tris"
+      ]
+    },
+    "opex_table_body": {
+      "stride": 1,
+      "offset": 0,
+      "nodes": [
+        "cost_tris",
+        "share_tris",
+        "tris_feed",
+        "tris_price"
+      ]
+    },
+    "capex_table_body": {
+      "stride": 2,
+      "offset": 16,
+      "nodes": [
+        "lang",
+        "wc_frac"
+      ]
+    }
+  },
+  "skip": {},
+  "notes": {
+    "tables": "The baseline captures each table as the list of every number in its text. Unit strings (CFC11, Co-60, PM2.5, 1,4-DCB), basis strings (158 t × $10/kg, 12 op + 3 sup) and value-sorted OPEX rows add or move numbers, and the CAPEX capture concatenates cost and share (\"$450,000\" + \"6.0%\" -> 4500006.0), so only the leading run of each table has a uniform stride. The lca_table_body scalar covers the Tris GWP cell; every category total is verified in the model against the dashboard by the lcia_check script in the authoring notes."
+  }
+}

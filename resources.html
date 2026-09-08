@@ -16,27 +16,27 @@
   <style>
     /* The step-by-step flowsheets need the full viewport width, so this pane
        breaks out of the Bootstrap .container that wraps the rest of the page. */
-    #step-by-step .cc-sbs-fullbleed {
+    #step-by-step .cc-sbs-fullbleed, #lca-graph .cc-sbs-fullbleed {
       width: 100vw;
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
       padding-left: 18px;
       padding-right: 18px;
     }
-    #step-by-step .cc-sbs-fullbleed .cc-case-study-shell { max-width: none; }
-    #step-by-step .cc-case-study-frame { border-radius: 14px; }
+    #step-by-step .cc-sbs-fullbleed .cc-case-study-shell, #lca-graph .cc-sbs-fullbleed .cc-case-study-shell { max-width: none; }
+    #step-by-step .cc-case-study-frame, #lca-graph .cc-case-study-frame { border-radius: 14px; }
     /* The embedded page prints its own step chrome, so the shell stays minimal. */
-    #step-by-step .cc-case-study-shell { padding: 12px; }
-    #step-by-step .cc-case-study-head { margin-bottom: 10px; align-items: center; }
-    #step-by-step .cc-case-study-title { font-size: 19px; margin: 0 0 2px; }
-    #step-by-step .cc-case-study-copy { font-size: 13px; margin: 0; }
-    #step-by-step .cc-sbs-intro {
+    #step-by-step .cc-case-study-shell, #lca-graph .cc-case-study-shell { padding: 12px; }
+    #step-by-step .cc-case-study-head, #lca-graph .cc-case-study-head { margin-bottom: 10px; align-items: center; }
+    #step-by-step .cc-case-study-title, #lca-graph .cc-case-study-title { font-size: 19px; margin: 0 0 2px; }
+    #step-by-step .cc-case-study-copy, #lca-graph .cc-case-study-copy { font-size: 13px; margin: 0; }
+    #step-by-step .cc-sbs-intro, #lca-graph .cc-sbs-intro {
       max-width: 96ch; margin: 0 auto 14px; font-size: 14px; line-height: 1.6;
       color: var(--cc-text-muted, #5e7a6a); text-align: center;
     }
     #step-by-step #sbsTabs { margin-bottom: 14px !important; }
     @media (max-width: 640px) {
-      #step-by-step .cc-sbs-fullbleed { padding-left: 8px; padding-right: 8px; }
+      #step-by-step .cc-sbs-fullbleed, #lca-graph .cc-sbs-fullbleed { padding-left: 8px; padding-right: 8px; }
     }
   </style>
   <script src="js/analytics.js"></script>
@@ -84,6 +84,11 @@
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="step-by-step-tab" data-bs-toggle="pill" data-bs-target="#step-by-step" type="button" role="tab" aria-controls="step-by-step" aria-selected="false">
           <i class="fa-solid fa-list-ol me-2"></i>LCA Step by Step
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="lca-graph-tab" data-bs-toggle="pill" data-bs-target="#lca-graph" type="button" role="tab" aria-controls="lca-graph" aria-selected="false">
+          <i class="fa-solid fa-diagram-project me-2"></i>LCA Graph
         </button>
       </li>
     </ul>
@@ -334,6 +339,37 @@
         </div>
       </div>
 
+      <!-- LCA Graph -->
+      <div class="tab-pane fade" id="lca-graph" role="tabpanel" aria-labelledby="lca-graph-tab">
+
+        <p class="cc-sbs-intro">A different way in: the same four case studies, but described as a
+           process model rather than as code. LCA Graph compiles the flowsheet, its parameters
+           and its equations into a calculation graph, draws the flowsheet from it, and walks
+           the eight steps on any model you load. Pick a calculation target to see exactly which
+           inputs it needs, then run tornado, sweep, scenario and Monte Carlo sensitivity on it.
+           Every published quirk of the original dashboard is reproduced and flagged, not hidden.</p>
+
+        <div class="cc-sbs-fullbleed">
+          <div class="cc-card cc-case-study-shell">
+            <div class="cc-case-study-head">
+              <div>
+                <h3 class="cc-case-study-title">LCA Graph &mdash; calculate from a process model</h3>
+                <p class="cc-case-study-copy mb-0">Choose a model inside the tool, or upload your own <code>.pml.json</code>. Four models ship: Flue2Chem, Laterite, Palladium and PHA, each verified against its standalone dashboard.</p>
+              </div>
+              <a class="btn cc-btn-outline cc-btn-embed" href="lcagraph/app/index.html?model=flue2chem" target="_blank" rel="noopener">
+                <i class="fa-solid fa-up-right-from-square me-2"></i>Open Standalone
+              </a>
+            </div>
+            <iframe
+              class="cc-case-study-frame"
+              title="LCA Graph: step-by-step LCA and TEA from a process model"
+              src="lcagraph/app/index.html?model=flue2chem"
+              loading="lazy"
+              style="background:#f4f8f5;min-height:1800px;"></iframe>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -396,7 +432,7 @@
   window.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || typeof d.ccSbsHeight !== 'number') return;
-    var frames = document.querySelectorAll('#step-by-step iframe');
+    var frames = document.querySelectorAll('#step-by-step iframe, #lca-graph iframe');
     for (var i = 0; i < frames.length; i++) {
       if (frames[i].contentWindow === e.source) {
         frames[i].style.height = (d.ccSbsHeight + 8) + 'px';

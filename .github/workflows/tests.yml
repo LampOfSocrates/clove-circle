@@ -26,6 +26,9 @@ jobs:
       - name: Case-study calculation baselines
         run: npm run test:case-studies
 
+      - name: LCA Graph engine and golden models
+        run: npm run test:lcagraph
+
       - name: Full Playwright suite
         run: npm run test:e2e
 

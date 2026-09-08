@@ -1,0 +1,2501 @@
+{
+  "pml": "0.1",
+  "meta": {
+    "id": "flue2chem",
+    "title": "Flue2Chem — CO₂ capture to surfactant",
+    "subtitle": "Turning a flue gas stream into a surfactant that today comes from fossil feedstock.",
+    "functionalUnit": "1 kg F2C surfactant (Flue2Chem) at the factory gate",
+    "boundary": "Cradle-to-gate. Starts at the flue gas leaving the stack, ends at surfactant ready to ship. Excludes use phase and end of life.",
+    "currency": "£",
+    "source": "Reproduces standalone/flue2chem-lca-tea.html (Flue2Chem TEA and LCA worksheet) number for number, including its quirks.",
+    "notes": [
+      {
+        "id": "h2o_unused",
+        "level": "quirk",
+        "title": "Flue gas H₂O fraction is never used",
+        "text": "The dashboard asks for the water mass fraction of the flue gas (0.13) but no formula reads it. Change it and nothing moves. It is kept here as an input so the form matches, and so that you can see that an input with no arrows out of it is a dead parameter.",
+        "nodes": [
+          "h2o_frac"
+        ]
+      },
+      {
+        "id": "exhaust_net_h2",
+        "level": "quirk",
+        "title": "Exhaust is reported net of electrolytic hydrogen",
+        "text": "The hydrogen made by electrolysis is not a feed that crosses the plant boundary in the worksheet: it is made from water inside the gas-treatment block and subtracted from the exhaust + water stream (exhaust = remaining flue gas + FT flue gas + ethanol wastewater − total H₂). That is why the closure checks flue gas in against products + exhaust out, with no hydrogen term, and why the \"mass balance check\" row equals the flue gas exactly.",
+        "nodes": [
+          "exhaust",
+          "h2_total",
+          "mass_closure.out"
+        ]
+      },
+      {
+        "id": "lcia_frozen",
+        "level": "quirk",
+        "title": "Only the Electricity column of the LCIA is live",
+        "text": "The 18-category ReCiPe results were computed once, offline, per kg surfactant. In the dashboard only the Electricity column responds to your inputs: it is the frozen electricity impact multiplied by (net electricity per tonne of all four saleable products) ÷ 50,312.5 kWh/t, the basis it was originally computed on. Emissions, Infrastructure, Wastewater and the fossil counterfactual never move. Two consequences: at the default inputs the scale factor is 0.19, so the live electricity impact is a fifth of the static figure in the worksheet; and the divisor counts co-product mass although the impact is presented per kg surfactant.",
+        "nodes": [
+          "elec_scale",
+          "elec_per_product",
+          "lcia_base_elec",
+          "gwp_per_kg"
+        ]
+      },
+      {
+        "id": "fx_077",
+        "level": "quirk",
+        "title": "An undocumented 0.77 factor is folded into base costs",
+        "text": "Every equipment base cost except gas treatment is multiplied by 0.77 before the six-tenths rule (e.g. 25.3 × 0.77 = 19.481 m£ for FT synthesis). The worksheet does not say what it is; it is almost certainly a US$ → £ conversion. The same 0.77 also appears inside the FT product upgrading size basis. Both are exposed here as named constants so the assumption is visible.",
+        "nodes": [
+          "fx_base",
+          "ft_upg_factor"
+        ]
+      },
+      {
+        "id": "dcf_schedule",
+        "level": "quirk",
+        "title": "Construction phasing only affects the chart",
+        "text": "The cash-flow table spreads the total capital over years −2, −1 and 0 (year −3 is zero) and then adds the economic margin discounted to year 0 for 20 years. Nothing in the schedule is time-valued: the capital is neither escalated nor discounted, so the year-20 cumulative is simply −TCI + Σ margin/(1+r)ᵗ. The phasing shapes the cumulative curve but not the NPV.",
+        "nodes": [
+          "npv",
+          "dcf_cum"
+        ]
+      },
+      {
+        "id": "product_first",
+        "level": "info",
+        "title": "The mass balance runs backwards from the product",
+        "text": "Surfactant output is fixed first as yield × CO₂ fraction × flue gas. Ethylene oxide, ethanol, its hydrogen and its CO₂ follow from stoichiometric ratios, and whatever recovered CO₂ is left over goes to the Fischer–Tropsch branch. If capture cannot supply what the ethanol route needs (low recovery, high yield) the FT streams go negative and the six-tenths rule returns no cost; the dashboard shows dashes in that case, and so does this model.",
+        "nodes": [
+          "surfactant",
+          "gas_ft.co2",
+          "gas_ft"
+        ]
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "mass",
+      "title": "Mass balance",
+      "verb": "Do mass balance",
+      "tryIt": "Click the flue gas stream and halve it to 18,000 t/d, then run the mass balance again. Every stream halves and the closure error stays at zero — the balance is linear in throughput. Now click the CO₂ Capture block and drop the recovery to 0.60: the surfactant output does not move, because yield is defined on the raw flue gas, but the CO₂ sent to the FT unit falls sharply."
+    },
+    {
+      "id": "lci",
+      "title": "Life cycle inventory",
+      "verb": "Build inventory",
+      "tryIt": "Raise the electrolysis demand from 39.4 to 55 kWh/kg H₂ — a realistic commercial figure rather than a near-thermodynamic one — and re-run. Watch how much of the whole inventory is just hydrogen."
+    },
+    {
+      "id": "lcia",
+      "title": "Impact assessment",
+      "verb": "Run impact assessment",
+      "tryIt": "Cut the electrolysis demand to 20 kWh/kg H₂ and the capture duty to 0.2 GJ/t, as if both ran on far less power, and re-run. Only the Electricity column moves — the other three columns and the fossil benchmark are frozen — and global warming still falls by a sixth: this process is only as clean as the electricity behind it."
+    },
+    {
+      "id": "capex",
+      "title": "Capital cost",
+      "verb": "Estimate CAPEX",
+      "tryIt": "Change the Lang factor from 5.03 to 3.0 and re-run. Total capital drops by 40% without a single piece of equipment changing — which is why the Lang factor is the assumption a reviewer will challenge first."
+    },
+    {
+      "id": "opex",
+      "title": "Operating cost & revenue",
+      "verb": "Cost the operation",
+      "tryIt": "Set the co-product price to zero and re-run. If a process only works when you can sell everything it makes, that is worth knowing before it is built."
+    },
+    {
+      "id": "dcf",
+      "title": "Profitability",
+      "verb": "Run cash flow",
+      "tryIt": "Push the discount rate from 10% to 20% and re-run. Compare the minimum selling price against the 7,500 £/t that the fossil-derived surfactant sells for."
+    }
+  ],
+  "stepCopy": {
+    "scope": {
+      "tryIt": "Before touching anything, note the functional unit. Every number you are about to calculate is “per 1 kg of surfactant” — change the product and none of them are comparable any more."
+    },
+    "interpret": {
+      "tryIt": "Go back and change one input at a time by 10%, re-running to the end each time. Electricity cost, Lang factor and surfactant yield will move the answer far more than the rest. Those are the three numbers worth arguing about."
+    }
+  },
+  "components": {
+    "co2": {
+      "label": "CO₂",
+      "mw": 44,
+      "source": "Worksheet uses 44, not 44.01."
+    },
+    "h2": {
+      "label": "H₂",
+      "mw": 2
+    },
+    "h2o": {
+      "label": "H₂O",
+      "mw": 18
+    },
+    "ethanol": {
+      "label": "Ethanol",
+      "mw": 46
+    },
+    "eo": {
+      "label": "Ethylene oxide",
+      "mw": 44
+    },
+    "c": {
+      "label": "Carbon",
+      "mw": 12,
+      "source": "Used to turn the fossil surfactant's 0.64 kg C/kg end-of-life carbon into CO₂."
+    }
+  },
+  "params": {
+    "flue_in": {
+      "label": "Flue gas throughput",
+      "stage": "mass",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "default": 36000,
+      "range": [
+        5000,
+        80000
+      ],
+      "hit": "flue",
+      "source": "Stack flow for a large industrial CO2 point source (Flue2Chem basis case)."
+    },
+    "co2_frac": {
+      "label": "Flue gas CO₂ composition, mass fraction",
+      "stage": "mass",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.22,
+      "range": [
+        0.03,
+        0.5
+      ],
+      "hit": "capture",
+      "source": "Mass fraction. Post-combustion flue gas is typically 4-15%; 22% reflects an enriched source."
+    },
+    "h2o_frac": {
+      "label": "Flue gas H₂O composition, mass fraction",
+      "stage": "mass",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.13,
+      "range": [
+        0,
+        0.3
+      ],
+      "hit": "capture",
+      "notes": [
+        "h2o_unused"
+      ],
+      "source": "Declared in the worksheet; no formula reads it."
+    },
+    "co2_rec": {
+      "label": "CO₂ recovered by capture",
+      "stage": "mass",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.85,
+      "range": [
+        0.5,
+        0.99
+      ],
+      "hit": "capture",
+      "source": "Capture rate of the absorber. 85-95% is the usual amine-scrubbing design range."
+    },
+    "co2_conc": {
+      "label": "CO₂ concentration (w/w) after capture",
+      "stage": "mass",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.9,
+      "range": [
+        0.5,
+        0.999
+      ],
+      "hit": "capture",
+      "source": "Mass fraction CO2 in the captured gas leaving the capture unit."
+    },
+    "h2_co2_ratio": {
+      "label": "H₂ to CO₂ molar ratio",
+      "stage": "mass",
+      "dim": "ratio",
+      "unit": "mol/mol",
+      "default": 3,
+      "range": [
+        1,
+        6
+      ],
+      "hit": "ft",
+      "source": "Stoichiometric requirement of the synthesis step; 3:1 is the RWGS/FT design ratio."
+    },
+    "surf_yield": {
+      "label": "Surfactant yield",
+      "stage": "mass",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 0.14,
+      "range": [
+        0.02,
+        0.4
+      ],
+      "hit": "surf_synth",
+      "source": "kg surfactant per kg CO2 in the raw flue gas - the overall carbon-to-product yield."
+    },
+    "opdays": {
+      "label": "Operating days per year",
+      "stage": "mass",
+      "dim": "days",
+      "unit": "d/y",
+      "default": 365,
+      "range": [
+        300,
+        365
+      ],
+      "source": "On-stream time. 330 d/y is a common turnaround allowance; 365 assumes continuous operation."
+    },
+    "eo_per_surf": {
+      "label": "Ethylene oxide per kg surfactant",
+      "stage": "mass",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 0.59,
+      "editable": false,
+      "source": "Worksheet: EO = 0.59 × surfactant.",
+      "hit": "eo_plant"
+    },
+    "h2_per_eth": {
+      "label": "H₂ per kg ethanol",
+      "stage": "mass",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 0.947,
+      "editable": false,
+      "source": "Worksheet: H2 to ethanol plant = 0.947 × ethanol.",
+      "hit": "ethanol_plant"
+    },
+    "alc_per_surf": {
+      "label": "Alcohol intermediate per kg surfactant",
+      "stage": "mass",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 0.41,
+      "editable": false,
+      "source": "Worksheet: alcohol intermediate = 0.41 × surfactant.",
+      "hit": "ft"
+    },
+    "ftcp_per_surf": {
+      "label": "FT coproduct per kg surfactant",
+      "stage": "mass",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 0.1,
+      "editable": false,
+      "source": "Worksheet: FT coproduct = 0.10 × surfactant.",
+      "hit": "ft"
+    },
+    "eo_loss_frac": {
+      "label": "EO carried in the ethanol-rich stream",
+      "stage": "mass",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.05,
+      "editable": false,
+      "source": "Worksheet: 5% of the EO mass rides along with the ethanol-rich stream and leaves as EO-plant by-product.",
+      "hit": "eo_plant"
+    },
+    "eth_coprod_split": {
+      "label": "Ethanol-plant residue to coproduct",
+      "stage": "mass",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.445,
+      "editable": false,
+      "source": "Worksheet: 44.5% of the ethanol-plant residue is coproduct, the rest wastewater.",
+      "hit": "ethanol_plant"
+    },
+    "elec_cc": {
+      "label": "Electricity required by carbon capture",
+      "stage": "lci",
+      "dim": "energy_intensity",
+      "unit": "GJ/t",
+      "default": 0.7,
+      "range": [
+        0.2,
+        3
+      ],
+      "hit": "capture",
+      "source": "Per tonne of CO2 in the flue gas. Amine capture is typically 0.5-1.2 GJ/t as electricity."
+    },
+    "elec_h2": {
+      "label": "Electricity to generate electrolytic H₂",
+      "stage": "lci",
+      "dim": "energy_per_mass",
+      "unit": "kWh/kg",
+      "default": 39.4,
+      "range": [
+        30,
+        60
+      ],
+      "hit": "gas_treat",
+      "source": "kWh per kg H2. 39.4 is near the thermodynamic limit for PEM; commercial units run 50-55."
+    },
+    "onsite": {
+      "label": "Onsite electricity generated",
+      "stage": "lci",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 10,
+      "range": [
+        0,
+        50
+      ],
+      "hit": "gas_treat",
+      "source": "Share of consumption met on site rather than imported from the grid."
+    },
+    "lcia_base_elec": {
+      "label": "LCIA electricity basis",
+      "stage": "lcia",
+      "dim": "energy_per_mass",
+      "unit": "kWh/t",
+      "default": 50312.5,
+      "editable": false,
+      "source": "Worksheet: 161 × 1000 / 3.2 MWh per kt of product. Net electricity per tonne of saleable product on which the frozen Electricity column was computed.",
+      "notes": [
+        "lcia_frozen"
+      ]
+    },
+    "fx_base": {
+      "label": "Base-cost conversion factor",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "default": 0.77,
+      "editable": false,
+      "source": "Undocumented multiplier applied to every base cost except gas treatment; presumably US$ → £.",
+      "notes": [
+        "fx_077"
+      ]
+    },
+    "cepci_now": {
+      "label": "CEPCI, current",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "default": 800,
+      "editable": false,
+      "source": "Cost index the equipment costs are escalated to."
+    },
+    "ft_feed_lhv": {
+      "label": "Energy content of FT feed",
+      "stage": "capex",
+      "dim": "energy_intensity",
+      "unit": "GJ/t",
+      "default": 23,
+      "editable": false,
+      "source": "Worksheet: FT synthesis is sized on (CO2-rich gas + H2) × 23 GJ/t expressed as MWe.",
+      "hit": "ft"
+    },
+    "ft_upg_co2_yield": {
+      "label": "FT liquids per kg CO₂ in flue gas",
+      "stage": "capex",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 0.16,
+      "editable": false,
+      "source": "Worksheet: FT product upgrading is sized on surfactant + 0.16 × CO2 in flue × 0.77.",
+      "hit": "ft"
+    },
+    "ft_upg_factor": {
+      "label": "FT upgrading size factor",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "default": 0.77,
+      "editable": false,
+      "source": "Undocumented 0.77 inside the FT upgrading size basis (same value as the base-cost conversion).",
+      "hit": "ft",
+      "notes": [
+        "fx_077"
+      ]
+    },
+    "ferm_per_surf": {
+      "label": "Alcohol train throughput per kg surfactant",
+      "stage": "capex",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 0.56,
+      "editable": false,
+      "source": "Worksheet: alcohol synthesis, fermentation and EtOH purification are sized on 0.56 × surfactant.",
+      "hit": "ethanol_plant"
+    },
+    "lang": {
+      "label": "Lang factor",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "default": 5.03,
+      "range": [
+        3,
+        6
+      ],
+      "source": "Total capital divided by delivered equipment cost. 4.7-5.0 for fluid-processing plants (Peters & Timmerhaus)."
+    },
+    "sprice": {
+      "label": "Surfactant price",
+      "stage": "opex",
+      "dim": "price_mass",
+      "unit": "£/t",
+      "default": 7500,
+      "range": [
+        2000,
+        15000
+      ],
+      "hit": "surfactant",
+      "source": "Market price of the fossil-derived surfactant this product displaces."
+    },
+    "cprice": {
+      "label": "Co-product price",
+      "stage": "opex",
+      "dim": "price_mass",
+      "unit": "£/t",
+      "default": 1500,
+      "range": [
+        0,
+        5000
+      ],
+      "source": "Blended price for FT, ethanol-plant and EO-plant co-products."
+    },
+    "elcost": {
+      "label": "Electricity cost",
+      "stage": "opex",
+      "dim": "price_energy",
+      "unit": "£/kWh",
+      "default": 0.25,
+      "range": [
+        0.02,
+        0.6
+      ],
+      "hit": "gas_treat",
+      "source": "Industrial tariff."
+    },
+    "flgp": {
+      "label": "Flue gas price",
+      "stage": "opex",
+      "dim": "price_mass",
+      "unit": "£/t",
+      "default": 0,
+      "range": [
+        0,
+        50
+      ],
+      "hit": "flue",
+      "source": "Paid to the emitter for the flue gas. Zero if taken as a free waste stream."
+    },
+    "acc": {
+      "label": "Annual capital charge",
+      "stage": "opex",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.1,
+      "range": [
+        0.05,
+        0.25
+      ],
+      "source": "Fraction of total capital charged to each operating year."
+    },
+    "indopex": {
+      "label": "Indirect opex / annual delivered equip. cost",
+      "stage": "opex",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.06,
+      "range": [
+        0,
+        0.2
+      ],
+      "source": "Maintenance, insurance and overheads as a fraction of annualised equipment cost."
+    },
+    "laboh": {
+      "label": "Labour overhead",
+      "stage": "opex",
+      "dim": "count",
+      "unit": "",
+      "default": 1.9,
+      "range": [
+        1,
+        3
+      ],
+      "source": "Multiplier on base salary covering employment on-costs and supervision."
+    },
+    "salary": {
+      "label": "Worker salary",
+      "stage": "opex",
+      "dim": "salary",
+      "unit": "£/y",
+      "default": 50000,
+      "range": [
+        20000,
+        120000
+      ],
+      "source": "Per worker per year."
+    },
+    "jobs": {
+      "label": "Number of jobs",
+      "stage": "opex",
+      "dim": "jobs",
+      "unit": "jobs/ktpa",
+      "default": 1,
+      "range": [
+        0.2,
+        5
+      ],
+      "source": "Staffing intensity per ktpa of surfactant."
+    },
+    "misc": {
+      "label": "Miscellaneous opex / total opex",
+      "stage": "opex",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.2,
+      "range": [
+        0,
+        0.5
+      ],
+      "source": "Contingency applied to the sum of variable and fixed operating costs."
+    },
+    "irr": {
+      "label": "Internal rate of return",
+      "stage": "dcf",
+      "dim": "fraction",
+      "unit": "fraction",
+      "default": 0.1,
+      "range": [
+        0.02,
+        0.3
+      ],
+      "source": "Rate used to discount future cash flows. 8-12% is typical for process industry projects."
+    },
+    "plant_life": {
+      "label": "Operating years",
+      "stage": "dcf",
+      "dim": "years",
+      "unit": "y",
+      "default": 20,
+      "editable": false,
+      "source": "Worksheet cash-flow table runs years 1-20."
+    },
+    "constr_years": {
+      "label": "Construction years",
+      "stage": "dcf",
+      "dim": "years",
+      "unit": "y",
+      "default": 3,
+      "editable": false,
+      "source": "Worksheet spends the capital in equal thirds over years −2, −1 and 0.",
+      "notes": [
+        "dcf_schedule"
+      ]
+    }
+  },
+  "tables": {
+    "equipment": {
+      "label": "Equipment cost basis (six-tenths rule)",
+      "stage": "capex",
+      "columns": {
+        "label": {
+          "type": "text"
+        },
+        "base_cost": {
+          "label": "Base cost (as printed)",
+          "dim": "currency",
+          "unit": "£M",
+          "editable": true
+        },
+        "fx_applied": {
+          "label": "0.77 factor applied",
+          "dim": "count"
+        },
+        "base_size": {
+          "label": "Base size",
+          "dim": "count",
+          "editable": true
+        },
+        "size_unit": {
+          "type": "text"
+        },
+        "n": {
+          "label": "Scale exponent",
+          "dim": "count",
+          "editable": true
+        },
+        "cepci_base": {
+          "label": "CEPCI base",
+          "dim": "count"
+        },
+        "size_index": {
+          "label": "Position in unit_sizes",
+          "dim": "count"
+        }
+      },
+      "rows": {
+        "ft_syn": {
+          "label": "FT synthesis",
+          "base_cost": 25.3,
+          "fx_applied": 1,
+          "base_size": 100,
+          "size_unit": "MWe",
+          "n": 0.72,
+          "cepci_base": 394.3,
+          "size_index": 0
+        },
+        "ft_upg": {
+          "label": "FT product upgrading",
+          "base_cost": 233,
+          "fx_applied": 1,
+          "base_size": 286,
+          "size_unit": "m³/h",
+          "n": 0.7,
+          "cepci_base": 394.3,
+          "size_index": 1
+        },
+        "alc_syn": {
+          "label": "Alcohol synthesis",
+          "base_cost": 3.5,
+          "fx_applied": 1,
+          "base_size": 87.5,
+          "size_unit": "tph",
+          "n": 0.72,
+          "cepci_base": 394.3,
+          "size_index": 2
+        },
+        "ferm": {
+          "label": "Fermentation",
+          "base_cost": 0.67,
+          "fx_applied": 1,
+          "base_size": 1.04,
+          "size_unit": "tph",
+          "n": 0.8,
+          "cepci_base": 402,
+          "size_index": 3
+        },
+        "etoh_pur": {
+          "label": "EtOH purification",
+          "base_cost": 2.92,
+          "fx_applied": 1,
+          "base_size": 18.466,
+          "size_unit": "tph",
+          "n": 0.8,
+          "cepci_base": 402,
+          "size_index": 4
+        },
+        "gas_treat": {
+          "label": "Gas treatment, ETP & Electrolysis",
+          "base_cost": 1.6,
+          "fx_applied": 0,
+          "base_size": 1,
+          "size_unit": "MWe",
+          "n": 0.7,
+          "cepci_base": 800,
+          "size_index": 5
+        },
+        "co2_capture": {
+          "label": "CO₂ Capture",
+          "base_cost": 28,
+          "fx_applied": 1,
+          "base_size": 9600,
+          "size_unit": "kmol/h",
+          "n": 0.7,
+          "cepci_base": 394.3,
+          "size_index": 6
+        },
+        "surf_synth": {
+          "label": "Surfactant synthesis",
+          "base_cost": 3.5,
+          "fx_applied": 1,
+          "base_size": 87.5,
+          "size_unit": "tph",
+          "n": 0.72,
+          "cepci_base": 402,
+          "size_index": 7
+        },
+        "eo_plant": {
+          "label": "Ethylene oxide plant",
+          "base_cost": 3.5,
+          "fx_applied": 1,
+          "base_size": 87.5,
+          "size_unit": "tph",
+          "n": 0.72,
+          "cepci_base": 402,
+          "size_index": 8
+        }
+      }
+    },
+    "impacts": {
+      "label": "ReCiPe 2016 midpoint results per kg surfactant (frozen)",
+      "stage": "lcia",
+      "columns": {
+        "label": {
+          "type": "text"
+        },
+        "unit": {
+          "type": "text"
+        },
+        "elec_base": {
+          "label": "Electricity (at LCIA basis)",
+          "dim": "count"
+        },
+        "emissions": {
+          "label": "Emissions",
+          "dim": "count"
+        },
+        "infrastructure": {
+          "label": "Infrastructure",
+          "dim": "count"
+        },
+        "wastewater": {
+          "label": "Wastewater",
+          "dim": "count"
+        },
+        "fossil_gate": {
+          "label": "Fossil-based (cradle to gate)",
+          "dim": "count"
+        },
+        "fossil_eol_c": {
+          "label": "Fossil-based end-of-life carbon",
+          "dim": "mass_intensity",
+          "unit": "kg/kg"
+        }
+      },
+      "rows": {
+        "gwp": {
+          "label": "Global warming",
+          "unit": "kg CO₂ eq",
+          "elec_base": 1.0607551,
+          "emissions": 0.285375,
+          "infrastructure": 0.08936802919,
+          "wastewater": 0.0064614894,
+          "fossil_gate": 2.185726,
+          "fossil_eol_c": 0.64
+        },
+        "odp": {
+          "label": "Stratospheric ozone depletion",
+          "unit": "kg CFC11 eq",
+          "elec_base": 4.9239225e-7,
+          "emissions": 3.4375e-7,
+          "infrastructure": 4.9922787547e-8,
+          "wastewater": 1.9943478e-8,
+          "fossil_gate": 3.4760424e-7,
+          "fossil_eol_c": 0
+        },
+        "irp": {
+          "label": "Ionizing radiation",
+          "unit": "kBq Co-60 eq",
+          "elec_base": 0.051415125,
+          "emissions": 0,
+          "infrastructure": 0.0038335225294,
+          "wastewater": 0.00082519462,
+          "fossil_gate": 0.17530133,
+          "fossil_eol_c": 0
+        },
+        "ofhh": {
+          "label": "Ozone formation, Human health",
+          "unit": "kg NOₓ eq",
+          "elec_base": 0.0037280049,
+          "emissions": 0.006165625,
+          "infrastructure": 0.00049219888022,
+          "wastewater": 0.000022567098,
+          "fossil_gate": 0.0052260676,
+          "fossil_eol_c": 0
+        },
+        "pm": {
+          "label": "Fine particulate matter",
+          "unit": "kg PM2.5 eq",
+          "elec_base": 0.0023273351,
+          "emissions": 0.0017403125,
+          "infrastructure": 0.00031848259915,
+          "wastewater": 0.000014280727,
+          "fossil_gate": 0.0022926558,
+          "fossil_eol_c": 0
+        },
+        "oft": {
+          "label": "Ozone formation, Terrestrial",
+          "unit": "kg NOₓ eq",
+          "elec_base": 0.0038616056,
+          "emissions": 0.0064578125,
+          "infrastructure": 0.00050026460764,
+          "wastewater": 0.000022984902,
+          "fossil_gate": 0.0060159632,
+          "fossil_eol_c": 0
+        },
+        "tap": {
+          "label": "Terrestrial acidification",
+          "unit": "kg SO₂ eq",
+          "elec_base": 0.0045865722,
+          "emissions": 0.00589125,
+          "infrastructure": 0.00064896025883,
+          "wastewater": 0.000046007754,
+          "fossil_gate": 0.006303221,
+          "fossil_eol_c": 0
+        },
+        "fep": {
+          "label": "Freshwater eutrophication",
+          "unit": "kg P eq",
+          "elec_base": 0.0010751903,
+          "emissions": 0,
+          "infrastructure": 0.00011791223297,
+          "wastewater": 0.000015170362,
+          "fossil_gate": 0.00054236412,
+          "fossil_eol_c": 0
+        },
+        "mep": {
+          "label": "Marine eutrophication",
+          "unit": "kg N eq",
+          "elec_base": 0.000076260947,
+          "emissions": 0,
+          "infrastructure": 0.00002118049862,
+          "wastewater": 0.000084057874,
+          "fossil_gate": 0.00003815583,
+          "fossil_eol_c": 0
+        },
+        "tetp": {
+          "label": "Terrestrial ecotoxicity",
+          "unit": "kg 1,4-DCB",
+          "elec_base": 8.5813554,
+          "emissions": 0,
+          "infrastructure": 0.10119159137,
+          "wastewater": 0.028192356,
+          "fossil_gate": 2.058589,
+          "fossil_eol_c": 0
+        },
+        "fetp": {
+          "label": "Freshwater ecotoxicity",
+          "unit": "kg 1,4-DCB",
+          "elec_base": 2.3868748,
+          "emissions": 0,
+          "infrastructure": 0.004626991924,
+          "wastewater": 0.00059393039,
+          "fossil_gate": 0.10163104,
+          "fossil_eol_c": 0
+        },
+        "metp": {
+          "label": "Marine ecotoxicity",
+          "unit": "kg 1,4-DCB",
+          "elec_base": 2.8895168,
+          "emissions": 0,
+          "infrastructure": 0.006353215326,
+          "wastewater": 0.00079544647,
+          "fossil_gate": 0.13049075,
+          "fossil_eol_c": 0
+        },
+        "hctp": {
+          "label": "Human carcinogenic toxicity",
+          "unit": "kg 1,4-DCB",
+          "elec_base": 0.91225563,
+          "emissions": 0,
+          "infrastructure": 0.011407915082,
+          "wastewater": 0.0038394484,
+          "fossil_gate": 0.13044001,
+          "fossil_eol_c": 0
+        },
+        "hnctp": {
+          "label": "Human non-carcinogenic toxicity",
+          "unit": "kg 1,4-DCB",
+          "elec_base": 8.7216028,
+          "emissions": 0,
+          "infrastructure": 0.1680895485,
+          "wastewater": 0.040888059,
+          "fossil_gate": 1.7206876,
+          "fossil_eol_c": 0
+        },
+        "lu": {
+          "label": "Land use",
+          "unit": "m²a crop eq",
+          "elec_base": 0.063431464,
+          "emissions": 0,
+          "infrastructure": 0.0037063635572,
+          "wastewater": 0.00017670612,
+          "fossil_gate": 0.035719791,
+          "fossil_eol_c": 0
+        },
+        "mrs": {
+          "label": "Mineral resource scarcity",
+          "unit": "kg Cu eq",
+          "elec_base": 0.045053124,
+          "emissions": 0,
+          "infrastructure": 0.015855830033,
+          "wastewater": 0.00011112903,
+          "fossil_gate": 0.0068036511,
+          "fossil_eol_c": 0
+        },
+        "frs": {
+          "label": "Fossil resource scarcity",
+          "unit": "kg oil eq",
+          "elec_base": 0.26008135,
+          "emissions": 0,
+          "infrastructure": 0.0934271474168,
+          "wastewater": 0.0010644289,
+          "fossil_gate": 1.450212,
+          "fossil_eol_c": 0
+        },
+        "wc": {
+          "label": "Water consumption",
+          "unit": "m³",
+          "elec_base": 0.01387925,
+          "emissions": 0,
+          "infrastructure": -0.0011470742006,
+          "wastewater": -0.012838407,
+          "fossil_gate": 0.032658977,
+          "fossil_eol_c": 0
+        }
+      }
+    },
+    "cashflow": {
+      "label": "Discounted cash flow schedule",
+      "stage": "dcf",
+      "columns": {
+        "label": {
+          "type": "text"
+        },
+        "year": {
+          "label": "Year",
+          "dim": "count"
+        }
+      },
+      "rows": {
+        "ym3": {
+          "label": "Year -3",
+          "year": -3
+        },
+        "ym2": {
+          "label": "Year -2",
+          "year": -2
+        },
+        "ym1": {
+          "label": "Year -1",
+          "year": -1
+        },
+        "y0": {
+          "label": "Year 0",
+          "year": 0
+        },
+        "y1": {
+          "label": "Year 1",
+          "year": 1
+        },
+        "y2": {
+          "label": "Year 2",
+          "year": 2
+        },
+        "y3": {
+          "label": "Year 3",
+          "year": 3
+        },
+        "y4": {
+          "label": "Year 4",
+          "year": 4
+        },
+        "y5": {
+          "label": "Year 5",
+          "year": 5
+        },
+        "y6": {
+          "label": "Year 6",
+          "year": 6
+        },
+        "y7": {
+          "label": "Year 7",
+          "year": 7
+        },
+        "y8": {
+          "label": "Year 8",
+          "year": 8
+        },
+        "y9": {
+          "label": "Year 9",
+          "year": 9
+        },
+        "y10": {
+          "label": "Year 10",
+          "year": 10
+        },
+        "y11": {
+          "label": "Year 11",
+          "year": 11
+        },
+        "y12": {
+          "label": "Year 12",
+          "year": 12
+        },
+        "y13": {
+          "label": "Year 13",
+          "year": 13
+        },
+        "y14": {
+          "label": "Year 14",
+          "year": 14
+        },
+        "y15": {
+          "label": "Year 15",
+          "year": 15
+        },
+        "y16": {
+          "label": "Year 16",
+          "year": 16
+        },
+        "y17": {
+          "label": "Year 17",
+          "year": 17
+        },
+        "y18": {
+          "label": "Year 18",
+          "year": 18
+        },
+        "y19": {
+          "label": "Year 19",
+          "year": 19
+        },
+        "y20": {
+          "label": "Year 20",
+          "year": 20
+        }
+      }
+    }
+  },
+  "units": {
+    "env": {
+      "kind": "env"
+    },
+    "capture": {
+      "label": "CO₂ Capture",
+      "sub": "amine absorber",
+      "kind": "separator",
+      "params": [
+        "co2_frac",
+        "h2o_frac",
+        "co2_rec",
+        "co2_conc",
+        "elec_cc"
+      ]
+    },
+    "ft": {
+      "label": "FT + Alcohol",
+      "sub": "synthesis",
+      "kind": "reactor",
+      "params": [
+        "h2_co2_ratio",
+        "alc_per_surf",
+        "ftcp_per_surf",
+        "ft_feed_lhv",
+        "ft_upg_co2_yield",
+        "ft_upg_factor"
+      ]
+    },
+    "ethanol_plant": {
+      "label": "Ethanol plant",
+      "kind": "reactor",
+      "params": [
+        "h2_per_eth",
+        "eth_coprod_split",
+        "ferm_per_surf"
+      ]
+    },
+    "gas_treat": {
+      "label": "Gas treatment",
+      "sub": "ETP & Electrolysis",
+      "kind": "converter",
+      "params": [
+        "elec_h2",
+        "onsite",
+        "elcost"
+      ]
+    },
+    "eo_plant": {
+      "label": "Ethylene oxide",
+      "sub": "plant",
+      "kind": "reactor",
+      "params": [
+        "eo_per_surf",
+        "eo_loss_frac"
+      ]
+    },
+    "surf_synth": {
+      "label": "Surfactant",
+      "sub": "synthesis",
+      "kind": "reactor",
+      "params": [
+        "surf_yield"
+      ]
+    }
+  },
+  "streams": {
+    "flue": {
+      "label": "Flue gas",
+      "from": "env",
+      "to": "capture",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "flue_in",
+      "components": {
+        "co2": "flue_in * co2_frac"
+      }
+    },
+    "gas_ft": {
+      "label": "CO₂ rich gas (FT)",
+      "from": "capture",
+      "to": "ft",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "gas_ft.co2 / co2_conc",
+      "components": {
+        "co2": "co2_recovered - gas_eth.co2"
+      },
+      "notes": [
+        "product_first"
+      ]
+    },
+    "gas_eth": {
+      "label": "CO₂ rich gas (Ethanol)",
+      "from": "capture",
+      "to": "ethanol_plant",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "gas_eth.co2 / co2_conc",
+      "components": {
+        "co2": "h2_eth / (h2_co2_ratio * mw.h2 / (h2_co2_ratio * mw.h2 + mw.co2)) * mw.co2 / (h2_co2_ratio * mw.h2 + mw.co2)"
+      }
+    },
+    "rem_flue": {
+      "label": "Rem. flue gas",
+      "from": "capture",
+      "to": "gas_treat",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "flue - gas_ft - gas_eth",
+      "components": {
+        "co2": "flue.co2 - co2_recovered"
+      },
+      "closes": true
+    },
+    "h2_ft": {
+      "label": "H₂ to FT + Alcohol synthesis",
+      "from": "gas_treat",
+      "to": "ft",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "gas_ft.co2 / mw.co2 * h2_co2_ratio * mw.h2",
+      "recycle": true
+    },
+    "h2_eth": {
+      "label": "H₂ to Ethanol plant",
+      "from": "gas_treat",
+      "to": "ethanol_plant",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "h2_per_eth * eth_rich.ethanol",
+      "recycle": true
+    },
+    "alcohol": {
+      "label": "Alcohol intermediate",
+      "from": "ft",
+      "to": "surf_synth",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "alc_per_surf * surfactant"
+    },
+    "ft_coprod": {
+      "label": "FT coproduct",
+      "from": "ft",
+      "to": "env",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "ftcp_per_surf * surfactant",
+      "product": "co"
+    },
+    "ft_flue": {
+      "label": "FT flue gas",
+      "from": "ft",
+      "to": "gas_treat",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "gas_ft + h2_ft - alcohol - ft_coprod",
+      "closes": true
+    },
+    "eth_rich": {
+      "label": "Ethanol rich stream",
+      "from": "ethanol_plant",
+      "to": "eo_plant",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "eth_rich.ethanol + eo * eo_loss_frac",
+      "components": {
+        "ethanol": "eo * mw.ethanol / mw.eo"
+      }
+    },
+    "eth_coprod": {
+      "label": "Coproduct from Ethanol plant",
+      "from": "ethanol_plant",
+      "to": "env",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "(gas_eth + h2_eth - eth_rich) * eth_coprod_split",
+      "product": "co"
+    },
+    "ww_eth": {
+      "label": "Wastewater from Ethanol plant",
+      "from": "ethanol_plant",
+      "to": "gas_treat",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "(gas_eth + h2_eth - eth_rich) * (1 - eth_coprod_split)",
+      "closes": true
+    },
+    "eo": {
+      "label": "Ethylene oxide",
+      "from": "eo_plant",
+      "to": "surf_synth",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "eo_per_surf * surfactant"
+    },
+    "eo_byprod": {
+      "label": "EO byproduct",
+      "from": "eo_plant",
+      "to": "env",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "eth_rich.ethanol - eo + eo * eo_loss_frac",
+      "product": "co",
+      "closes": true
+    },
+    "surfactant": {
+      "label": "Surfactant output",
+      "from": "surf_synth",
+      "to": "env",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "surf_yield * co2_frac * flue_in",
+      "product": "main",
+      "notes": [
+        "product_first"
+      ]
+    },
+    "exhaust": {
+      "label": "Exhaust + water",
+      "from": "gas_treat",
+      "to": "env",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "rem_flue + ft_flue + ww_eth - h2_total",
+      "closes": true,
+      "notes": [
+        "exhaust_net_h2"
+      ]
+    }
+  },
+  "derived": {
+    "co2_recovered": {
+      "label": "CO₂ recovered",
+      "stage": "mass",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "flue.co2 * co2_rec",
+      "hit": "capture"
+    },
+    "h2_total": {
+      "label": "H₂ from electrolysis (total)",
+      "stage": "mass",
+      "dim": "mass_flow",
+      "unit": "t/d",
+      "expr": "h2_ft + h2_eth",
+      "hit": "gas_treat",
+      "notes": [
+        "exhaust_net_h2"
+      ]
+    },
+    "flue_ktpa": {
+      "label": "Flue gas (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "flue * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "flue_co2_ktpa": {
+      "label": "CO₂ in flue gas (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "flue.co2 * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "co2_recovered_ktpa": {
+      "label": "CO₂ recovered (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "co2_recovered * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "gas_ft_ktpa": {
+      "label": "CO₂ rich gas to FT + Alcohol (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "gas_ft * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "gas_ft_co2_ktpa": {
+      "label": "CO₂ in CO₂ rich gas to FT (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "gas_ft.co2 * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "gas_eth_ktpa": {
+      "label": "CO₂ rich gas to Ethanol plant (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "gas_eth * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "gas_eth_co2_ktpa": {
+      "label": "CO₂ in CO₂ rich gas to Ethanol (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "gas_eth.co2 * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "rem_flue_ktpa": {
+      "label": "Remaining flue gas (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "rem_flue * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "rem_flue_co2_ktpa": {
+      "label": "CO₂ in remaining flue gas (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "rem_flue.co2 * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "h2_ft_ktpa": {
+      "label": "H₂ to FT + Alcohol synthesis (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "h2_ft * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "h2_eth_ktpa": {
+      "label": "H₂ to Ethanol plant (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "h2_eth * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "h2_ktpa": {
+      "label": "H₂ from electrolysis (total) (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "h2_total * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "alcohol_ktpa": {
+      "label": "Alcohol intermediate (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "alcohol * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "ft_coprod_ktpa": {
+      "label": "FT coproduct (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "ft_coprod * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "ft_flue_ktpa": {
+      "label": "FT flue gas (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "ft_flue * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "ethanol_ktpa": {
+      "label": "Ethanol (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "eth_rich.ethanol * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "eth_rich_ktpa": {
+      "label": "Ethanol rich stream (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "eth_rich * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "eth_coprod_ktpa": {
+      "label": "Coproduct from Ethanol plant (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "eth_coprod * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "ww_eth_ktpa": {
+      "label": "Wastewater from Ethanol plant (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "ww_eth * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "eo_ktpa": {
+      "label": "Ethylene oxide (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "eo * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "eo_byprod_ktpa": {
+      "label": "Byproduct from Ethylene oxide plant (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "eo_byprod * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "surf_ktpa": {
+      "label": "Surfactant output (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "surfactant * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "exhaust_ktpa": {
+      "label": "Exhaust + water (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "exhaust * opdays * 1000",
+      "group": "mass_balance"
+    },
+    "coprod_ktpa": {
+      "label": "Co-products (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "ft_coprod_ktpa + eth_coprod_ktpa + eo_byprod_ktpa"
+    },
+    "saleable_ktpa": {
+      "label": "All saleable products (annual)",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kt/y",
+      "expr": "surf_ktpa + coprod_ktpa"
+    },
+    "elec_total": {
+      "label": "Electricity total consumed",
+      "stage": "lci",
+      "dim": "energy_year",
+      "unit": "MWh/y",
+      "expr": "elec_h2 * h2_ktpa * 3.6 / 1000 + elec_cc * flue.co2 * opdays",
+      "role": "energy",
+      "basis": "electrolysis + capture"
+    },
+    "elec_onsite": {
+      "label": "Electricity generated (onsite)",
+      "stage": "lci",
+      "dim": "energy_year",
+      "unit": "MWh/y",
+      "expr": "onsite * elec_total",
+      "role": "energy"
+    },
+    "elec_net": {
+      "label": "Net electricity imported",
+      "stage": "lci",
+      "dim": "energy_year",
+      "unit": "MWh/y",
+      "expr": "elec_total - elec_onsite",
+      "role": "lci",
+      "group": "electricity"
+    },
+    "elec_per_kg_surf": {
+      "label": "Net electricity per kg surfactant",
+      "stage": "lci",
+      "dim": "energy_per_mass",
+      "unit": "kWh/kg",
+      "expr": "elec_net / surf_ktpa * 1000 / 3.6",
+      "role": "lci",
+      "group": "electricity"
+    },
+    "elec_per_product": {
+      "label": "Net electricity per kg of saleable product",
+      "stage": "lci",
+      "dim": "energy_per_mass",
+      "unit": "kWh/kg",
+      "expr": "elec_net / saleable_ktpa * 1000 / 3.6",
+      "role": "lci",
+      "group": "electricity",
+      "notes": [
+        "lcia_frozen"
+      ]
+    },
+    "elec_scale": {
+      "label": "Electricity impact scale factor",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "elec_per_product / lcia_base_elec",
+      "role": "impact",
+      "notes": [
+        "lcia_frozen"
+      ]
+    },
+    "impact_elec": {
+      "label": "Electricity",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "row.elec_base * elec_scale",
+      "table": "impacts",
+      "column": "elec",
+      "role": "impact"
+    },
+    "impact_fossil": {
+      "label": "Fossil-based",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "row.fossil_gate + row.fossil_eol_c * mw.co2 / mw.c",
+      "table": "impacts",
+      "column": "fossil",
+      "role": "impact"
+    },
+    "impact_total": {
+      "label": "F2C total",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "row.elec + row.emissions + row.infrastructure + row.wastewater",
+      "table": "impacts",
+      "column": "total",
+      "role": "impact"
+    },
+    "impact_f2c_pct": {
+      "label": "F2C relative to the larger (%)",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "if(row.total >= row.fossil, 100, row.total / row.fossil * 100)",
+      "table": "impacts",
+      "column": "f2c_pct",
+      "role": "impact"
+    },
+    "impact_fossil_pct": {
+      "label": "Fossil relative to the larger (%)",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "if(row.fossil >= row.total, 100, row.fossil / row.total * 100)",
+      "table": "impacts",
+      "column": "fossil_pct",
+      "role": "impact"
+    },
+    "gwp_per_kg": {
+      "label": "Global warming per kg surfactant",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "expr": "impacts.gwp.total",
+      "role": "impact",
+      "group": "gwp",
+      "kpi": true,
+      "notes": [
+        "lcia_frozen"
+      ]
+    },
+    "gwp_fossil": {
+      "label": "Global warming, fossil-based surfactant",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "expr": "impacts.gwp.fossil",
+      "role": "impact",
+      "group": "gwp"
+    },
+    "gwp_vs_fossil": {
+      "label": "Global warming relative to fossil",
+      "stage": "lcia",
+      "dim": "fraction",
+      "unit": "%",
+      "expr": "impacts.gwp.total / impacts.gwp.fossil",
+      "role": "impact",
+      "group": "gwp"
+    },
+    "size_ft_syn": {
+      "label": "FT synthesis size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "(gas_ft + h2_ft) / 24 * ft_feed_lhv * 1000 / 3600",
+      "basis": "MWe: FT feed × LHV",
+      "hit": "ft"
+    },
+    "size_ft_upg": {
+      "label": "FT product upgrading size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "(surfactant + ft_upg_co2_yield * flue.co2 * ft_upg_factor) / 24",
+      "basis": "m³/h",
+      "hit": "ft"
+    },
+    "size_alc_syn": {
+      "label": "Alcohol synthesis size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "ferm_per_surf * surfactant / 24",
+      "basis": "tph",
+      "hit": "ft"
+    },
+    "size_ferm": {
+      "label": "Fermentation size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "ferm_per_surf * surfactant / 24",
+      "basis": "tph",
+      "hit": "ethanol_plant"
+    },
+    "size_etoh_pur": {
+      "label": "EtOH purification size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "ferm_per_surf * surfactant / 24",
+      "basis": "tph",
+      "hit": "ethanol_plant"
+    },
+    "size_gas_treat": {
+      "label": "Gas treatment size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "elec_onsite / 3.6 / opdays / 24",
+      "basis": "MWe of onsite generation",
+      "hit": "gas_treat"
+    },
+    "size_co2_capture": {
+      "label": "CO₂ capture size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "flue.co2 / 24 * 1000 / mw.co2",
+      "basis": "kmol/h CO₂ in flue gas",
+      "hit": "capture"
+    },
+    "size_surf_synth": {
+      "label": "Surfactant synthesis size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "surfactant / 24",
+      "basis": "tph",
+      "hit": "surf_synth"
+    },
+    "size_eo_plant": {
+      "label": "Ethylene oxide plant size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "(eo + eo_byprod) / 24",
+      "basis": "tph",
+      "hit": "eo_plant"
+    },
+    "unit_sizes": {
+      "label": "Current sizes, in equipment row order",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "concat(size_ft_syn, size_ft_upg, size_alc_syn, size_ferm, size_etoh_pur, size_gas_treat, size_co2_capture, size_surf_synth, size_eo_plant)",
+      "role": "series"
+    },
+    "equip_base_gbp": {
+      "label": "Base cost (m£)",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "row.base_cost * if(row.fx_applied, fx_base, 1)",
+      "table": "equipment",
+      "column": "base_gbp",
+      "role": "capex",
+      "notes": [
+        "fx_077"
+      ]
+    },
+    "equip_size": {
+      "label": "Current size",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "expr": "at(unit_sizes, row.size_index)",
+      "table": "equipment",
+      "column": "size",
+      "role": "capex"
+    },
+    "equip_cost_row": {
+      "label": "Cost (m£)",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "six_tenths(row.base_gbp, row.size, row.base_size, row.n, row.cepci_base, cepci_now)",
+      "table": "equipment",
+      "column": "cost",
+      "role": "capex"
+    },
+    "ft_alc_total": {
+      "label": "FT + Alcohol synthesis",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "equipment.ft_syn.cost + equipment.ft_upg.cost + equipment.alc_syn.cost",
+      "role": "capex",
+      "hit": "ft"
+    },
+    "ethanol_total": {
+      "label": "Ethanol plant",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "equipment.ferm.cost + equipment.etoh_pur.cost",
+      "role": "capex",
+      "hit": "ethanol_plant"
+    },
+    "equip_cost": {
+      "label": "Delivered cost of equipment",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "sum(col(equipment, cost))",
+      "role": "capex"
+    },
+    "tci": {
+      "label": "Total capital",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "equip_cost * lang",
+      "role": "capex",
+      "kpi": true,
+      "basis": "equipment × Lang factor"
+    },
+    "capex_annual": {
+      "label": "Capex (annual)",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "tci * acc",
+      "role": "opex",
+      "basis": "TCI × annual capital charge"
+    },
+    "opex_var": {
+      "label": "Variable opex (electricity)",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "elec_net * elcost / 1e6",
+      "role": "opex"
+    },
+    "workers": {
+      "label": "Workforce",
+      "stage": "opex",
+      "dim": "count",
+      "unit": "",
+      "expr": "jobs * surf_ktpa / 1e6",
+      "basis": "jobs per ktpa × ktpa surfactant"
+    },
+    "labour_cost": {
+      "label": "Labour cost",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "salary * laboh * workers / 1e6",
+      "role": "opex"
+    },
+    "opex_fix": {
+      "label": "Fixed opex",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "indopex * equip_cost * acc + labour_cost",
+      "role": "opex"
+    },
+    "opex_total": {
+      "label": "Total opex (incl. misc)",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "(1 + misc) * (opex_var + opex_fix)",
+      "role": "opex"
+    },
+    "feed_cost": {
+      "label": "Feedstock cost",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "flue * flgp * opdays / 1e6",
+      "role": "opex"
+    },
+    "rev_surf": {
+      "label": "Surfactant value",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "surf_ktpa / 1000 * sprice / 1e6",
+      "role": "revenue"
+    },
+    "rev_coprod": {
+      "label": "Coproduct value",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "coprod_ktpa / 1000 * cprice / 1e6",
+      "role": "revenue"
+    },
+    "cost_total": {
+      "label": "Total cost",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "capex_annual + opex_total + feed_cost",
+      "role": "metric"
+    },
+    "value_total": {
+      "label": "Total value",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "rev_surf + rev_coprod",
+      "role": "metric"
+    },
+    "margin": {
+      "label": "Economic margin",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "£M/y",
+      "expr": "value_total - cost_total",
+      "role": "metric",
+      "kpi": true
+    },
+    "mssp": {
+      "label": "Min. surfactant selling price",
+      "stage": "dcf",
+      "dim": "price_mass",
+      "unit": "£/t",
+      "expr": "(capex_annual + opex_total + feed_cost - rev_coprod) * 1e6 / (surf_ktpa / 1000)",
+      "role": "metric",
+      "kpi": true
+    },
+    "cash_ann": {
+      "label": "Ann. DCF (m£)",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "if(row.year > 0, margin / (1 + irr) ^ row.year, if(row.year > -constr_years, -tci / constr_years, 0))",
+      "table": "cashflow",
+      "column": "ann",
+      "role": "series",
+      "notes": [
+        "dcf_schedule"
+      ]
+    },
+    "cash_cum": {
+      "label": "Cumulative (m£)",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "at(cumsum(col(cashflow, ann)), row.year + constr_years)",
+      "table": "cashflow",
+      "column": "cum",
+      "role": "series"
+    },
+    "dcf_annual": {
+      "label": "Annual discounted cash flow, years −3…20",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "col(cashflow, ann)",
+      "role": "series"
+    },
+    "dcf_cum": {
+      "label": "Cumulative discounted cash flow, years −3…20",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "col(cashflow, cum)",
+      "role": "series",
+      "notes": [
+        "dcf_schedule"
+      ]
+    },
+    "npv": {
+      "label": "NPV over 20 years",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "£M",
+      "expr": "-tci + npv(repeat(margin, plant_life), irr)",
+      "role": "metric",
+      "kpi": true,
+      "notes": [
+        "dcf_schedule"
+      ]
+    },
+    "mssp_by_npv": {
+      "label": "Surfactant price for NPV = 0",
+      "stage": "dcf",
+      "dim": "price_mass",
+      "unit": "£/t",
+      "role": "metric",
+      "solve": {
+        "target": "npv",
+        "vary": "sprice",
+        "lo": 0,
+        "hi": 1000000,
+        "equals": 0
+      }
+    }
+  },
+  "checks": {
+    "mass_closure": {
+      "kind": "closure",
+      "stage": "mass",
+      "label": "Mass balance check (should = flue gas)",
+      "unit": "t/d",
+      "in": [
+        "flue"
+      ],
+      "out": [
+        "surfactant",
+        "ft_coprod",
+        "eth_coprod",
+        "eo_byprod",
+        "exhaust"
+      ],
+      "tolerance": 0.0001
+    },
+    "positive_feed": {
+      "kind": "constraint",
+      "stage": "mass",
+      "severity": "hard",
+      "expr": "flue_in > 0",
+      "message": "Flue gas throughput must be positive."
+    },
+    "ft_branch": {
+      "kind": "constraint",
+      "stage": "mass",
+      "severity": "soft",
+      "expr": "gas_ft.co2 >= 0",
+      "message": "Recovered CO₂ does not cover what the ethanol route needs; the FT branch has gone negative and its equipment cannot be costed."
+    }
+  },
+  "lcia": {
+    "method": "ReCiPe 2016 Midpoint (H) V1.05 / World (2010) H",
+    "categories": [
+      {
+        "id": "gwp",
+        "label": "Global warming",
+        "unit": "kg CO₂ eq",
+        "total": "impacts.gwp.total",
+        "contributions": {
+          "Electricity": "impacts.gwp.elec",
+          "Emissions": "impacts.gwp.emissions",
+          "Infrastructure": "impacts.gwp.infrastructure",
+          "Wastewater": "impacts.gwp.wastewater"
+        }
+      },
+      {
+        "id": "odp",
+        "label": "Stratospheric ozone depletion",
+        "unit": "kg CFC11 eq",
+        "total": "impacts.odp.total",
+        "contributions": {
+          "Electricity": "impacts.odp.elec",
+          "Emissions": "impacts.odp.emissions",
+          "Infrastructure": "impacts.odp.infrastructure",
+          "Wastewater": "impacts.odp.wastewater"
+        }
+      },
+      {
+        "id": "irp",
+        "label": "Ionizing radiation",
+        "unit": "kBq Co-60 eq",
+        "total": "impacts.irp.total",
+        "contributions": {
+          "Electricity": "impacts.irp.elec",
+          "Emissions": "impacts.irp.emissions",
+          "Infrastructure": "impacts.irp.infrastructure",
+          "Wastewater": "impacts.irp.wastewater"
+        }
+      },
+      {
+        "id": "ofhh",
+        "label": "Ozone formation, Human health",
+        "unit": "kg NOₓ eq",
+        "total": "impacts.ofhh.total",
+        "contributions": {
+          "Electricity": "impacts.ofhh.elec",
+          "Emissions": "impacts.ofhh.emissions",
+          "Infrastructure": "impacts.ofhh.infrastructure",
+          "Wastewater": "impacts.ofhh.wastewater"
+        }
+      },
+      {
+        "id": "pm",
+        "label": "Fine particulate matter",
+        "unit": "kg PM2.5 eq",
+        "total": "impacts.pm.total",
+        "contributions": {
+          "Electricity": "impacts.pm.elec",
+          "Emissions": "impacts.pm.emissions",
+          "Infrastructure": "impacts.pm.infrastructure",
+          "Wastewater": "impacts.pm.wastewater"
+        }
+      },
+      {
+        "id": "oft",
+        "label": "Ozone formation, Terrestrial",
+        "unit": "kg NOₓ eq",
+        "total": "impacts.oft.total",
+        "contributions": {
+          "Electricity": "impacts.oft.elec",
+          "Emissions": "impacts.oft.emissions",
+          "Infrastructure": "impacts.oft.infrastructure",
+          "Wastewater": "impacts.oft.wastewater"
+        }
+      },
+      {
+        "id": "tap",
+        "label": "Terrestrial acidification",
+        "unit": "kg SO₂ eq",
+        "total": "impacts.tap.total",
+        "contributions": {
+          "Electricity": "impacts.tap.elec",
+          "Emissions": "impacts.tap.emissions",
+          "Infrastructure": "impacts.tap.infrastructure",
+          "Wastewater": "impacts.tap.wastewater"
+        }
+      },
+      {
+        "id": "fep",
+        "label": "Freshwater eutrophication",
+        "unit": "kg P eq",
+        "total": "impacts.fep.total",
+        "contributions": {
+          "Electricity": "impacts.fep.elec",
+          "Emissions": "impacts.fep.emissions",
+          "Infrastructure": "impacts.fep.infrastructure",
+          "Wastewater": "impacts.fep.wastewater"
+        }
+      },
+      {
+        "id": "mep",
+        "label": "Marine eutrophication",
+        "unit": "kg N eq",
+        "total": "impacts.mep.total",
+        "contributions": {
+          "Electricity": "impacts.mep.elec",
+          "Emissions": "impacts.mep.emissions",
+          "Infrastructure": "impacts.mep.infrastructure",
+          "Wastewater": "impacts.mep.wastewater"
+        }
+      },
+      {
+        "id": "tetp",
+        "label": "Terrestrial ecotoxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "impacts.tetp.total",
+        "contributions": {
+          "Electricity": "impacts.tetp.elec",
+          "Emissions": "impacts.tetp.emissions",
+          "Infrastructure": "impacts.tetp.infrastructure",
+          "Wastewater": "impacts.tetp.wastewater"
+        }
+      },
+      {
+        "id": "fetp",
+        "label": "Freshwater ecotoxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "impacts.fetp.total",
+        "contributions": {
+          "Electricity": "impacts.fetp.elec",
+          "Emissions": "impacts.fetp.emissions",
+          "Infrastructure": "impacts.fetp.infrastructure",
+          "Wastewater": "impacts.fetp.wastewater"
+        }
+      },
+      {
+        "id": "metp",
+        "label": "Marine ecotoxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "impacts.metp.total",
+        "contributions": {
+          "Electricity": "impacts.metp.elec",
+          "Emissions": "impacts.metp.emissions",
+          "Infrastructure": "impacts.metp.infrastructure",
+          "Wastewater": "impacts.metp.wastewater"
+        }
+      },
+      {
+        "id": "hctp",
+        "label": "Human carcinogenic toxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "impacts.hctp.total",
+        "contributions": {
+          "Electricity": "impacts.hctp.elec",
+          "Emissions": "impacts.hctp.emissions",
+          "Infrastructure": "impacts.hctp.infrastructure",
+          "Wastewater": "impacts.hctp.wastewater"
+        }
+      },
+      {
+        "id": "hnctp",
+        "label": "Human non-carcinogenic toxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "impacts.hnctp.total",
+        "contributions": {
+          "Electricity": "impacts.hnctp.elec",
+          "Emissions": "impacts.hnctp.emissions",
+          "Infrastructure": "impacts.hnctp.infrastructure",
+          "Wastewater": "impacts.hnctp.wastewater"
+        }
+      },
+      {
+        "id": "lu",
+        "label": "Land use",
+        "unit": "m²a crop eq",
+        "total": "impacts.lu.total",
+        "contributions": {
+          "Electricity": "impacts.lu.elec",
+          "Emissions": "impacts.lu.emissions",
+          "Infrastructure": "impacts.lu.infrastructure",
+          "Wastewater": "impacts.lu.wastewater"
+        }
+      },
+      {
+        "id": "mrs",
+        "label": "Mineral resource scarcity",
+        "unit": "kg Cu eq",
+        "total": "impacts.mrs.total",
+        "contributions": {
+          "Electricity": "impacts.mrs.elec",
+          "Emissions": "impacts.mrs.emissions",
+          "Infrastructure": "impacts.mrs.infrastructure",
+          "Wastewater": "impacts.mrs.wastewater"
+        }
+      },
+      {
+        "id": "frs",
+        "label": "Fossil resource scarcity",
+        "unit": "kg oil eq",
+        "total": "impacts.frs.total",
+        "contributions": {
+          "Electricity": "impacts.frs.elec",
+          "Emissions": "impacts.frs.emissions",
+          "Infrastructure": "impacts.frs.infrastructure",
+          "Wastewater": "impacts.frs.wastewater"
+        }
+      },
+      {
+        "id": "wc",
+        "label": "Water consumption",
+        "unit": "m³",
+        "total": "impacts.wc.total",
+        "contributions": {
+          "Electricity": "impacts.wc.elec",
+          "Emissions": "impacts.wc.emissions",
+          "Infrastructure": "impacts.wc.infrastructure",
+          "Wastewater": "impacts.wc.wastewater"
+        }
+      }
+    ],
+    "benchmarks": [
+      {
+        "label": "Fossil-based surfactant",
+        "category": "gwp",
+        "node": "impacts.gwp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "odp",
+        "node": "impacts.odp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "irp",
+        "node": "impacts.irp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "ofhh",
+        "node": "impacts.ofhh.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "pm",
+        "node": "impacts.pm.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "oft",
+        "node": "impacts.oft.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "tap",
+        "node": "impacts.tap.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "fep",
+        "node": "impacts.fep.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "mep",
+        "node": "impacts.mep.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "tetp",
+        "node": "impacts.tetp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "fetp",
+        "node": "impacts.fetp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "metp",
+        "node": "impacts.metp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "hctp",
+        "node": "impacts.hctp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "hnctp",
+        "node": "impacts.hnctp.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "lu",
+        "node": "impacts.lu.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "mrs",
+        "node": "impacts.mrs.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "frs",
+        "node": "impacts.frs.fossil"
+      },
+      {
+        "label": "Fossil-based surfactant",
+        "category": "wc",
+        "node": "impacts.wc.fossil"
+      }
+    ]
+  },
+  "allocation": {
+    "lca": {
+      "method": "mass",
+      "basis": "Net electricity is divided by the mass of all four saleable products (surfactant and three co-products) before the frozen per-kg-surfactant impacts are scaled.",
+      "nodes": [
+        "elec_per_product",
+        "elec_scale"
+      ]
+    },
+    "tea": {
+      "method": "none",
+      "basis": "Co-products are credited as revenue at one blended price; the minimum selling price charges every cost to the surfactant net of that credit.",
+      "nodes": [
+        "rev_coprod",
+        "mssp"
+      ]
+    }
+  },
+  "targets": {
+    "gwp": {
+      "label": "Climate impact per kg surfactant",
+      "nodes": [
+        "gwp_per_kg",
+        "gwp_vs_fossil"
+      ]
+    },
+    "capital": {
+      "label": "Capital",
+      "nodes": [
+        "equip_cost",
+        "tci"
+      ]
+    },
+    "econ": {
+      "label": "Economics",
+      "nodes": [
+        "mssp",
+        "margin",
+        "npv"
+      ]
+    },
+    "mass": {
+      "label": "Mass balance",
+      "nodes": [
+        "surfactant",
+        "h2_total",
+        "mass_closure.error"
+      ]
+    }
+  },
+  "sensitivity": {
+    "tornado_mssp": {
+      "kind": "oat",
+      "label": "What moves the minimum selling price?",
+      "target": "mssp",
+      "params": "editable",
+      "delta": 0.1
+    },
+    "tornado_gwp": {
+      "kind": "oat",
+      "label": "What moves the climate impact?",
+      "target": "gwp_per_kg",
+      "params": "editable",
+      "delta": 0.1
+    },
+    "price_sweep": {
+      "kind": "sweep",
+      "label": "NPV against surfactant price",
+      "target": "npv",
+      "param": "sprice",
+      "from": 2000,
+      "to": 15000,
+      "steps": 13
+    },
+    "price_power_grid": {
+      "kind": "sweep",
+      "label": "NPV against price and power cost",
+      "target": "npv",
+      "param": "sprice",
+      "from": 2000,
+      "to": 15000,
+      "steps": 13,
+      "param2": "elcost",
+      "from2": 0.05,
+      "to2": 0.5,
+      "steps2": 9
+    },
+    "cases": {
+      "kind": "scenario",
+      "label": "Named cases",
+      "targets": [
+        "gwp_per_kg",
+        "mssp",
+        "npv"
+      ],
+      "scenarios": {
+        "more_flue_gas": {
+          "flue_in": 39600
+        },
+        "double_surfactant_price": {
+          "sprice": 15000
+        },
+        "expensive_electricity": {
+          "elcost": 0.5
+        },
+        "greener_hydrogen": {
+          "elec_h2": 20,
+          "elec_cc": 0.2
+        },
+        "cheap_power": {
+          "elcost": 0.08
+        }
+      }
+    },
+    "mc": {
+      "kind": "montecarlo",
+      "label": "NPV uncertainty",
+      "target": "npv",
+      "n": 2000,
+      "seed": 42,
+      "params": {
+        "sprice": {
+          "dist": "triangular",
+          "min": 5000,
+          "mode": 7500,
+          "max": 10000
+        },
+        "elcost": {
+          "dist": "lognormal",
+          "median": 0.25,
+          "sigma": 0.3
+        },
+        "lang": {
+          "dist": "uniform",
+          "min": 3,
+          "max": 6
+        },
+        "elec_h2": {
+          "dist": "triangular",
+          "min": 39.4,
+          "mode": 50,
+          "max": 55
+        },
+        "surf_yield": {
+          "dist": "triangular",
+          "min": 0.1,
+          "mode": 0.14,
+          "max": 0.2
+        }
+      }
+    }
+  },
+  "diagram": {
+    "rank": {
+      "capture": 0,
+      "ft": 1,
+      "ethanol_plant": 1,
+      "gas_treat": 2,
+      "eo_plant": 2,
+      "surf_synth": 3
+    },
+    "order": {
+      "ft": 0,
+      "ethanol_plant": 1,
+      "gas_treat": 2
+    }
+  }
+}

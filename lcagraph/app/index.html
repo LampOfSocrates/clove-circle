@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="LCA Graph: load a process model, watch the calculation graph build, then do the LCA and TEA step by step.">
+<title>LCA Graph | Clove Circle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f4f8f5; padding: 22px; }
+  @media (max-width: 640px) { body { padding: 12px; } }
+
+  /* Escape hatch for anyone who opens this page directly — resources.html
+     links it with target="_blank", so the tab has no history to go back
+     through. It sits in the existing chrome row rather than floating, which
+     would land on top of it. Hidden in-frame, where resources.html already
+     supplies the site chrome. */
+  .lg-chrome .cc-back-home {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid rgba(61, 139, 104, 0.5); border-radius: 7px;
+    padding: 10px 15px; background: #fff; color: #2a5c45;
+    font: 700 12px/1 Inter, system-ui, sans-serif;
+    letter-spacing: .05em; text-transform: uppercase; text-decoration: none;
+    transition: all .15s;
+  }
+  .lg-chrome .cc-back-home:hover,
+  .lg-chrome .cc-back-home:focus { background: #3d8b68; border-color: #3d8b68; color: #fff; }
+  body.in-frame .cc-back-home { display: none; }
+  @media print { .cc-back-home { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="lg" id="app">
+
+  <div class="lg-header">
+    <div>
+      <span class="lg-eyebrow">LCA Graph · calculate step by step</span>
+      <h1 data-lg-title>Loading model…</h1>
+      <p data-lg-subtitle></p>
+    </div>
+    <div class="lg-chrome">
+        <a class="cc-back-home" href="../../resources.html#lca-graph"><span aria-hidden="true">&#8592;</span> Clove Circle</a>
+      <select data-lg-model aria-label="Choose a model">
+        <option value="flue2chem">Flue2Chem · CO₂ to surfactant</option>
+        <option value="laterite">Laterite · bioleaching to metals</option>
+        <option value="palladium">Palladium · bio-recovery</option>
+        <option value="pha">PHA · biocomposite from lignocellulose</option>
+      </select>
+      <label class="lg-btn">Upload model<input type="file" accept=".json,application/json" data-lg-upload></label>
+      <button type="button" data-lg-solve-all>Run all steps</button>
+      <button type="button" data-lg-reset>Reset</button>
+      <button type="button" data-lg-download>Download case</button>
+      <button type="button" data-lg-lint>Check model</button>
+    </div>
+  </div>
+
+  <div class="lg-status" data-lg-status></div>
+  <div class="lg-notes" data-lg-notes></div>
+
+  <nav class="lg-rail" data-lg-rail aria-label="The eight steps of an LCA and TEA"></nav>
+
+  <div class="lg-kpis" data-lg-kpis></div>
+
+  <div class="lg-grid">
+    <div class="lg-col">
+      <p class="lg-diagram-hint">
+        <span><span class="lg-swatch" style="background:#b57a17"></span><b>Amber</b> unit — has inputs you set</span>
+        <span><span class="lg-swatch" style="background:#8aa398"></span><b>Grey</b> — calculated</span>
+        <span><span class="lg-swatch" style="background:#185fa5"></span>Blue — recycle</span>
+        <span><span class="lg-swatch" style="background:#3d8b68"></span>Green — product</span>
+        <span>Dashed — stale or by difference</span>
+      </p>
+      <div class="lg-diagram-wrap" data-lg-diagram></div>
+      <div data-lg-tryit></div>
+      <div class="lg-panel" data-lg-inspector></div>
+      <div class="lg-panel lg-card" data-lg-card></div>
+    </div>
+    <div class="lg-col">
+      <div class="lg-panel" data-lg-fields></div>
+    </div>
+  </div>
+</div>
+
+<script src="../src/units.js"></script>
+<script src="../src/expr.js"></script>
+<script src="../src/functions.js"></script>
+<script src="../src/compile.js"></script>
+<script src="../src/solve.js"></script>
+<script src="../src/targets.js"></script>
+<script src="../src/sensitivity.js"></script>
+<script src="../src/layout.js"></script>
+<script src="../src/validate.js"></script>
+<script src="app.js"></script>
+<script>
+  window.lgApp = new LGApp(document.getElementById('app'));
+</script>
+<script>
+  // resources.html embeds this page; hide the chrome it already provides.
+  if (window.self !== window.top) document.body.classList.add('in-frame');
+</script>
+</body>
+</html>

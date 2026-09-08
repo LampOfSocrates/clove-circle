@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://clovecircle.com/lcagraph/schema/pml.schema.json",
+  "title": "PML process model (LCA Graph) v0.1",
+  "type": "object",
+  "required": ["pml", "meta", "stages"],
+  "additionalProperties": false,
+  "definitions": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "expr": { "type": "string", "minLength": 1 },
+    "note": {
+      "type": "object", "required": ["level", "title", "text"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "level": { "enum": ["info", "warning", "quirk"] },
+        "title": { "type": "string" }, "text": { "type": "string" },
+        "nodes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "param": {
+      "type": "object", "required": ["label", "stage", "dim", "default"], "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" }, "stage": { "$ref": "#/definitions/id" }, "dim": { "type": "string" },
+        "unit": { "type": "string" }, "default": { "type": ["number", "null"] },
+        "range": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "editable": { "type": "boolean" }, "source": { "type": "string" }, "hit": { "type": "string" },
+        "basis": { "type": "string" }, "role": { "type": "string" }, "group": { "type": "string" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "column": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["text", "number"] }, "dim": { "type": "string" }, "unit": { "type": "string" },
+        "editable": { "type": "boolean" }, "nullable": { "type": "boolean" }, "label": { "type": "string" }
+      }
+    },
+    "table": {
+      "type": "object", "required": ["columns", "rows"], "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" }, "stage": { "$ref": "#/definitions/id" },
+        "columns": { "type": "object", "additionalProperties": { "$ref": "#/definitions/column" } },
+        "rows": { "type": "object", "additionalProperties": { "type": "object" } }
+      }
+    },
+    "unit": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" }, "sub": { "type": "string" },
+        "kind": { "enum": ["env", "source", "sink", "mixer", "splitter", "separator", "converter", "reactor", "custom", "cost_only"] },
+        "params": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "stream": {
+      "type": "object", "required": ["from", "to", "dim"], "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" }, "from": { "$ref": "#/definitions/id" }, "to": { "$ref": "#/definitions/id" },
+        "stage": { "$ref": "#/definitions/id" }, "dim": { "type": "string" }, "unit": { "type": "string" },
+        "expr": { "$ref": "#/definitions/expr" },
+        "components": { "type": "object", "additionalProperties": { "$ref": "#/definitions/expr" } },
+        "closes": { "type": "boolean" }, "recycle": { "type": "boolean" }, "guess": { "type": "number" },
+        "product": { "enum": ["main", "co"] }, "hit": { "type": "string" }, "basis": { "type": "string" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "derived": {
+      "type": "object", "required": ["label", "stage"], "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" }, "stage": { "$ref": "#/definitions/id" }, "dim": { "type": "string" },
+        "unit": { "type": "string" }, "expr": { "$ref": "#/definitions/expr" },
+        "table": { "$ref": "#/definitions/id" }, "column": { "$ref": "#/definitions/id" },
+        "solve": {
+          "type": "object", "required": ["target", "vary"], "additionalProperties": false,
+          "properties": { "target": { "type": "string" }, "vary": { "type": "string" }, "lo": { "type": "number" }, "hi": { "type": "number" }, "equals": { "type": "number" } }
+        },
+        "role": { "type": "string" }, "group": { "type": "string" }, "sign": { "enum": ["any", "positive"] },
+        "basis": { "type": "string" }, "kpi": { "type": "boolean" }, "hit": { "type": "string" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "check": {
+      "type": "object", "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["closure", "constraint"] }, "stage": { "$ref": "#/definitions/id" }, "label": { "type": "string" },
+        "unit": { "type": "string" }, "dim": { "type": "string" },
+        "in": { "type": "array", "items": { "type": "string" } }, "out": { "type": "array", "items": { "type": "string" } },
+        "tolerance": { "type": "number" }, "severity": { "enum": ["hard", "soft"] },
+        "expr": { "$ref": "#/definitions/expr" }, "message": { "type": "string" }
+      }
+    },
+    "sensitivity": {
+      "type": "object", "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["oat", "sweep", "scenario", "montecarlo"] }, "label": { "type": "string" },
+        "target": { "type": "string" }, "targets": { "type": "array", "items": { "type": "string" } },
+        "params": { "oneOf": [{ "const": "editable" }, { "type": "array", "items": { "type": "string" } }, { "type": "object" }] },
+        "delta": { "type": "number" }, "ranges": { "type": "object" },
+        "param": { "type": "string" }, "from": { "type": "number" }, "to": { "type": "number" }, "steps": { "type": "integer" }, "values": { "type": "array" },
+        "param2": { "type": "string" }, "from2": { "type": "number" }, "to2": { "type": "number" }, "steps2": { "type": "integer" }, "values2": { "type": "array" },
+        "scenarios": { "type": "object" }, "n": { "type": "integer" }, "seed": { "type": "integer" }, "bins": { "type": "integer" }
+      }
+    }
+  },
+  "properties": {
+    "pml": { "const": "0.1" },
+    "meta": {
+      "type": "object", "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" }, "title": { "type": "string" }, "subtitle": { "type": "string" },
+        "functionalUnit": { "type": "string" }, "boundary": { "type": "string" }, "currency": { "type": "string" },
+        "source": { "type": "string" }, "notes": { "type": "array", "items": { "$ref": "#/definitions/note" } }
+      }
+    },
+    "stages": {
+      "type": "array", "minItems": 1,
+      "items": { "type": "object", "required": ["id", "title"], "properties": { "id": { "$ref": "#/definitions/id" }, "title": { "type": "string" }, "verb": { "type": "string" }, "tryIt": { "type": "string" } } }
+    },
+    "stepCopy": { "type": "object" },
+    "components": { "type": "object", "additionalProperties": { "type": "object", "properties": { "label": { "type": "string" }, "mw": { "type": "number" }, "source": { "type": "string" } } } },
+    "params": { "type": "object", "additionalProperties": { "$ref": "#/definitions/param" } },
+    "tables": { "type": "object", "additionalProperties": { "$ref": "#/definitions/table" } },
+    "units": { "type": "object", "additionalProperties": { "$ref": "#/definitions/unit" } },
+    "streams": { "type": "object", "additionalProperties": { "$ref": "#/definitions/stream" } },
+    "derived": { "type": "object", "additionalProperties": { "$ref": "#/definitions/derived" } },
+    "checks": { "type": "object", "additionalProperties": { "$ref": "#/definitions/check" } },
+    "lcia": { "type": "object" },
+    "allocation": { "type": "object" },
+    "targets": { "type": "object", "additionalProperties": { "type": "object", "required": ["nodes"], "properties": { "label": { "type": "string" }, "nodes": { "type": "array", "items": { "type": "string" } } } } },
+    "sensitivity": { "type": "object", "additionalProperties": { "$ref": "#/definitions/sensitivity" } },
+    "diagram": { "type": "object", "properties": { "rank": { "type": "object" }, "order": { "type": "object" } } }
+  }
+}

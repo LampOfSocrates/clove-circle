@@ -18,10 +18,11 @@ const ROOT = path.resolve(__dirname, '..');
 /** Every page on the site, as repo-relative posix paths. */
 function allPages(dir = ROOT, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    // 'lcagraph' is a self-contained sub-application with its own README and
-    // tests, not a page of this site — asserting site chrome on it is wrong.
-    // Move it here the day it is linked from the site.
-    const SKIP = ['node_modules', '.git', 'test-results', 'playwright-report', 'docs', 'lcagraph'];
+    // lcagraph/app is now embedded and linked from resources.html, so it is a
+    // site page and the dead-end rule applies to it. Its src/, schema/, models/
+    // and tests/ are library code, not pages.
+    const SKIP = ['node_modules', '.git', 'test-results', 'playwright-report', 'docs',
+                  'src', 'schema', 'models'];
     if (SKIP.includes(entry.name)) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) allPages(full, out);

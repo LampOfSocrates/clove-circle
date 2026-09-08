@@ -1,0 +1,95 @@
+{
+  "baseline": "pha-lignocellulose",
+  "notes": [
+    "eq-tbody: the baseline captures the equipment table as the numbers in its concatenated textContent, so each row yields three tokens (base size, current size fused with the leading digit(s) of the cost, fractional digits of the cost). Only the base-size column (offset 0) is a clean number; the cost column is verified through o-H17 (their sum) and o-H18 instead.",
+    "dcf-tbody: same capture artefact fuses the year, discounted cash flow and cumulative NPV of each row; only the year-0 cash flow (offset 1, = -TCI) is a clean token, so that is what is mapped."
+  ],
+  "inputs": {
+    "i-basisTpa": "basis_tpa",
+    "i-moisture": "moisture",
+    "i-hemiPct": "hemi_pct",
+    "i-cellPct": "cell_pct",
+    "i-lignPct": "lign_pct",
+    "i-ashPct": "ash_pct",
+    "i-recHemi": "rec_hemi",
+    "i-recCell": "rec_cell",
+    "i-recLign": "rec_lign",
+    "i-recPHA": "rec_pha",
+    "i-biocompRec": "biocomp_rec"
+  },
+  "outputs": {
+    "o-wet": "wet_biomass",
+    "o-compSum": "comp_sum",
+    "o-k-biocomp": "biocomposite",
+    "o-k-elec": "elec_gen",
+    "o-k-wet": "wet_biomass",
+    "bE5": "dry_biomass.hemicellulose",
+    "bF5": "ferm_feed.hemicellulose",
+    "bE6": "dry_biomass.cellulose",
+    "bF6": "ferm_feed.cellulose",
+    "bG6": "biofiller",
+    "bE7": "dry_biomass.lignin",
+    "bF7": "ferm_feed.lignin",
+    "bE8": "dry_biomass.ash",
+    "bH14": "pha",
+    "bI14": "chp_feed",
+    "bJ14": "biocomposite",
+    "bE14": "dry_organics",
+    "bF14": "ferm_feed",
+    "o-k-tci": "tci",
+    "o-k-tcost": "total_cost",
+    "o-k-rev": "revenue",
+    "o-k-net": "net_profit",
+    "o-H17": "dce",
+    "o-tciLbl": "tci_ratio",
+    "o-H18": "tci",
+    "o-B32": "cap_charge",
+    "o-B33": "indirect_opex",
+    "o-B34": "labour_cost",
+    "o-F21": "reagent_cost",
+    "o-F22": "elec_cost",
+    "o-F23": "heat_cost",
+    "o-B36": "feed_cost",
+    "o-B37": "misc_opex",
+    "o-B39": "total_cost",
+    "o-B40": "revenue",
+    "o-B41": "net_profit",
+    "o-gwpTot": "gwp_total",
+    "o-gwpBig": "gwp_total",
+    "o-gwpAnn": "gwp_annual",
+    "o-gwpAnnSub": "biocomposite"
+  },
+  "tables": {
+    "eq-tbody": {
+      "stride": 3, "offset": 0,
+      "nodes": [
+        "equipment.inoculation.base_size",
+        "equipment.fermenters.base_size",
+        "equipment.centrifugation.base_size",
+        "equipment.solvent_extraction.base_size",
+        "equipment.washing.base_size",
+        "equipment.drying.base_size",
+        "equipment.anaerobic_digestion.base_size",
+        "equipment.chp.base_size",
+        "equipment.biomass_handling.base_size",
+        "equipment.pretreatment.base_size",
+        "equipment.extrusion.base_size",
+        "equipment.injection_moulding.base_size",
+        "equipment.printing_3d.base_size"
+      ]
+    },
+    "dcf-tbody": {
+      "stride": 1, "offset": 1,
+      "nodes": [ { "node": "tci", "scale": -1 } ]
+    }
+  },
+  "skip": {
+    "o-k-biocomp-sub": "empty KPI subtitle",
+    "o-k-elec-sub": "empty KPI subtitle",
+    "o-k-wet-sub": "empty KPI subtitle",
+    "o-k-tci-sub": "empty KPI subtitle",
+    "o-k-tcost-sub": "empty KPI subtitle",
+    "o-k-rev-sub": "empty KPI subtitle",
+    "o-k-net-sub": "presentation string (✓ Profitable / ✗ Loss-making)"
+  }
+}

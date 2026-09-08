@@ -1,0 +1,2122 @@
+{
+  "pml": "0.1",
+  "meta": {
+    "id": "palladium",
+    "title": "Palladium bio-recovery",
+    "subtitle": "Recovering a critical metal from dilute solution using a bacterial biocatalyst.",
+    "functionalUnit": "1 kg of palladium recovered",
+    "boundary": "Cradle-to-gate. Starts at the Pd-bearing leachate arriving on site, ends at refined Pd. Excludes production of the waste stream itself and any downstream use.",
+    "currency": "$",
+    "source": "Reproduces standalone/palladium-biorecovery-lca-tea.html",
+    "notes": [
+      {
+        "id": "capex_fixed",
+        "level": "quirk",
+        "title": "Fixed equipment list",
+        "text": "The purchased equipment cost is a fixed list of eleven items sized for the design case. It does not change with throughput, feed concentration or recovery: doubling the plant leaves TCI at exactly the same value. Only the Lang factor moves the capital cost.",
+        "nodes": [
+          "pec",
+          "tic",
+          "tci"
+        ]
+      },
+      {
+        "id": "lcia_frozen",
+        "level": "quirk",
+        "title": "Frozen LCIA basis",
+        "text": "The 18 impact categories use per-litre reagent burdens from the LCA study converted to per kg Pd with a frozen reference loading of 0.031926 kg Pd per m³ (31,322 L of solution per kg Pd). They are then scaled linearly by Tris molarity / 100 mM and NaCl molarity / 150 mM only. Throughput, feed concentration and recovery therefore never move the impact table, even though the mass balance and the electricity inventory respond to them.",
+        "nodes": [
+          "per_kg_basis",
+          "f_tris",
+          "f_nacl",
+          "gwp_total",
+          "gwp_tris",
+          "gwp_nacl",
+          "lcia_total"
+        ]
+      },
+      {
+        "id": "gwp_no_elec",
+        "level": "quirk",
+        "title": "Climate figure excludes electricity",
+        "text": "The headline climate impact is the Tris-HCl plus NaCl precursor burden only. The electricity inventory is computed (and costed) but is not included in the impact table or the GWP benchmarks. gwp_electricity and gwp_with_elec are provided for comparison and are not part of the published figure.",
+        "nodes": [
+          "gwp_total",
+          "gwp_electricity",
+          "gwp_with_elec"
+        ]
+      },
+      {
+        "id": "tris_donut_live",
+        "level": "quirk",
+        "title": "Tris precursor breakdown on a different basis",
+        "text": "The Tris-HCl precursor breakdown (hydroxylamine, formaldehyde, hydrogen, HCl) multiplies per-kg-Tris factors by the live Tris consumption per kg Pd from the mass balance, whereas the impact table uses the frozen 31,322 L/kg basis. The two Tris figures are not consistent with each other and the breakdown does not sum to the table value.",
+        "nodes": [
+          "tris_per_kg",
+          "tris_precursor_gwp"
+        ]
+      },
+      {
+        "id": "tax_no_carry",
+        "level": "quirk",
+        "title": "Tax with no loss carry-forward",
+        "text": "Tax is max(0, EBIT) × rate in every year. A loss-making year pays no tax but the loss is not carried forward to reduce tax in later years.",
+        "nodes": [
+          "tax_paid"
+        ]
+      },
+      {
+        "id": "msp_vs_npv",
+        "level": "quirk",
+        "title": "MSP and NPV are not exactly consistent",
+        "text": "NPV recovers the working capital as a cash inflow in the final year. The closed-form minimum selling price annualises the whole TCI over the project life and ignores that recovery, so the price at which NPV is exactly zero (msp_by_npv) is slightly lower than the reported MSP.",
+        "nodes": [
+          "msp",
+          "npv",
+          "msp_by_npv",
+          "cash_flows"
+        ]
+      },
+      {
+        "id": "util_prices_const",
+        "level": "quirk",
+        "title": "Utility prices are constants",
+        "text": "Water ($1.5/m³) and electricity ($0.12/kWh) prices are fixed constants while reagent prices are user inputs. The energy intensities (3.5 kWh/m³ of solution and 800 kWh/kg Pd for calcination) are also fixed.",
+        "nodes": [
+          "water_price",
+          "elec_price",
+          "elec_per_m3",
+          "calc_kwh_per_kg"
+        ]
+      },
+      {
+        "id": "payback_simple",
+        "level": "quirk",
+        "title": "Simple payback",
+        "text": "Payback is the simple ratio TCI / annual cash flow, undiscounted and ignoring the working-capital recovery. It is shown as \"—\" when the cash flow is not positive.",
+        "nodes": [
+          "payback"
+        ]
+      },
+      {
+        "id": "buffer_not_recovered",
+        "level": "quirk",
+        "title": "Buffer recycle is costed but not credited",
+        "text": "A buffer recycle unit (nanofiltration + concentrator) is in the equipment list, but the mass balance consumes the full Tris-HCl and NaCl charge every year and sends the spent solution to effluent. No reagent recovery is credited in the inventory or the operating cost.",
+        "nodes": [
+          "equipment.buffer_recycle.cost",
+          "effluent",
+          "tris_feed",
+          "nacl_feed"
+        ]
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "mass",
+      "title": "Mass balance",
+      "verb": "Do mass balance",
+      "tryIt": "Click the feed stream and drop the Pd concentration from 1.0 to 0.3 mM, then re-run. The Pd recovered falls by two thirds while the buffer and water flows do not move at all — the plant does the same work for a third of the product."
+    },
+    {
+      "id": "lci",
+      "title": "Life cycle inventory",
+      "verb": "Build inventory",
+      "tryIt": "Look at Tris-HCl per kg Pd. It is measured in tonnes of buffer per kilogram of metal. Now halve the Tris concentration to 50 mM and re-run to see how directly the inventory follows it."
+    },
+    {
+      "id": "lcia",
+      "title": "Impact assessment",
+      "verb": "Run impact assessment",
+      "tryIt": "The buffer dominates. Set Tris to 25 mM and re-run — if the chemistry tolerated it, that one change would do more for the carbon footprint than switching to renewable electricity."
+    },
+    {
+      "id": "capex",
+      "title": "Capital cost",
+      "verb": "Estimate CAPEX",
+      "tryIt": "The equipment list is fixed at this design, so only the Lang factor moves total capital. Try 3.0 against 4.0 and see the spread a single estimating convention creates."
+    },
+    {
+      "id": "opex",
+      "title": "Operating cost & revenue",
+      "verb": "Cost the operation",
+      "tryIt": "Compare the Tris-HCl cost against every other line. Then raise the biocatalyst reuse cycles from 10 to 30 in the mass balance step and re-run everything — reuse is the cheapest lever available."
+    },
+    {
+      "id": "dcf",
+      "title": "Profitability",
+      "verb": "Run cash flow",
+      "tryIt": "Set the Pd price to $15,000/kg, near its historic low, and re-run. A process that depends on a volatile commodity price is a different investment proposition from one that does not."
+    }
+  ],
+  "stepCopy": {
+    "scope": {
+      "tryIt": "Note that the functional unit is 1 kg of Pd recovered, not 1 m³ of solution treated. That single choice is why a dilute feed looks so bad here: the same buffer burden gets divided by far less metal."
+    },
+    "interpret": {
+      "tryIt": "Feed concentration, Tris molarity and Pd price dominate everything else here. Two are process design choices and one is entirely outside your control."
+    }
+  },
+  "components": {
+    "pd": {
+      "label": "Palladium",
+      "mw": 106.42
+    },
+    "tris": {
+      "label": "Tris-HCl",
+      "mw": 157.6
+    },
+    "nacl": {
+      "label": "NaCl",
+      "mw": 58.44
+    },
+    "biocat": {
+      "label": "Biocatalyst (dry cells)"
+    }
+  },
+  "params": {
+    "throughput": {
+      "label": "Leachate throughput",
+      "stage": "mass",
+      "dim": "volume_flow",
+      "unit": "m³/y",
+      "default": 10000,
+      "range": [
+        1000,
+        100000
+      ],
+      "hit": "process_water",
+      "source": "Volume of Pd-bearing solution treated per year - spent catalyst leachate or e-waste liquor."
+    },
+    "feed_pd": {
+      "label": "Pd concentration in feed",
+      "stage": "mass",
+      "dim": "molarity",
+      "unit": "mM",
+      "default": 1,
+      "range": [
+        0.05,
+        10
+      ],
+      "hit": "leachate",
+      "source": "Pd(II) in the incoming liquor. 1 mM is about 106 mg/L - typical of a dilute secondary stream."
+    },
+    "recovery": {
+      "label": "Recovery efficiency",
+      "stage": "mass",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 95,
+      "range": [
+        50,
+        100
+      ],
+      "hit": "bioreactor",
+      "source": "Fraction of the incoming Pd reduced onto the biocatalyst. Shewanella systems report 90-99%."
+    },
+    "tris_mm": {
+      "label": "Tris-HCl buffer",
+      "stage": "mass",
+      "dim": "molarity",
+      "unit": "mM",
+      "default": 100,
+      "range": [
+        0,
+        300
+      ],
+      "hit": "tris_feed",
+      "source": "Buffer strength needed to hold pH during bioreduction. The single largest environmental burden."
+    },
+    "nacl_mm": {
+      "label": "NaCl",
+      "stage": "mass",
+      "dim": "molarity",
+      "unit": "mM",
+      "default": 150,
+      "range": [
+        0,
+        500
+      ],
+      "hit": "nacl_feed",
+      "source": "Ionic strength adjustment for cell viability."
+    },
+    "biocat_cycles": {
+      "label": "Biocatalyst reuse cycles",
+      "stage": "mass",
+      "dim": "count",
+      "unit": "",
+      "default": 10,
+      "range": [
+        1,
+        50
+      ],
+      "hit": "bioreactor",
+      "source": "How many batches one biomass charge survives before replacement."
+    },
+    "biocat_loading": {
+      "label": "Single-pass biocatalyst loading",
+      "stage": "mass",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "default": 2.7,
+      "editable": false,
+      "hit": "bioreactor",
+      "source": "kg dry cells per kg Pd recovered in a single pass (BIOCAT_KG_PER_KG_PD_SP)."
+    },
+    "elec_per_m3": {
+      "label": "Electricity per m³ of solution",
+      "stage": "lci",
+      "dim": "count",
+      "unit": "",
+      "default": 3.5,
+      "editable": false,
+      "basis": "kWh/m³",
+      "source": "Pumping, mixing and buffer handling: 3.5 kWh per m³ of solution treated (ELEC_PER_M3)."
+    },
+    "calc_kwh_per_kg": {
+      "label": "Calcination electricity per kg Pd",
+      "stage": "lci",
+      "dim": "energy_per_mass",
+      "unit": "kWh/kg",
+      "default": 800,
+      "editable": false,
+      "hit": "calciner",
+      "source": "Electric calcination furnace, 800 kWh per kg Pd (CALC_KWH_PER_KG_PD)."
+    },
+    "lca_pd_loading": {
+      "label": "LCA reference Pd loading",
+      "stage": "lcia",
+      "dim": "concentration",
+      "unit": "kg/m3",
+      "default": 0.031926,
+      "editable": false,
+      "source": "kg Pd recovered per m³ of process solution in the LCA study; converts per-litre burdens to per kg Pd."
+    },
+    "tris_mm_ref": {
+      "label": "Tris molarity at LCA design",
+      "stage": "lcia",
+      "dim": "molarity",
+      "unit": "mM",
+      "default": 100,
+      "editable": false,
+      "source": "Tris-HCl concentration at which the per-litre burdens were computed."
+    },
+    "nacl_mm_ref": {
+      "label": "NaCl molarity at LCA design",
+      "stage": "lcia",
+      "dim": "molarity",
+      "unit": "mM",
+      "default": 150,
+      "editable": false,
+      "source": "NaCl concentration at which the per-litre burdens were computed."
+    },
+    "gwp_elec": {
+      "label": "Grid electricity GWP",
+      "stage": "lcia",
+      "dim": "emission_factor",
+      "unit": "kg CO2e/kWh",
+      "default": 0.207,
+      "editable": false,
+      "source": "kg CO2e per kWh, UK grid average. Not used by the published climate figure (see note)."
+    },
+    "gwp_ipa": {
+      "label": "Benchmark: IPA 2022 global primary Pd",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "default": 28094,
+      "editable": false,
+      "source": "International Platinum Group Metals Association 2022 global average, kg CO2e per kg Pd."
+    },
+    "gwp_za": {
+      "label": "Benchmark: Ecoinvent South Africa",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "default": 23292,
+      "editable": false,
+      "source": "Ecoinvent primary Pd, South African mines."
+    },
+    "gwp_ru": {
+      "label": "Benchmark: Ecoinvent Russia",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "default": 4005,
+      "editable": false,
+      "source": "Ecoinvent primary Pd, Russian mines (Ni-Cu by-product)."
+    },
+    "lang": {
+      "label": "Lang factor",
+      "stage": "capex",
+      "dim": "count",
+      "unit": "",
+      "default": 4,
+      "range": [
+        2,
+        6
+      ],
+      "source": "Total installed cost divided by purchased equipment cost. 3.6-4.2 for solid-fluid plants."
+    },
+    "wc_frac": {
+      "label": "Working capital fraction of TIC",
+      "stage": "capex",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 10,
+      "editable": false,
+      "source": "Working capital taken as 10% of total installed cost."
+    },
+    "tris_price": {
+      "label": "Tris-HCl price",
+      "stage": "opex",
+      "dim": "price_mass",
+      "unit": "$/kg",
+      "default": 10,
+      "range": [
+        1,
+        40
+      ],
+      "hit": "tris_feed",
+      "source": "$/kg of Tris-HCl. Bulk buffer chemistry is expensive at this scale."
+    },
+    "nacl_price": {
+      "label": "NaCl price",
+      "stage": "opex",
+      "dim": "price_mass",
+      "unit": "$/kg",
+      "default": 0.2,
+      "range": [
+        0.05,
+        1
+      ],
+      "hit": "nacl_feed",
+      "source": "$/kg of sodium chloride, bulk."
+    },
+    "biocat_price": {
+      "label": "Biocatalyst production cost",
+      "stage": "opex",
+      "dim": "price_mass",
+      "unit": "$/kg",
+      "default": 5000,
+      "range": [
+        500,
+        20000
+      ],
+      "hit": "biocat_makeup",
+      "source": "$/kg dry cell mass, covering fermentation, harvest and purification."
+    },
+    "pd_price": {
+      "label": "Pd market price",
+      "stage": "opex",
+      "dim": "price_mass",
+      "unit": "$/kg",
+      "default": 48000,
+      "range": [
+        10000,
+        120000
+      ],
+      "hit": "pd_product",
+      "source": "$/kg of palladium. Historically volatile - it has traded from $15k to $95k/kg."
+    },
+    "water_price": {
+      "label": "Process water price",
+      "stage": "opex",
+      "dim": "price_volume",
+      "unit": "$/m³",
+      "default": 1.5,
+      "editable": false,
+      "hit": "process_water",
+      "source": "Fixed at $1.5/m³ (H2O_PRICE)."
+    },
+    "elec_price": {
+      "label": "Electricity price",
+      "stage": "opex",
+      "dim": "price_energy",
+      "unit": "$/kWh",
+      "default": 0.12,
+      "editable": false,
+      "source": "Fixed at $0.12/kWh (ELEC_PRICE)."
+    },
+    "operators_per_shift": {
+      "label": "Operators per shift",
+      "stage": "opex",
+      "dim": "count",
+      "unit": "",
+      "default": 3,
+      "editable": false,
+      "source": "FIXED_OPEX.operators_per_shift"
+    },
+    "shifts": {
+      "label": "Shifts",
+      "stage": "opex",
+      "dim": "count",
+      "unit": "",
+      "default": 4,
+      "editable": false,
+      "source": "FIXED_OPEX.shifts (4-shift rota)"
+    },
+    "op_salary": {
+      "label": "Operator salary",
+      "stage": "opex",
+      "dim": "salary",
+      "unit": "$/y",
+      "default": 60000,
+      "editable": false,
+      "source": "FIXED_OPEX.op_salary"
+    },
+    "supervisors": {
+      "label": "Supervisors",
+      "stage": "opex",
+      "dim": "count",
+      "unit": "",
+      "default": 3,
+      "editable": false,
+      "source": "FIXED_OPEX.supervisors"
+    },
+    "sup_salary": {
+      "label": "Supervisor salary",
+      "stage": "opex",
+      "dim": "salary",
+      "unit": "$/y",
+      "default": 110000,
+      "editable": false,
+      "source": "FIXED_OPEX.sup_salary"
+    },
+    "maint_frac": {
+      "label": "Maintenance & repairs, fraction of TIC",
+      "stage": "opex",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 4,
+      "editable": false,
+      "source": "4% of TIC per year."
+    },
+    "ins_frac": {
+      "label": "Insurance & property tax, fraction of TIC",
+      "stage": "opex",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 1.5,
+      "editable": false,
+      "source": "1.5% of TIC per year."
+    },
+    "overhead_frac": {
+      "label": "Plant overheads, fraction of labour",
+      "stage": "opex",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 50,
+      "editable": false,
+      "source": "50% of labour."
+    },
+    "discount": {
+      "label": "Discount rate",
+      "stage": "dcf",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 10,
+      "range": [
+        2,
+        30
+      ],
+      "source": "Cost of capital used to discount future cash flows."
+    },
+    "life": {
+      "label": "Project life",
+      "stage": "dcf",
+      "dim": "years",
+      "unit": "y",
+      "default": 15,
+      "range": [
+        3,
+        30
+      ],
+      "source": "Operating years over which the investment is judged."
+    },
+    "tax": {
+      "label": "Tax rate",
+      "stage": "dcf",
+      "dim": "fraction",
+      "unit": "%",
+      "default": 25,
+      "range": [
+        0,
+        50
+      ],
+      "source": "Corporation tax on operating profit."
+    },
+    "dep": {
+      "label": "Depreciation life",
+      "stage": "dcf",
+      "dim": "years",
+      "unit": "y",
+      "default": 10,
+      "range": [
+        3,
+        20
+      ],
+      "source": "Straight-line depreciation period for the installed plant."
+    }
+  },
+  "tables": {
+    "lcia_cf": {
+      "label": "ReCiPe 2016 Midpoint (H) burdens per litre of process solution at the LCA design (100 mM Tris, 150 mM NaCl)",
+      "stage": "lcia",
+      "columns": {
+        "label": {
+          "type": "text"
+        },
+        "unit": {
+          "type": "text"
+        },
+        "tris_per_l": {
+          "label": "Tris-HCl burden per litre",
+          "dim": "count",
+          "unit": ""
+        },
+        "nacl_per_l": {
+          "label": "NaCl burden per litre",
+          "dim": "count",
+          "unit": ""
+        }
+      },
+      "rows": {
+        "gw": {
+          "label": "Global warming",
+          "unit": "kg CO₂ eq",
+          "tris_per_l": 0.117940474,
+          "nacl_per_l": 0.0023902914
+        },
+        "od": {
+          "label": "Stratospheric ozone depletion",
+          "unit": "kg CFC11 eq",
+          "tris_per_l": 4.2759745e-8,
+          "nacl_per_l": 9.5639734e-10
+        },
+        "ir": {
+          "label": "Ionizing radiation",
+          "unit": "kBq Co-60 eq",
+          "tris_per_l": 0.0093899821,
+          "nacl_per_l": 0.00020224387
+        },
+        "of_hh": {
+          "label": "Ozone formation, Human health",
+          "unit": "kg NOₓ eq",
+          "tris_per_l": 0.00022971259,
+          "nacl_per_l": 0.000007688672
+        },
+        "pm": {
+          "label": "Fine particulate matter formation",
+          "unit": "kg PM2.5 eq",
+          "tris_per_l": 0.00055603746,
+          "nacl_per_l": 0.0000050008575
+        },
+        "of_te": {
+          "label": "Ozone formation, Terrestrial ecosystems",
+          "unit": "kg NOₓ eq",
+          "tris_per_l": 0.000235194,
+          "nacl_per_l": 0.0000077980593
+        },
+        "ta": {
+          "label": "Terrestrial acidification",
+          "unit": "kg SO₂ eq",
+          "tris_per_l": 0.0017671138,
+          "nacl_per_l": 0.0000097862432
+        },
+        "fe": {
+          "label": "Freshwater eutrophication",
+          "unit": "kg P eq",
+          "tris_per_l": 0.000036083965,
+          "nacl_per_l": 0.0000012764799
+        },
+        "me": {
+          "label": "Marine eutrophication",
+          "unit": "kg N eq",
+          "tris_per_l": 0.00017491231,
+          "nacl_per_l": 3.2948173e-7
+        },
+        "tet": {
+          "label": "Terrestrial ecotoxicity",
+          "unit": "kg 1,4-DCB",
+          "tris_per_l": 0.220814936,
+          "nacl_per_l": 0.010546173
+        },
+        "fet": {
+          "label": "Freshwater ecotoxicity",
+          "unit": "kg 1,4-DCB",
+          "tris_per_l": 0.0052164858,
+          "nacl_per_l": 0.00034509302
+        },
+        "met": {
+          "label": "Marine ecotoxicity",
+          "unit": "kg 1,4-DCB",
+          "tris_per_l": 0.0068183167,
+          "nacl_per_l": 0.0004420226
+        },
+        "hct": {
+          "label": "Human carcinogenic toxicity",
+          "unit": "kg 1,4-DCB",
+          "tris_per_l": 0.0070782259,
+          "nacl_per_l": 0.00042546884
+        },
+        "hnct": {
+          "label": "Human non-carcinogenic toxicity",
+          "unit": "kg 1,4-DCB",
+          "tris_per_l": 0.105111194,
+          "nacl_per_l": 0.0055917762
+        },
+        "lu": {
+          "label": "Land use",
+          "unit": "m²a crop eq",
+          "tris_per_l": 0.0019222584,
+          "nacl_per_l": 0.00010931694
+        },
+        "mrs": {
+          "label": "Mineral resource scarcity",
+          "unit": "kg Cu eq",
+          "tris_per_l": 0.0003761686,
+          "nacl_per_l": 0.000024822916
+        },
+        "frs": {
+          "label": "Fossil resource scarcity",
+          "unit": "kg oil eq",
+          "tris_per_l": 0.043757514,
+          "nacl_per_l": 0.00058340617
+        },
+        "wc": {
+          "label": "Water consumption",
+          "unit": "m³",
+          "tris_per_l": 0.002161237,
+          "nacl_per_l": 0.000036302965
+        }
+      }
+    },
+    "tris_precursors": {
+      "label": "Tris-HCl precursor GWP per kg Tris-HCl (LCA Figure 2)",
+      "stage": "lcia",
+      "columns": {
+        "label": {
+          "type": "text"
+        },
+        "gwp_per_kg_tris": {
+          "label": "GWP per kg Tris-HCl",
+          "dim": "gwp_intensity",
+          "unit": "kg CO2e/kg"
+        }
+      },
+      "rows": {
+        "hydroxylamine": {
+          "label": "Hydroxylamine",
+          "gwp_per_kg_tris": 6.6639604
+        },
+        "formaldehyde": {
+          "label": "Formaldehyde",
+          "gwp_per_kg_tris": 0.61903152
+        },
+        "hydrogen": {
+          "label": "Hydrogen",
+          "gwp_per_kg_tris": 0.061447826
+        },
+        "hcl": {
+          "label": "HCl 30%",
+          "gwp_per_kg_tris": 0.13909281
+        }
+      }
+    },
+    "equipment": {
+      "label": "Purchased equipment cost (fixed list, USD)",
+      "stage": "capex",
+      "columns": {
+        "label": {
+          "type": "text"
+        },
+        "cost": {
+          "label": "Purchased cost",
+          "dim": "currency",
+          "unit": "$"
+        }
+      },
+      "rows": {
+        "buffer_tanks": {
+          "label": "Buffer make-up tanks (3×50 m³)",
+          "cost": 450000
+        },
+        "bioreactor": {
+          "label": "Bioreactor / contactor (200 m³)",
+          "cost": 1100000
+        },
+        "fermentor": {
+          "label": "Bacterial fermentor (10 m³)",
+          "cost": 800000
+        },
+        "purification": {
+          "label": "Biocatalyst purification skid",
+          "cost": 2000000
+        },
+        "centrifuge": {
+          "label": "Disc-stack centrifuge",
+          "cost": 500000
+        },
+        "microfilter": {
+          "label": "Microfilter polishing",
+          "cost": 250000
+        },
+        "calciner": {
+          "label": "Calcination furnace (electric)",
+          "cost": 300000
+        },
+        "buffer_recycle": {
+          "label": "Buffer recycle (NF + concentrator)",
+          "cost": 900000
+        },
+        "pumps": {
+          "label": "Pumps, piping, instrumentation",
+          "cost": 500000
+        },
+        "refining": {
+          "label": "Pd refining & assay",
+          "cost": 400000
+        },
+        "utilities": {
+          "label": "Utilities & service connections",
+          "cost": 300000
+        }
+      }
+    },
+    "fixed_opex": {
+      "label": "Fixed operating cost items (USD/y)",
+      "stage": "opex",
+      "columns": {
+        "label": {
+          "type": "text"
+        },
+        "cost": {
+          "label": "Annual cost",
+          "dim": "currency_year",
+          "unit": "$/y"
+        }
+      },
+      "rows": {
+        "acid_base": {
+          "label": "Acids/bases (pH, CIP)",
+          "cost": 75000
+        },
+        "steam": {
+          "label": "Steam",
+          "cost": 250000
+        },
+        "cooling": {
+          "label": "Cooling water",
+          "cost": 100000
+        },
+        "waste": {
+          "label": "Waste disposal",
+          "cost": 150000
+        },
+        "qaqc": {
+          "label": "Lab QA/QC",
+          "cost": 200000
+        }
+      }
+    }
+  },
+  "units": {
+    "env": {
+      "kind": "env"
+    },
+    "buffer_makeup": {
+      "label": "Buffer make-up",
+      "sub": "3×50 m³ tanks",
+      "kind": "mixer",
+      "params": [
+        "tris_mm",
+        "nacl_mm",
+        "throughput"
+      ]
+    },
+    "bioreactor": {
+      "label": "Bioreactor / contactor",
+      "sub": "200 m³, Pd(II) bioreduction",
+      "kind": "reactor",
+      "params": [
+        "recovery",
+        "biocat_cycles",
+        "biocat_loading",
+        "feed_pd"
+      ]
+    },
+    "fermentor": {
+      "label": "Bacterial fermentor",
+      "sub": "10 m³",
+      "kind": "source"
+    },
+    "purification": {
+      "label": "Biocatalyst purification skid",
+      "kind": "separator",
+      "params": [
+        "biocat_price"
+      ]
+    },
+    "centrifuge": {
+      "label": "Disc-stack centrifuge",
+      "sub": "cell harvest",
+      "kind": "separator"
+    },
+    "microfilter": {
+      "label": "Microfilter polishing",
+      "kind": "cost_only"
+    },
+    "calciner": {
+      "label": "Calcination furnace",
+      "sub": "electric",
+      "kind": "converter",
+      "params": [
+        "calc_kwh_per_kg"
+      ]
+    },
+    "buffer_recycle": {
+      "label": "Buffer recycle",
+      "sub": "NF + concentrator",
+      "kind": "separator",
+      "notes": [
+        "buffer_not_recovered"
+      ]
+    },
+    "refining": {
+      "label": "Pd refining & assay",
+      "kind": "separator",
+      "params": [
+        "pd_price"
+      ]
+    },
+    "pumps": {
+      "label": "Pumps, piping, instrumentation",
+      "kind": "cost_only"
+    },
+    "utilities": {
+      "label": "Utilities & service connections",
+      "kind": "cost_only",
+      "params": [
+        "water_price",
+        "elec_price"
+      ]
+    }
+  },
+  "streams": {
+    "process_water": {
+      "label": "Process water",
+      "from": "env",
+      "to": "buffer_makeup",
+      "dim": "volume_flow",
+      "unit": "m³/y",
+      "expr": "throughput",
+      "basis": "Solution volume treated per year"
+    },
+    "tris_feed": {
+      "label": "Tris-HCl supply",
+      "from": "env",
+      "to": "buffer_makeup",
+      "dim": "mass_year",
+      "unit": "t/y",
+      "expr": "throughput * tris_kg_m3",
+      "basis": "c_Tris · MW_Tris · Q"
+    },
+    "nacl_feed": {
+      "label": "NaCl supply",
+      "from": "env",
+      "to": "buffer_makeup",
+      "dim": "mass_year",
+      "unit": "t/y",
+      "expr": "throughput * nacl_kg_m3",
+      "basis": "c_NaCl · MW_NaCl · Q"
+    },
+    "buffer": {
+      "label": "Buffered solution",
+      "from": "buffer_makeup",
+      "to": "bioreactor",
+      "dim": "volume_flow",
+      "unit": "m³/y",
+      "expr": "process_water"
+    },
+    "leachate": {
+      "label": "Pd-bearing leachate",
+      "from": "env",
+      "to": "bioreactor",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "components": {
+        "pd": "throughput * 1000 * (feed_pd / 1000) * (mw.pd / 1000)"
+      },
+      "basis": "Q · c_Pd · M_Pd"
+    },
+    "cells_fresh": {
+      "label": "Fresh cells",
+      "from": "fermentor",
+      "to": "purification",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "expr": "biocat_makeup"
+    },
+    "biocat_makeup": {
+      "label": "Biocatalyst make-up",
+      "from": "purification",
+      "to": "bioreactor",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "expr": "biocat_loading * pd_recovered / max(1, biocat_cycles)",
+      "basis": "2.7 · m_Pd / N cycles"
+    },
+    "biocat_recycle": {
+      "label": "Biocatalyst reuse",
+      "from": "centrifuge",
+      "to": "bioreactor",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "recycle": true,
+      "expr": "biocat_loading * pd_recovered - biocat_makeup",
+      "basis": "Single-pass loading minus make-up"
+    },
+    "pd_laden_cells": {
+      "label": "Pd-laden cells",
+      "from": "bioreactor",
+      "to": "centrifuge",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "components": {
+        "pd": "pd_recovered",
+        "biocat": "biocat_makeup + biocat_recycle"
+      }
+    },
+    "pd_lost": {
+      "label": "Pd lost (uncaptured)",
+      "from": "bioreactor",
+      "to": "env",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "components": {
+        "pd": "leachate.pd * (1 - recovery)"
+      },
+      "basis": "× (1 − η)"
+    },
+    "spent_solution": {
+      "label": "Spent solution",
+      "from": "bioreactor",
+      "to": "buffer_recycle",
+      "dim": "volume_flow",
+      "unit": "m³/y",
+      "expr": "buffer"
+    },
+    "effluent": {
+      "label": "Effluent",
+      "from": "buffer_recycle",
+      "to": "env",
+      "dim": "volume_flow",
+      "unit": "m³/y",
+      "expr": "spent_solution",
+      "notes": [
+        "buffer_not_recovered"
+      ]
+    },
+    "spent_cells": {
+      "label": "Spent Pd-laden cells",
+      "from": "centrifuge",
+      "to": "calciner",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "components": {
+        "pd": "pd_laden_cells.pd",
+        "biocat": "biocat_makeup"
+      }
+    },
+    "calciner_offgas": {
+      "label": "Biomass burnt off",
+      "from": "calciner",
+      "to": "env",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "expr": "spent_cells - pd_crude",
+      "closes": true
+    },
+    "pd_crude": {
+      "label": "Crude Pd",
+      "from": "calciner",
+      "to": "refining",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "expr": "spent_cells.pd"
+    },
+    "pd_product": {
+      "label": "Pd recovered",
+      "from": "refining",
+      "to": "env",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "expr": "pd_crude",
+      "product": "main"
+    }
+  },
+  "derived": {
+    "tris_kg_m3": {
+      "label": "Tris-HCl concentration",
+      "stage": "mass",
+      "dim": "concentration",
+      "unit": "kg/m3",
+      "expr": "tris_mm / 1000 * mw.tris"
+    },
+    "nacl_kg_m3": {
+      "label": "NaCl concentration",
+      "stage": "mass",
+      "dim": "concentration",
+      "unit": "kg/m3",
+      "expr": "nacl_mm / 1000 * mw.nacl"
+    },
+    "pd_recovered": {
+      "label": "Pd recovered",
+      "stage": "mass",
+      "dim": "mass_year",
+      "unit": "kg/y",
+      "expr": "leachate.pd * recovery",
+      "kpi": true,
+      "hit": "pd_product",
+      "basis": "× η recovery"
+    },
+    "tris_per_kg": {
+      "label": "Tris-HCl per kg Pd",
+      "stage": "lci",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "role": "lci",
+      "expr": "tris_feed / pd_recovered",
+      "notes": [
+        "tris_donut_live"
+      ]
+    },
+    "nacl_per_kg": {
+      "label": "NaCl per kg Pd",
+      "stage": "lci",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "role": "lci",
+      "expr": "nacl_feed / pd_recovered"
+    },
+    "water_per_kg": {
+      "label": "Process water per kg Pd",
+      "stage": "lci",
+      "dim": "volume_intensity",
+      "unit": "m³/kg",
+      "role": "lci",
+      "expr": "process_water / pd_recovered"
+    },
+    "biocat_per_kg": {
+      "label": "Biocatalyst make-up per kg Pd",
+      "stage": "lci",
+      "dim": "mass_intensity",
+      "unit": "kg/kg",
+      "role": "lci",
+      "expr": "biocat_makeup / pd_recovered"
+    },
+    "elec_kwh": {
+      "label": "Electricity consumed",
+      "stage": "lci",
+      "dim": "energy_year",
+      "unit": "MWh/y",
+      "role": "energy",
+      "expr": "(throughput * elec_per_m3 + calc_kwh_per_kg * pd_recovered) * 3.6 / 1000",
+      "basis": "Q × 3.5 kWh/m³ + 800 kWh/kg × m_Pd"
+    },
+    "elec_per_kg": {
+      "label": "Electricity per kg Pd",
+      "stage": "lci",
+      "dim": "energy_per_mass",
+      "unit": "kWh/kg",
+      "role": "lci",
+      "expr": "elec_kwh / 3.6 * 1000 / pd_recovered"
+    },
+    "per_kg_basis": {
+      "label": "Solution per kg Pd (LCA basis)",
+      "stage": "lcia",
+      "dim": "volume_intensity",
+      "unit": "L/kg",
+      "expr": "1 / lca_pd_loading",
+      "basis": "1000 L/m³ ÷ 0.031926 kg Pd/m³"
+    },
+    "f_tris": {
+      "label": "Tris scaling vs LCA design",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "tris_mm / tris_mm_ref"
+    },
+    "f_nacl": {
+      "label": "NaCl scaling vs LCA design",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "expr": "nacl_mm / nacl_mm_ref"
+    },
+    "lcia_tris": {
+      "label": "Tris-HCl impact per kg Pd",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "role": "impact",
+      "table": "lcia_cf",
+      "column": "tris_pd",
+      "expr": "row.tris_per_l * f_tris * per_kg_basis * 1000"
+    },
+    "lcia_nacl": {
+      "label": "NaCl impact per kg Pd",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "role": "impact",
+      "table": "lcia_cf",
+      "column": "nacl_pd",
+      "expr": "row.nacl_per_l * f_nacl * per_kg_basis * 1000"
+    },
+    "lcia_total": {
+      "label": "Total impact per kg Pd",
+      "stage": "lcia",
+      "dim": "count",
+      "unit": "",
+      "role": "impact",
+      "table": "lcia_cf",
+      "column": "total",
+      "expr": "row.tris_pd + row.nacl_pd"
+    },
+    "lcia_share": {
+      "label": "Tris-HCl share",
+      "stage": "lcia",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "impact",
+      "table": "lcia_cf",
+      "column": "tris_share",
+      "expr": "if(row.total > 0, row.tris_pd / row.total, 0)"
+    },
+    "gwp_tris": {
+      "label": "GWP from Tris-HCl",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "role": "impact",
+      "group": "gw",
+      "expr": "lcia_cf.gw.tris_pd"
+    },
+    "gwp_nacl": {
+      "label": "GWP from NaCl",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "role": "impact",
+      "group": "gw",
+      "expr": "lcia_cf.gw.nacl_pd"
+    },
+    "gwp_total": {
+      "label": "Climate impact per kg Pd",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "role": "impact",
+      "group": "gw",
+      "kpi": true,
+      "expr": "lcia_cf.gw.total"
+    },
+    "gwp_share_tris": {
+      "label": "Tris-HCl share of GWP",
+      "stage": "lcia",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "impact",
+      "group": "gw",
+      "expr": "lcia_cf.gw.tris_share"
+    },
+    "gwp_vs_ipa": {
+      "label": "GWP vs IPA 2022 global primary Pd",
+      "stage": "lcia",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "metric",
+      "expr": "(gwp_total - gwp_ipa) / gwp_ipa"
+    },
+    "gwp_vs_za": {
+      "label": "GWP vs Ecoinvent South Africa",
+      "stage": "lcia",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "metric",
+      "expr": "(gwp_total - gwp_za) / gwp_za"
+    },
+    "gwp_vs_ru": {
+      "label": "GWP vs Ecoinvent Russia",
+      "stage": "lcia",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "metric",
+      "expr": "(gwp_total - gwp_ru) / gwp_ru"
+    },
+    "gwp_electricity": {
+      "label": "GWP from electricity (not in published figure)",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "role": "impact",
+      "group": "gw_extra",
+      "expr": "elec_per_kg * gwp_elec",
+      "notes": [
+        "gwp_no_elec"
+      ]
+    },
+    "gwp_with_elec": {
+      "label": "GWP including electricity (not in published figure)",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "role": "impact",
+      "group": "gw_extra",
+      "expr": "gwp_total + gwp_electricity",
+      "notes": [
+        "gwp_no_elec"
+      ]
+    },
+    "tris_precursor_gwp": {
+      "label": "Tris precursor GWP per kg Pd",
+      "stage": "lcia",
+      "dim": "gwp_intensity",
+      "unit": "kg CO2e/kg",
+      "role": "impact",
+      "group": "tris_precursors",
+      "table": "tris_precursors",
+      "column": "gwp_per_kg_pd",
+      "expr": "row.gwp_per_kg_tris * tris_per_kg",
+      "notes": [
+        "tris_donut_live"
+      ]
+    },
+    "equip_share": {
+      "label": "Share of PEC",
+      "stage": "capex",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "capex",
+      "table": "equipment",
+      "column": "share",
+      "expr": "row.cost / pec"
+    },
+    "pec": {
+      "label": "Purchased equipment cost",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "$M",
+      "role": "capex",
+      "expr": "sum(col(equipment, cost))",
+      "basis": "Sum of the fixed equipment list"
+    },
+    "tic": {
+      "label": "Total installed cost",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "$M",
+      "role": "capex",
+      "expr": "lang * pec",
+      "basis": "Lang factor × PEC"
+    },
+    "working_capital": {
+      "label": "Working capital",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "$M",
+      "role": "capex",
+      "expr": "wc_frac * tic",
+      "basis": "10% of TIC"
+    },
+    "tci": {
+      "label": "Total capital investment",
+      "stage": "capex",
+      "dim": "currency",
+      "unit": "$M",
+      "role": "capex",
+      "kpi": true,
+      "expr": "tic + working_capital",
+      "basis": "TIC + working capital"
+    },
+    "cost_tris": {
+      "label": "Tris-HCl buffer",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "variable",
+      "expr": "tris_feed * tris_price / 1000 / 1e6",
+      "basis": "Tris-HCl supply × price"
+    },
+    "cost_nacl": {
+      "label": "NaCl",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "variable",
+      "expr": "nacl_feed * nacl_price / 1000 / 1e6",
+      "basis": "NaCl supply × price"
+    },
+    "cost_water": {
+      "label": "Process water",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "variable",
+      "expr": "process_water * water_price / 1e6",
+      "basis": "Q × $1.5/m³"
+    },
+    "cost_biocat": {
+      "label": "Biocatalyst make-up",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "variable",
+      "expr": "biocat_makeup * biocat_price / 1000 / 1e6",
+      "basis": "Make-up × production cost"
+    },
+    "cost_acid": {
+      "label": "Acids/bases (pH, CIP)",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "fixed_opex.acid_base.cost",
+      "basis": "fixed"
+    },
+    "cost_elec": {
+      "label": "Electricity",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "variable",
+      "expr": "elec_kwh * elec_price / 1e6",
+      "basis": "MWh × $0.12/kWh"
+    },
+    "cost_steam": {
+      "label": "Steam",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "fixed_opex.steam.cost",
+      "basis": "fixed"
+    },
+    "cost_cooling": {
+      "label": "Cooling water",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "fixed_opex.cooling.cost",
+      "basis": "fixed"
+    },
+    "cost_labour": {
+      "label": "Labour",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "(operators_per_shift * shifts * op_salary + supervisors * sup_salary) / 1e6",
+      "basis": "12 op + 3 sup"
+    },
+    "cost_maint": {
+      "label": "Maintenance & repairs",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "maint_frac * tic",
+      "basis": "4% of TIC"
+    },
+    "cost_ins": {
+      "label": "Insurance, property tax",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "ins_frac * tic",
+      "basis": "1.5% of TIC"
+    },
+    "cost_overhead": {
+      "label": "Plant overheads",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "overhead_frac * cost_labour",
+      "basis": "50% of labour"
+    },
+    "cost_waste": {
+      "label": "Waste disposal",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "fixed_opex.waste.cost",
+      "basis": "fixed"
+    },
+    "cost_qaqc": {
+      "label": "Lab QA/QC",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$/y",
+      "role": "opex",
+      "group": "fixed",
+      "expr": "fixed_opex.qaqc.cost",
+      "basis": "fixed"
+    },
+    "opex_total": {
+      "label": "Total operating cost",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "opex",
+      "group": "total",
+      "expr": "cost_tris + cost_nacl + cost_water + cost_biocat + cost_acid + cost_elec + cost_steam + cost_cooling + cost_labour + cost_maint + cost_ins + cost_overhead + cost_waste + cost_qaqc",
+      "basis": "Sum of the 14 line items"
+    },
+    "share_tris": {
+      "label": "Tris-HCl share of OPEX",
+      "stage": "opex",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "opex",
+      "expr": "cost_tris / opex_total"
+    },
+    "revenue": {
+      "label": "Pd revenue",
+      "stage": "opex",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "revenue",
+      "expr": "pd_recovered * pd_price / 1000 / 1e6",
+      "basis": "Pd recovered × Pd price"
+    },
+    "life_years": {
+      "label": "Project life (whole years)",
+      "stage": "dcf",
+      "dim": "years",
+      "unit": "y",
+      "expr": "round(life)"
+    },
+    "depreciation": {
+      "label": "Annual depreciation",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "metric",
+      "expr": "tic / max(1, dep)",
+      "basis": "Straight line on TIC"
+    },
+    "ebit": {
+      "label": "Operating profit (EBIT)",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "metric",
+      "expr": "revenue - opex_total - depreciation"
+    },
+    "tax_paid": {
+      "label": "Tax paid",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "metric",
+      "expr": "max(0, ebit) * tax",
+      "basis": "max(0, EBIT) × rate",
+      "notes": [
+        "tax_no_carry"
+      ]
+    },
+    "net_profit": {
+      "label": "Net profit",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "metric",
+      "expr": "ebit - tax_paid"
+    },
+    "cash_flow": {
+      "label": "Annual cash flow",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "metric",
+      "expr": "net_profit + depreciation",
+      "basis": "Net profit + depreciation"
+    },
+    "cash_flows": {
+      "label": "Cash flow series (year 0 … T)",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "$M",
+      "role": "series",
+      "expr": "concat(-tci, add_at(repeat(cash_flow, life_years), life_years - 1, working_capital))",
+      "basis": "Year 0 = −TCI; years 1..T = CF, working capital recovered in year T",
+      "notes": [
+        "msp_vs_npv"
+      ]
+    },
+    "cumulative_cash": {
+      "label": "Cumulative cash position",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "$M",
+      "role": "series",
+      "expr": "cumsum(cash_flows)"
+    },
+    "npv": {
+      "label": "NPV",
+      "stage": "dcf",
+      "dim": "currency",
+      "unit": "$M",
+      "role": "metric",
+      "kpi": true,
+      "expr": "npv(cash_flows, discount, 0)",
+      "notes": [
+        "msp_vs_npv"
+      ]
+    },
+    "irr": {
+      "label": "IRR",
+      "stage": "dcf",
+      "dim": "fraction",
+      "unit": "%",
+      "role": "metric",
+      "expr": "irr(cash_flows)"
+    },
+    "payback": {
+      "label": "Simple payback",
+      "stage": "dcf",
+      "dim": "years",
+      "unit": "y",
+      "role": "metric",
+      "kpi": true,
+      "expr": "if(cash_flow > 0, tci / cash_flow, 1 / 0)",
+      "basis": "TCI ÷ annual cash flow",
+      "notes": [
+        "payback_simple"
+      ]
+    },
+    "annualised_tci": {
+      "label": "Annualised TCI",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "metric",
+      "expr": "tci / annuity(discount, life_years)",
+      "basis": "TCI ÷ annuity factor"
+    },
+    "required_revenue": {
+      "label": "Revenue for NPV = 0 (closed form)",
+      "stage": "dcf",
+      "dim": "currency_year",
+      "unit": "$M/y",
+      "role": "metric",
+      "expr": "(annualised_tci - depreciation) / (1 - tax) + opex_total + depreciation"
+    },
+    "msp": {
+      "label": "Minimum selling price",
+      "stage": "dcf",
+      "dim": "price_mass",
+      "unit": "$/kg",
+      "role": "metric",
+      "kpi": true,
+      "expr": "required_revenue * 1e6 / pd_recovered * 1000",
+      "basis": "((annualised TCI − D) ÷ (1 − tax) + OPEX + D) ÷ Pd recovered",
+      "notes": [
+        "msp_vs_npv"
+      ]
+    },
+    "msp_by_npv": {
+      "label": "MSP (NPV = 0, with working-capital recovery)",
+      "stage": "dcf",
+      "dim": "price_mass",
+      "unit": "$/kg",
+      "role": "metric",
+      "solve": {
+        "target": "npv",
+        "vary": "pd_price",
+        "lo": 0,
+        "hi": 1000000000,
+        "equals": 0
+      },
+      "notes": [
+        "msp_vs_npv"
+      ]
+    }
+  },
+  "checks": {
+    "pd_balance": {
+      "kind": "closure",
+      "stage": "mass",
+      "label": "Palladium balance closure",
+      "unit": "kg/y",
+      "in": [
+        "leachate.pd"
+      ],
+      "out": [
+        "pd_product",
+        "pd_lost.pd"
+      ],
+      "tolerance": 0.001
+    },
+    "cells_balance": {
+      "kind": "closure",
+      "stage": "mass",
+      "label": "Biocatalyst balance closure",
+      "unit": "kg/y",
+      "in": [
+        "biocat_makeup",
+        "biocat_recycle"
+      ],
+      "out": [
+        "pd_laden_cells.biocat"
+      ],
+      "tolerance": 0.001
+    },
+    "positive_feed": {
+      "kind": "constraint",
+      "stage": "mass",
+      "severity": "hard",
+      "expr": "throughput > 0 && feed_pd > 0",
+      "message": "Throughput and Pd concentration must be positive."
+    },
+    "recovery_range": {
+      "kind": "constraint",
+      "stage": "mass",
+      "severity": "hard",
+      "expr": "recovery > 0 && recovery <= 1",
+      "message": "Recovery must be between 0 and 100%."
+    },
+    "cycles_min": {
+      "kind": "constraint",
+      "stage": "mass",
+      "severity": "soft",
+      "expr": "biocat_cycles >= 1",
+      "message": "Reuse cycles below 1 are treated as 1."
+    },
+    "tax_lt_1": {
+      "kind": "constraint",
+      "stage": "dcf",
+      "severity": "hard",
+      "expr": "tax < 1",
+      "message": "Tax rate must be below 100%."
+    }
+  },
+  "lcia": {
+    "method": "ReCiPe 2016 Midpoint (H)",
+    "categories": [
+      {
+        "id": "gw",
+        "label": "Global warming",
+        "unit": "kg CO₂ eq",
+        "total": "lcia_cf.gw.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.gw.tris_pd",
+          "NaCl": "lcia_cf.gw.nacl_pd"
+        }
+      },
+      {
+        "id": "od",
+        "label": "Stratospheric ozone depletion",
+        "unit": "kg CFC11 eq",
+        "total": "lcia_cf.od.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.od.tris_pd",
+          "NaCl": "lcia_cf.od.nacl_pd"
+        }
+      },
+      {
+        "id": "ir",
+        "label": "Ionizing radiation",
+        "unit": "kBq Co-60 eq",
+        "total": "lcia_cf.ir.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.ir.tris_pd",
+          "NaCl": "lcia_cf.ir.nacl_pd"
+        }
+      },
+      {
+        "id": "of_hh",
+        "label": "Ozone formation, Human health",
+        "unit": "kg NOₓ eq",
+        "total": "lcia_cf.of_hh.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.of_hh.tris_pd",
+          "NaCl": "lcia_cf.of_hh.nacl_pd"
+        }
+      },
+      {
+        "id": "pm",
+        "label": "Fine particulate matter formation",
+        "unit": "kg PM2.5 eq",
+        "total": "lcia_cf.pm.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.pm.tris_pd",
+          "NaCl": "lcia_cf.pm.nacl_pd"
+        }
+      },
+      {
+        "id": "of_te",
+        "label": "Ozone formation, Terrestrial ecosystems",
+        "unit": "kg NOₓ eq",
+        "total": "lcia_cf.of_te.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.of_te.tris_pd",
+          "NaCl": "lcia_cf.of_te.nacl_pd"
+        }
+      },
+      {
+        "id": "ta",
+        "label": "Terrestrial acidification",
+        "unit": "kg SO₂ eq",
+        "total": "lcia_cf.ta.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.ta.tris_pd",
+          "NaCl": "lcia_cf.ta.nacl_pd"
+        }
+      },
+      {
+        "id": "fe",
+        "label": "Freshwater eutrophication",
+        "unit": "kg P eq",
+        "total": "lcia_cf.fe.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.fe.tris_pd",
+          "NaCl": "lcia_cf.fe.nacl_pd"
+        }
+      },
+      {
+        "id": "me",
+        "label": "Marine eutrophication",
+        "unit": "kg N eq",
+        "total": "lcia_cf.me.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.me.tris_pd",
+          "NaCl": "lcia_cf.me.nacl_pd"
+        }
+      },
+      {
+        "id": "tet",
+        "label": "Terrestrial ecotoxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "lcia_cf.tet.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.tet.tris_pd",
+          "NaCl": "lcia_cf.tet.nacl_pd"
+        }
+      },
+      {
+        "id": "fet",
+        "label": "Freshwater ecotoxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "lcia_cf.fet.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.fet.tris_pd",
+          "NaCl": "lcia_cf.fet.nacl_pd"
+        }
+      },
+      {
+        "id": "met",
+        "label": "Marine ecotoxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "lcia_cf.met.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.met.tris_pd",
+          "NaCl": "lcia_cf.met.nacl_pd"
+        }
+      },
+      {
+        "id": "hct",
+        "label": "Human carcinogenic toxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "lcia_cf.hct.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.hct.tris_pd",
+          "NaCl": "lcia_cf.hct.nacl_pd"
+        }
+      },
+      {
+        "id": "hnct",
+        "label": "Human non-carcinogenic toxicity",
+        "unit": "kg 1,4-DCB",
+        "total": "lcia_cf.hnct.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.hnct.tris_pd",
+          "NaCl": "lcia_cf.hnct.nacl_pd"
+        }
+      },
+      {
+        "id": "lu",
+        "label": "Land use",
+        "unit": "m²a crop eq",
+        "total": "lcia_cf.lu.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.lu.tris_pd",
+          "NaCl": "lcia_cf.lu.nacl_pd"
+        }
+      },
+      {
+        "id": "mrs",
+        "label": "Mineral resource scarcity",
+        "unit": "kg Cu eq",
+        "total": "lcia_cf.mrs.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.mrs.tris_pd",
+          "NaCl": "lcia_cf.mrs.nacl_pd"
+        }
+      },
+      {
+        "id": "frs",
+        "label": "Fossil resource scarcity",
+        "unit": "kg oil eq",
+        "total": "lcia_cf.frs.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.frs.tris_pd",
+          "NaCl": "lcia_cf.frs.nacl_pd"
+        }
+      },
+      {
+        "id": "wc",
+        "label": "Water consumption",
+        "unit": "m³",
+        "total": "lcia_cf.wc.total",
+        "contributions": {
+          "Tris-HCl": "lcia_cf.wc.tris_pd",
+          "NaCl": "lcia_cf.wc.nacl_pd"
+        }
+      }
+    ],
+    "benchmarks": [
+      {
+        "label": "IPA 2022 global primary Pd",
+        "category": "gw",
+        "node": "gwp_ipa"
+      },
+      {
+        "label": "Ecoinvent primary Pd, South Africa",
+        "category": "gw",
+        "node": "gwp_za"
+      },
+      {
+        "label": "Ecoinvent primary Pd, Russia",
+        "category": "gw",
+        "node": "gwp_ru"
+      }
+    ]
+  },
+  "allocation": {
+    "lca": {
+      "method": "none",
+      "basis": "Single product: every burden is assigned to the Pd recovered. Reagent burdens are per litre of solution on the frozen LCA basis.",
+      "nodes": [
+        "per_kg_basis"
+      ]
+    },
+    "tea": {
+      "method": "none",
+      "basis": "Single revenue stream: all costs are carried by the Pd product.",
+      "nodes": [
+        "revenue"
+      ]
+    }
+  },
+  "targets": {
+    "gwp": {
+      "label": "Climate impact per kg Pd",
+      "nodes": [
+        "gwp_total"
+      ]
+    },
+    "lcia": {
+      "label": "Full impact table",
+      "nodes": [
+        "lcia_total"
+      ]
+    },
+    "capital": {
+      "label": "Capital",
+      "nodes": [
+        "pec",
+        "tic",
+        "tci"
+      ]
+    },
+    "econ": {
+      "label": "Economics",
+      "nodes": [
+        "opex_total",
+        "revenue",
+        "msp",
+        "npv",
+        "irr",
+        "payback"
+      ]
+    },
+    "msp_check": {
+      "label": "MSP consistency",
+      "nodes": [
+        "msp",
+        "msp_by_npv"
+      ]
+    }
+  },
+  "sensitivity": {
+    "tornado_msp": {
+      "kind": "oat",
+      "label": "What moves the MSP?",
+      "target": "msp",
+      "params": "editable",
+      "delta": 0.1
+    },
+    "tornado_npv": {
+      "kind": "oat",
+      "label": "What moves the NPV?",
+      "target": "npv",
+      "params": "editable",
+      "delta": 0.1
+    },
+    "tornado_gwp": {
+      "kind": "oat",
+      "label": "What moves the climate impact?",
+      "target": "gwp_total",
+      "params": [
+        "tris_mm",
+        "nacl_mm",
+        "throughput",
+        "feed_pd",
+        "recovery"
+      ],
+      "delta": 0.1
+    },
+    "pd_price_sweep": {
+      "kind": "sweep",
+      "label": "NPV against Pd price",
+      "target": "npv",
+      "param": "pd_price",
+      "from": 10000,
+      "to": 120000,
+      "steps": 12
+    },
+    "feed_vs_tris": {
+      "kind": "sweep",
+      "label": "MSP against feed concentration and Tris",
+      "target": "msp",
+      "param": "feed_pd",
+      "from": 0.2,
+      "to": 3,
+      "steps": 8,
+      "param2": "tris_mm",
+      "from2": 25,
+      "to2": 200,
+      "steps2": 8
+    },
+    "cases": {
+      "kind": "scenario",
+      "label": "Design cases",
+      "targets": [
+        "gwp_total",
+        "msp",
+        "npv"
+      ],
+      "scenarios": {
+        "dilute_feed": {
+          "feed_pd": 0.3
+        },
+        "low_tris": {
+          "tris_mm": 25
+        },
+        "high_reuse": {
+          "biocat_cycles": 30
+        },
+        "pd_low": {
+          "pd_price": 15000
+        },
+        "pd_high": {
+          "pd_price": 90000
+        },
+        "lang_low": {
+          "lang": 3
+        }
+      }
+    },
+    "mc_npv": {
+      "kind": "montecarlo",
+      "label": "NPV uncertainty",
+      "target": "npv",
+      "n": 2000,
+      "seed": 42,
+      "params": {
+        "pd_price": {
+          "dist": "lognormal",
+          "median": 48000,
+          "sigma": 0.35
+        },
+        "feed_pd": {
+          "dist": "triangular",
+          "min": 0.5,
+          "mode": 1,
+          "max": 2
+        },
+        "recovery": {
+          "dist": "triangular",
+          "min": 85,
+          "mode": 95,
+          "max": 99
+        },
+        "tris_price": {
+          "dist": "uniform",
+          "min": 5,
+          "max": 20
+        },
+        "biocat_price": {
+          "dist": "triangular",
+          "min": 2000,
+          "mode": 5000,
+          "max": 10000
+        },
+        "lang": {
+          "dist": "uniform",
+          "min": 3,
+          "max": 5
+        }
+      }
+    }
+  },
+  "diagram": {
+    "rank": {
+      "fermentor": 0,
+      "purification": 1,
+      "buffer_makeup": 1,
+      "bioreactor": 2,
+      "centrifuge": 3,
+      "buffer_recycle": 3,
+      "calciner": 4,
+      "refining": 5
+    },
+    "order": {
+      "buffer_makeup": 0,
+      "purification": 1,
+      "centrifuge": 0,
+      "buffer_recycle": 1
+    }
+  }
+}

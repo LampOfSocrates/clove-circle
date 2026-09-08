@@ -1,0 +1,481 @@
+{
+  "pml": "0.1",
+  "meta": {
+    "id": "laterite",
+    "title": "Laterite to metal extraction",
+    "subtitle": "Winning nickel, cobalt and manganese from low-grade laterite ore by bioleaching.",
+    "functionalUnit": "1 kg of recovered critical metal (Al + Mn + Ni + Co) from the Mn-oxide concentrate bioleach",
+    "boundary": "Cradle-to-gate. Starts at mined laterite ore arriving wet at the plant, ends at recovered metal in the bioleach liquor. Excludes mining itself and downstream refining.",
+    "currency": "$",
+    "source": "Reproduces standalone/laterite-lca-tea.html (Balance, Energy GWP-MnO w allocation, Energy GWP-MnO no-alloc, Energy and GWP-BFL and TEA-price MnO BFL worksheets).",
+    "notes": [
+      {
+        "id": "q_mozley_double",
+        "level": "quirk",
+        "title": "Mozley stream counted twice",
+        "text": "The Mn-oxide concentrate is worked out as attrition feed minus fines minus heavies (72 - 69 - 0.6 = 2.4 kg/h). The 1.7 kg/h sent to Mozley separation is never subtracted, so it is inside the concentrate as well as in its own stream and the attrition block puts out 73.7 kg/h from 72 kg/h in. The attrition energy uses a different remainder (72 - 69 - 1.7 = 1.3 kg/h) for the coarse size fraction. Both are kept exactly as the spreadsheet has them.",
+        "nodes": ["mnox", "attr_frac_coarse", "attr_closure.error"]
+      },
+      {
+        "id": "q_split_constants",
+        "level": "quirk",
+        "title": "Split fractions are frozen x/360 ratios",
+        "text": "Every size fraction is a fixed ratio of the feed taken from the 360 kg/h reference case (20/360, 268/360, 72/360, 69/360, 1.7/360, 0.6/360). Changing the feed scales every stream together; the split itself never moves and does not respond to ore properties.",
+        "nodes": ["ref_feed", "bfl", "bcl_stor", "bcl_attr", "bcl_fine", "bcl_mozl", "heav"]
+      },
+      {
+        "id": "q_co_si",
+        "level": "quirk",
+        "title": "Cobalt recovery uses the silicon grade",
+        "text": "In both composition tables the cobalt recovery formula points one row down and multiplies the Co recovery (87.2% and 79.1%) by the Si wt% (0.4% and 1.0%) instead of the Co wt% (2.3% and 0.164%). The 'wt% used by recovery' column shows the grade actually applied; it is reproduced so that the graph matches the published numbers.",
+        "nodes": ["mnox_comp.co.wt_rec", "mnox_comp.co.n", "bfl_comp.co.wt_rec", "bfl_comp.co.n"]
+      },
+      {
+        "id": "q_bioleach_size",
+        "level": "quirk",
+        "title": "Bioleach CAPEX size fed in t/h against a kg/h base",
+        "text": "Seven equipment rows are scaled on their feed in kg/h against a 33.5 t/h (33,500 kg/h) reference. The bioleaching row divides its feed by 1000 first (0.0224) and compares that with an 18.5 t/h reference written as 18,500, so its cost is scaled on a size ratio that is 1000 times too small.",
+        "nodes": ["capex.bioleach.size", "capex.bioleach.cost"]
+      },
+      {
+        "id": "q_alloc",
+        "level": "quirk",
+        "title": "LCA is mass-allocated, TEA is not",
+        "text": "The climate footprint charges the Mn-oxide concentrate only with its mass share of each energy step (drying, crushing, attrition). The operating cost charges the whole coarse line plus the whole bulk-fine line, unallocated. The two panels therefore describe different systems.",
+        "nodes": ["ealloc", "noalloc_elec", "elec_tjy"]
+      },
+      {
+        "id": "q_third",
+        "level": "quirk",
+        "title": "Co-product GWP divided equally by three",
+        "text": "The per-metal footprints for Mn, Ni and Co are the total concentrate GWP divided by each metal's recovered mass and then by 3, a flat equal split across three co-products that ignores aluminium and does not sum back to the total.",
+        "nodes": ["coprod_n", "gwp_mn", "gwp_ni", "gwp_co"]
+      },
+      {
+        "id": "q_na2so4",
+        "level": "quirk",
+        "title": "Na2SO4 default is 0 on load, 60 after reset",
+        "text": "The dashboard's Na2SO4 field is 0 g/L when the page loads (the value the published numbers and the recorded baseline reflect) but its reset button sets it to 60 g/L. The graph uses 0 so that it matches the page as shown.",
+        "nodes": ["na2so4"]
+      },
+      {
+        "id": "q_dry_twice",
+        "level": "quirk",
+        "title": "Dry basis applied twice",
+        "text": "The feed entered is already dry, yet the bioleach volume, the metal recoveries and the BFL disk-milling energy multiply the concentrate and BFL flows by (1 - moisture) again. Only 1.8 of the 2.4 kg/h of concentrate is leached and recovered from.",
+        "nodes": ["mnox_dry", "bfl_dry", "liquor_mn", "liquor_bfl"]
+      },
+      {
+        "id": "q_mw_mn",
+        "level": "quirk",
+        "title": "Manganese molar mass taken as 57",
+        "text": "The BFL manganese grade converts MnO to Mn with 57/(57+16); the true molar mass of Mn is 54.94.",
+        "nodes": ["bfl_comp.mn.mw_metal", "bfl_comp.mn.wt"]
+      }
+    ]
+  },
+
+  "stages": [
+    { "id": "mass", "title": "Mass balance", "verb": "Do mass balance",
+      "tryIt": "The size fractions are fixed ratios of the feed, so click the ore stream and change the throughput: everything scales together and the split never moves. Now raise the moisture from 25% to 40% — the dry flows are untouched, but look at what happens to the drying energy in the next step." },
+    { "id": "lci", "title": "Life cycle inventory", "verb": "Build inventory",
+      "tryIt": "Drop the bioleach solid concentration from 50 to 20 g/L and re-run. More water per kilogram of ore means more slurry to heat, and the heat demand climbs sharply for no extra metal." },
+    { "id": "lcia", "title": "Impact assessment", "verb": "Run impact assessment",
+      "tryIt": "Look at which of the four contributors dominates. Then cut the FeSO₄ dose to the Mn oxide bioleach from 25 to 10 g/L and re-run to see how much of the footprint is one reagent." },
+    { "id": "capex", "title": "Capital cost", "verb": "Estimate CAPEX",
+      "tryIt": "Every unit is scaled with the six-tenths rule from a 33.5 t/h reference plant. Multiply the ore feed by ten and watch capital rise by roughly six times, not ten — that gap is the economy of scale." },
+    { "id": "opex", "title": "Operating cost & revenue", "verb": "Cost the operation",
+      "tryIt": "Set the raw laterite price to zero, as if the ore were a mine waste stream rather than a purchased feed. For a low-grade resource that single assumption often decides the whole case." },
+    { "id": "dcf", "title": "Profitability", "verb": "Run cash flow",
+      "tryIt": "Compare the break-even metal price against the $18.50/kg assumed. If break-even sits above the market price, the process needs either a richer ore or a cheaper feed." }
+  ],
+  "stepCopy": {
+    "scope": { "tryIt": "This case has four saleable metals from one ore, so the functional unit lumps them together. Splitting the burden between co-products instead — allocation — would give four different numbers from exactly the same plant." },
+    "interpret": { "tryIt": "Ore grade, moisture and feed price dominate here. Note that two of the three are properties of the deposit, not choices the designer gets to make." }
+  },
+
+  "components": {
+    "fe": { "label": "Fe" },
+    "al": { "label": "Al" },
+    "mn": { "label": "Mn" },
+    "cr": { "label": "Cr" },
+    "mg": { "label": "Mg" },
+    "ni": { "label": "Ni" },
+    "co": { "label": "Co" },
+    "si": { "label": "Si" },
+    "o":  { "label": "O", "mw": 16, "source": "Oxygen, used to convert the BFL oxide assays to metal grades." }
+  },
+
+  "params": {
+    "ncl":   { "label": "NCL raw material (dry)", "stage": "mass", "dim": "mass_hour", "unit": "kg/h", "default": 360, "range": [50, 5000], "hit": "ncl_dry",
+               "source": "Balance L3. Dry mass of nickel-cobalt laterite ore fed to the plant." },
+    "moist": { "label": "Moisture content", "stage": "mass", "dim": "fraction", "unit": "%", "default": 25, "range": [0, 60], "hit": "oven",
+               "source": "Balance L12. Free water in the as-mined ore; all of it has to be evaporated." },
+    "ref_feed": { "label": "Reference feed of the Balance sheet", "stage": "mass", "dim": "mass_hour", "unit": "kg/h", "default": 360, "editable": false,
+               "source": "Balance L3 basis (360 kg/h) from which every split fraction is taken.", "notes": ["q_split_constants"] },
+
+    "solidc": { "label": "Bioleach solid concentration", "stage": "lci", "dim": "concentration", "unit": "g/L", "default": 50, "range": [5, 200], "hit": "bioleach",
+               "source": "Balance O3. Pulp density in both bioleach reactors." },
+    "na2so4": { "label": "Na₂SO₄ dose — BFL", "stage": "lci", "dim": "concentration", "unit": "g/L", "default": 0, "range": [0, 200], "hit": "na2so4_bfl",
+               "source": "Balance O5. Reagent added to the bulk fine laterite bioleach.", "notes": ["q_na2so4"] },
+    "feso4b": { "label": "FeSO₄ dose — BFL", "stage": "lci", "dim": "concentration", "unit": "g/L", "default": 3, "range": [0, 60], "hit": "feso4_bfl",
+               "source": "Balance O6. Iron source for the bulk fine laterite bioleach." },
+    "feso4m": { "label": "FeSO₄ dose — Mn oxides conc.", "stage": "lci", "dim": "concentration", "unit": "g/L", "default": 25, "range": [0, 100], "hit": "feso4_mn",
+               "source": "Balance O7. Iron source for the Mn oxide concentrate bioleach; the dominant reagent burden." },
+
+    "t_cold":  { "label": "Ambient temperature", "stage": "lci", "dim": "temperature", "unit": "°C", "default": 25, "editable": false, "source": "Energy sheet D4." },
+    "t_oven":  { "label": "Oven drying temperature", "stage": "lci", "dim": "temperature", "unit": "°C", "default": 100, "editable": false, "source": "Energy sheet." },
+    "t_dry40": { "label": "Raw material drying temperature", "stage": "lci", "dim": "temperature", "unit": "°C", "default": 40, "editable": false, "source": "Energy sheet B11." },
+    "t_bio":   { "label": "Bioleach temperature", "stage": "lci", "dim": "temperature", "unit": "°C", "default": 46, "editable": false, "source": "Energy sheet D32.", "hit": "bioleach" },
+    "cp_w":    { "label": "Specific heat of water", "stage": "lci", "dim": "heat_capacity", "unit": "kJ/kg·K", "default": 4.18, "editable": false, "source": "Energy sheet." },
+    "cp_s":    { "label": "Specific heat of solids", "stage": "lci", "dim": "heat_capacity", "unit": "kJ/kg·K", "default": 0.9, "editable": false, "source": "Energy sheet." },
+    "h_evap":  { "label": "Latent heat of evaporation", "stage": "lci", "dim": "specific_energy", "unit": "kJ/kg", "default": 2257, "editable": false, "source": "Energy sheet." },
+    "eff_oven": { "label": "Oven thermal efficiency", "stage": "lci", "dim": "fraction", "unit": "fraction", "default": 0.65, "editable": false, "source": "Energy sheet B9.", "hit": "oven" },
+    "rho_water": { "label": "Water density", "stage": "lci", "dim": "concentration", "unit": "g/L", "default": 1000, "editable": false, "source": "Energy sheet B32: slurry is 1 kg/L." },
+    "bwi_crush": { "label": "Bond work index — crushing", "stage": "lci", "dim": "work_index", "unit": "kWh/t", "default": 12, "editable": false, "source": "Energy sheet B12.", "hit": "crusher" },
+    "crush_in":  { "label": "Crusher feed size F80", "stage": "lci", "dim": "length", "unit": "mm", "default": 100, "editable": false, "source": "Energy sheet B12.", "hit": "crusher" },
+    "crush_out": { "label": "Crusher product size P80", "stage": "lci", "dim": "length", "unit": "mm", "default": 20, "editable": false, "source": "Energy sheet B12.", "hit": "crusher" },
+    "bwi_attr":  { "label": "Bond work index — attrition & milling", "stage": "lci", "dim": "work_index", "unit": "kWh/t", "default": 14, "editable": false, "source": "Energy sheet B16, BFL B16.", "hit": "attrition" },
+    "attr_f80":  { "label": "Attrition feed size F80", "stage": "lci", "dim": "length", "unit": "mm", "default": 20, "editable": false, "source": "Energy sheet B16: crushed ore at 20 mm.", "hit": "attrition" },
+    "attr_p80_mozl":   { "label": "P80 of the Mozley fraction", "stage": "lci", "dim": "length", "unit": "mm", "default": 0.25, "editable": false, "source": "Energy sheet B16 (0.1–0.4 mm fraction).", "hit": "attrition" },
+    "attr_p80_coarse": { "label": "P80 of the coarse remainder", "stage": "lci", "dim": "length", "unit": "mm", "default": 0.6, "editable": false, "source": "Energy sheet B16.", "hit": "attrition" },
+    "attr_p80_fine":   { "label": "P80 of the fine fraction", "stage": "lci", "dim": "length", "unit": "mm", "default": 0.05, "editable": false, "source": "Energy sheet B16 (<0.1 mm fraction).", "hit": "attrition" },
+    "disk_p80":  { "label": "Disk mill product size P80 (BFL)", "stage": "lci", "dim": "length", "unit": "mm", "default": 5, "editable": false, "source": "BFL sheet B16.", "hit": "disk_mill" },
+    "mozl_kwht": { "label": "Mozley separator specific energy", "stage": "lci", "dim": "energy_per_mass", "unit": "kWh/t", "default": 1.3, "editable": false, "source": "Energy sheet D26.", "hit": "mozley" },
+    "op_days":   { "label": "Operating days per year", "stage": "lci", "dim": "days", "unit": "d/y", "default": 290, "editable": false, "source": "TEA F2." },
+
+    "ef_feso4":    { "label": "Emission factor — ferrous sulfate", "stage": "lcia", "dim": "emission_factor", "unit": "kg CO2e/kg", "default": 0.17035817, "editable": false, "source": "Energy GWP-MnO w allocation D33." },
+    "ef_elec":     { "label": "Emission factor — electricity", "stage": "lcia", "dim": "emission_factor", "unit": "kg CO2e/MJ", "default": 0.0575, "editable": false, "source": "Energy GWP-MnO w allocation D34." },
+    "ef_heat":     { "label": "Emission factor — heat", "stage": "lcia", "dim": "emission_factor", "unit": "kg CO2e/MJ", "default": 0.075791799, "editable": false, "source": "Energy GWP-MnO w allocation D35." },
+    "ef_nutrient": { "label": "Emission factor — basal salt medium", "stage": "lcia", "dim": "emission_factor", "unit": "kg CO2e/L", "default": 0.0010499693, "editable": false, "source": "Energy GWP-MnO w allocation D36." },
+    "coprod_n":    { "label": "Number of co-products sharing the GWP", "stage": "lcia", "dim": "count", "default": 3, "editable": false, "source": "Cells C43, C46, C47 divide by 3.", "notes": ["q_third"] },
+
+    "cepci_now": { "label": "CEPCI (current)", "stage": "capex", "dim": "count", "default": 820, "editable": false, "source": "TEA I2." },
+    "lang":      { "label": "Lang factor (TCI / delivered cost)", "stage": "capex", "dim": "count", "default": 3, "editable": false, "source": "TEA K16." },
+
+    "acc":   { "label": "Annual capital charge", "stage": "opex", "dim": "fraction", "unit": "fraction", "default": 0.1, "range": [0.05, 0.25], "source": "TEA B19. Fraction of total capital charged each operating year." },
+    "preag": { "label": "Reagents price", "stage": "opex", "dim": "price_mass", "unit": "$/kg", "default": 0.26, "range": [0.05, 2], "source": "TEA D16. Blended across FeSO₄ and Na₂SO₄." },
+    "pelec": { "label": "Electricity price", "stage": "opex", "dim": "price_energy", "unit": "$/MJ", "default": 0.0644, "range": [0.01, 0.4], "source": "TEA D17." },
+    "pheat": { "label": "Heat price", "stage": "opex", "dim": "price_energy", "unit": "$/MJ", "default": 0.03, "range": [0.005, 0.2], "source": "TEA D18." },
+    "pmet":  { "label": "Critical metals price", "stage": "opex", "dim": "price_mass", "unit": "$/kg", "default": 18.5, "range": [2, 60], "source": "TEA D24. Blended across the recovered metal streams.", "hit": "metal" },
+    "plat":  { "label": "Raw laterite price", "stage": "opex", "dim": "price_mass", "unit": "$/dry t", "default": 75, "range": [0, 200], "source": "TEA D23. Price of ore delivered to the plant.", "hit": "ncl_dry" },
+    "plab":  { "label": "Labour cost", "stage": "opex", "dim": "salary", "unit": "$/y", "default": 85000, "range": [20000, 200000], "source": "TEA D21. Per worker per year." },
+    "indir_frac":   { "label": "Indirect fixed opex, fraction of annual capital charge", "stage": "opex", "dim": "fraction", "unit": "fraction", "default": 0.06, "editable": false, "source": "TEA K17." },
+    "lab_overhead": { "label": "Labour overhead multiplier", "stage": "opex", "dim": "count", "default": 1.9, "editable": false, "source": "TEA K18." },
+    "jobs_kt":      { "label": "Jobs per kt of product", "stage": "opex", "dim": "jobs", "unit": "jobs/kt", "default": 23, "editable": false, "source": "TEA B22." },
+    "misc_frac":    { "label": "Miscellaneous opex, fraction of (indirect + labour + variable)", "stage": "opex", "dim": "fraction", "unit": "fraction", "default": 0.3, "editable": false, "source": "TEA B32 formula." },
+
+    "irr":  { "label": "Discount rate", "stage": "dcf", "dim": "fraction", "unit": "fraction", "default": 0.1, "range": [0.02, 0.3], "source": "TEA B20. Rate used to discount future cash flows." },
+    "life": { "label": "Project life", "stage": "dcf", "dim": "years", "unit": "y", "default": 10, "editable": false, "source": "TEA E27–E37: ten operating years." }
+  },
+
+  "tables": {
+    "splits": {
+      "label": "Balance sheet split basis (flows at the 360 kg/h reference feed)", "stage": "mass",
+      "columns": {
+        "label": { "type": "text" },
+        "cell": { "type": "text" },
+        "ref_flow": { "label": "Flow at reference feed", "dim": "mass_hour", "unit": "kg/h" }
+      },
+      "rows": {
+        "bfl":  { "label": "Bulk fine laterite", "cell": "L5", "ref_flow": 20 },
+        "stor": { "label": "BCL to storage", "cell": "L6", "ref_flow": 268 },
+        "attr": { "label": "BCL to attrition & wet sieving", "cell": "L7", "ref_flow": 72 },
+        "fine": { "label": "BCL fine fraction (<0.1 mm)", "cell": "L8", "ref_flow": 69 },
+        "mozl": { "label": "BCL to Mozley separation (0.1–0.4 mm)", "cell": "L9", "ref_flow": 1.7 },
+        "heav": { "label": "Heavy & mixed fraction", "cell": "L10", "ref_flow": 0.6 }
+      }
+    },
+    "mnox_comp": {
+      "label": "Mn oxides concentrate — composition and bioleach recovery (Balance L14–M23)", "stage": "mass",
+      "columns": {
+        "label": { "type": "text" },
+        "wt":  { "label": "wt% in concentrate", "dim": "fraction", "unit": "%", "editable": true },
+        "rec": { "label": "Recovery", "dim": "fraction", "unit": "%", "editable": true, "nullable": true },
+        "rec_uses_si": { "label": "Recovery formula points at the Si row (1 = yes)", "dim": "count" }
+      },
+      "rows": {
+        "fe": { "label": "Fe", "wt": 20.3, "rec": null, "rec_uses_si": 0 },
+        "al": { "label": "Al", "wt": 9.2,  "rec": 38.5, "rec_uses_si": 0 },
+        "mn": { "label": "Mn", "wt": 11.8, "rec": 94.6, "rec_uses_si": 0 },
+        "cr": { "label": "Cr", "wt": 8.8,  "rec": null, "rec_uses_si": 0 },
+        "mg": { "label": "Mg", "wt": 1.2,  "rec": null, "rec_uses_si": 0 },
+        "ni": { "label": "Ni", "wt": 1.7,  "rec": 79.9, "rec_uses_si": 0 },
+        "co": { "label": "Co", "wt": 2.3,  "rec": 87.2, "rec_uses_si": 1 },
+        "si": { "label": "Si", "wt": 0.4,  "rec": null, "rec_uses_si": 0 }
+      }
+    },
+    "bfl_comp": {
+      "label": "Bulk fine laterite — oxide assay, metal grade and bioleach recovery (Balance L25–M34)", "stage": "mass",
+      "columns": {
+        "label": { "type": "text" },
+        "oxide": { "type": "text" },
+        "oxide_pct": { "label": "Oxide assay", "dim": "fraction", "unit": "%", "editable": true, "nullable": true },
+        "ppm":       { "label": "Metal assay (ppm)", "dim": "count", "editable": true, "nullable": true },
+        "n_metal":   { "label": "Metal atoms in oxide", "dim": "count", "nullable": true },
+        "n_oxygen":  { "label": "Oxygen atoms in oxide", "dim": "count", "nullable": true },
+        "mw_metal":  { "label": "Metal molar mass", "dim": "molar_mass", "unit": "g/mol", "nullable": true },
+        "rec": { "label": "Recovery", "dim": "fraction", "unit": "%", "editable": true, "nullable": true },
+        "rec_uses_si": { "label": "Recovery formula points at the Si row (1 = yes)", "dim": "count" }
+      },
+      "rows": {
+        "fe": { "label": "Fe", "oxide": "Fe₂O₃", "oxide_pct": 69,   "ppm": null,  "n_metal": 2, "n_oxygen": 3, "mw_metal": 56, "rec": null, "rec_uses_si": 0 },
+        "al": { "label": "Al", "oxide": "Al₂O₃", "oxide_pct": 5.5,  "ppm": null,  "n_metal": 2, "n_oxygen": 3, "mw_metal": 27, "rec": 13.8, "rec_uses_si": 0 },
+        "mn": { "label": "Mn", "oxide": "MnO",   "oxide_pct": 1.19, "ppm": null,  "n_metal": 1, "n_oxygen": 1, "mw_metal": 57, "rec": 83.9, "rec_uses_si": 0 },
+        "cr": { "label": "Cr", "oxide": "Cr₂O₃", "oxide_pct": 2.95, "ppm": null,  "n_metal": 2, "n_oxygen": 3, "mw_metal": 52, "rec": 3.0,  "rec_uses_si": 0 },
+        "mg": { "label": "Mg", "oxide": "MgO",   "oxide_pct": 0.47, "ppm": null,  "n_metal": 1, "n_oxygen": 1, "mw_metal": 24, "rec": null, "rec_uses_si": 0 },
+        "ni": { "label": "Ni", "oxide": "Ni (ppm)", "oxide_pct": null, "ppm": 13450, "n_metal": null, "n_oxygen": null, "mw_metal": null, "rec": 8.8,  "rec_uses_si": 0 },
+        "co": { "label": "Co", "oxide": "Co (ppm)", "oxide_pct": null, "ppm": 1640,  "n_metal": null, "n_oxygen": null, "mw_metal": null, "rec": 79.1, "rec_uses_si": 1 },
+        "si": { "label": "Si", "oxide": "SiO₂",  "oxide_pct": 2.15, "ppm": null,  "n_metal": 1, "n_oxygen": 2, "mw_metal": 28, "rec": null, "rec_uses_si": 0 }
+      }
+    },
+    "capex": {
+      "label": "Capital cost estimation — six-tenths rule (TEA rows 4–11)", "stage": "capex",
+      "columns": {
+        "label": { "type": "text" },
+        "base_cost":  { "label": "Base cost", "dim": "currency", "unit": "$M", "editable": true },
+        "n":          { "label": "Scale exponent", "dim": "count", "editable": true },
+        "base_size":  { "label": "Base size", "dim": "mass_hour", "unit": "t/h" },
+        "cepci_base": { "label": "CEPCI of base cost", "dim": "count" },
+        "size_key":   { "label": "Size basis (1 wet ore, 2 dry ore, 3 BFL, 4 attrition feed, 5 Mozley feed, 6 bioleach feed in t/h)", "dim": "count" },
+        "size_basis": { "type": "text" }
+      },
+      "rows": {
+        "oven":      { "label": "Oven drying",           "base_cost": 7.6,  "n": 0.8,  "base_size": 33.5, "cepci_base": 394.3, "size_key": 1, "size_basis": "NCL wet feed" },
+        "dry40":     { "label": "Drying at 40°C",        "base_cost": 7.6,  "n": 0.8,  "base_size": 33.5, "cepci_base": 394.3, "size_key": 2, "size_basis": "NCL dry" },
+        "crushing":  { "label": "Crushing to 20 mm",     "base_cost": 0.41, "n": 0.6,  "base_size": 33.5, "cepci_base": 394.3, "size_key": 2, "size_basis": "NCL dry" },
+        "disk_mill": { "label": "Disk milling",          "base_cost": 0.41, "n": 0.6,  "base_size": 33.5, "cepci_base": 394.3, "size_key": 3, "size_basis": "BFL" },
+        "attrition": { "label": "Attrition & wet siev.", "base_cost": 0.41, "n": 0.6,  "base_size": 33.5, "cepci_base": 394.3, "size_key": 4, "size_basis": "BCL to attrition" },
+        "mozley":    { "label": "Mozley gravity sep.",   "base_cost": 0.41, "n": 0.6,  "base_size": 33.5, "cepci_base": 394.3, "size_key": 5, "size_basis": "BCL to Mozley" },
+        "storage":   { "label": "Storage",               "base_cost": 1.0,  "n": 0.65, "base_size": 33.5, "cepci_base": 394.3, "size_key": 2, "size_basis": "NCL dry" },
+        "bioleach":  { "label": "Bioleaching",           "base_cost": 2.96, "n": 0.7,  "base_size": 18.5, "cepci_base": 402,   "size_key": 6, "size_basis": "(Mn-ox conc. + BFL) / 1000" }
+      }
+    },
+    "years": {
+      "label": "NPV schedule (TEA E27–G37)", "stage": "dcf",
+      "columns": { "label": { "type": "text" }, "t": { "label": "Year", "dim": "years", "unit": "y" } },
+      "rows": {
+        "y0": { "label": "Year 0", "t": 0 }, "y1": { "label": "Year 1", "t": 1 }, "y2": { "label": "Year 2", "t": 2 },
+        "y3": { "label": "Year 3", "t": 3 }, "y4": { "label": "Year 4", "t": 4 }, "y5": { "label": "Year 5", "t": 5 },
+        "y6": { "label": "Year 6", "t": 6 }, "y7": { "label": "Year 7", "t": 7 }, "y8": { "label": "Year 8", "t": 8 },
+        "y9": { "label": "Year 9", "t": 9 }, "y10": { "label": "Year 10", "t": 10 }
+      }
+    }
+  },
+
+  "units": {
+    "env":       { "kind": "env" },
+    "oven":      { "label": "Oven drying", "sub": "100 °C, 65% efficiency", "kind": "converter", "params": ["moist", "t_oven", "eff_oven"] },
+    "dry40":     { "label": "Drying at 40 °C", "kind": "converter", "params": ["t_dry40"] },
+    "crusher":   { "label": "Crushing to 20 mm", "sub": "Bond law", "kind": "converter", "params": ["bwi_crush", "crush_in", "crush_out"] },
+    "screen":    { "label": "Size classification", "sub": "coarse / fine split", "kind": "splitter" },
+    "disk_mill": { "label": "Disk milling (BFL)", "sub": "20 → 5 mm", "kind": "converter", "params": ["bwi_attr", "disk_p80"] },
+    "bcl_split": { "label": "BCL split", "sub": "storage / attrition", "kind": "splitter" },
+    "storage":   { "label": "Storage", "kind": "sink" },
+    "attrition": { "label": "Attrition & wet sieving", "sub": "three size fractions", "kind": "separator", "params": ["bwi_attr", "attr_f80", "attr_p80_mozl", "attr_p80_coarse", "attr_p80_fine"] },
+    "mozley":    { "label": "Mozley gravity separation", "kind": "separator", "params": ["mozl_kwht"] },
+    "bioleach":  { "label": "Bioleaching", "sub": "46 °C, Mn-ox concentrate + BFL", "kind": "reactor", "params": ["solidc", "feso4m", "feso4b", "na2so4", "t_bio"] }
+  },
+
+  "streams": {
+    "ncl_wet":    { "label": "NCL wet feed", "from": "env", "to": "oven", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl / (1 - moist)", "basis": "Balance L2 = L3 / (1 - L12)" },
+    "water_evap": { "label": "Evaporated moisture", "from": "oven", "to": "env", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_wet - ncl_dry", "closes": true },
+    "ncl_dry":    { "label": "NCL dry (raw material)", "from": "oven", "to": "dry40", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl", "basis": "Balance L3" },
+    "ncl_40":     { "label": "NCL dried at 40 °C", "from": "dry40", "to": "crusher", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry" },
+    "crushed":    { "label": "Crushed ore (20 mm)", "from": "crusher", "to": "screen", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_40" },
+    "bfl":        { "label": "Bulk fine laterite", "from": "screen", "to": "disk_mill", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry * splits.bfl.ref_flow / ref_feed", "basis": "Balance L5 = 20/360 × L3", "notes": ["q_split_constants"] },
+    "bfl_milled": { "label": "Milled BFL to bioleach", "from": "disk_mill", "to": "bioleach", "dim": "mass_hour", "unit": "kg/h", "expr": "bfl" },
+    "bcl":        { "label": "Bulk coarse laterite", "from": "screen", "to": "bcl_split", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry - bfl", "basis": "Balance L4 = L3 - L5", "closes": true },
+    "bcl_stor":   { "label": "BCL to storage", "from": "bcl_split", "to": "storage", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry * splits.stor.ref_flow / ref_feed", "basis": "Balance L6 = 268/360 × L3" },
+    "bcl_attr":   { "label": "BCL to attrition & wet sieving", "from": "bcl_split", "to": "attrition", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry * splits.attr.ref_flow / ref_feed", "basis": "Balance L7 = 72/360 × L3" },
+    "bcl_fine":   { "label": "BCL fine fraction (<0.1 mm)", "from": "attrition", "to": "env", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry * splits.fine.ref_flow / ref_feed", "basis": "Balance L8 = 69/360 × L3" },
+    "bcl_mozl":   { "label": "BCL to Mozley separation (0.1–0.4 mm)", "from": "attrition", "to": "mozley", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry * splits.mozl.ref_flow / ref_feed", "basis": "Balance L9 = 1.7/360 × L3" },
+    "heav":       { "label": "Heavy & mixed fraction", "from": "attrition", "to": "env", "dim": "mass_hour", "unit": "kg/h", "expr": "ncl_dry * splits.heav.ref_flow / ref_feed", "basis": "Balance L10 = 0.6/360 × L3" },
+    "mnox":       { "label": "Mn oxides concentrate", "from": "attrition", "to": "bioleach", "dim": "mass_hour", "unit": "kg/h", "expr": "bcl_attr - bcl_fine - heav", "basis": "Balance L11 = L7 - L8 - L10 (L9 not subtracted)", "closes": true, "notes": ["q_mozley_double"] },
+    "mozl_prod":  { "label": "Mozley product", "from": "mozley", "to": "env", "dim": "mass_hour", "unit": "kg/h", "expr": "bcl_mozl", "closes": true },
+
+    "liquor_mn":  { "label": "Leach solution — Mn-ox concentrate", "stage": "lci", "from": "env", "to": "bioleach", "dim": "volume_hour", "unit": "L/h", "expr": "mnox_dry / (solidc / 1000)", "basis": "Energy sheet B29 = D30 × (1 - moist) × B2 / (D29 / 1000)", "notes": ["q_dry_twice"] },
+    "liquor_bfl": { "label": "Leach solution — BFL", "stage": "lci", "from": "env", "to": "bioleach", "dim": "volume_hour", "unit": "L/h", "expr": "bfl_dry / (solidc / 1000)", "basis": "BFL sheet B33", "notes": ["q_dry_twice"] },
+    "feso4_mn":   { "label": "FeSO₄ — Mn-ox concentrate bioleach", "stage": "lci", "from": "env", "to": "bioleach", "dim": "mass_hour", "unit": "kg/h", "expr": "liquor_mn * feso4m / 1000", "basis": "Energy sheet B31 = B29 × D31 / 1000" },
+    "feso4_bfl":  { "label": "FeSO₄ — BFL bioleach", "stage": "lci", "from": "env", "to": "bioleach", "dim": "mass_hour", "unit": "kg/h", "expr": "liquor_bfl * feso4b / 1000", "basis": "BFL sheet B35" },
+    "na2so4_bfl": { "label": "Na₂SO₄ — BFL bioleach", "stage": "lci", "from": "env", "to": "bioleach", "dim": "mass_hour", "unit": "kg/h", "expr": "liquor_bfl * na2so4 / 1000", "basis": "BFL sheet B34" },
+
+    "metal":      { "label": "Recovered metal — Mn-ox concentrate (Al + Mn + Ni + Co)", "from": "bioleach", "to": "env", "dim": "mass_hour", "unit": "kg/h", "product": "main", "basis": "Energy sheet B49",
+                    "components": { "al": "mnox_comp.al.rec_kgh", "mn": "mnox_comp.mn.rec_kgh", "ni": "mnox_comp.ni.rec_kgh", "co": "mnox_comp.co.rec_kgh" } },
+    "metal_bfl":  { "label": "Recovered metal — BFL (Al + Mn + Cr + Ni + Co)", "from": "bioleach", "to": "env", "dim": "mass_hour", "unit": "kg/h", "product": "co", "basis": "BFL sheet recoveries",
+                    "components": { "al": "bfl_comp.al.rec_kgh", "mn": "bfl_comp.mn.rec_kgh", "cr": "bfl_comp.cr.rec_kgh", "ni": "bfl_comp.ni.rec_kgh", "co": "bfl_comp.co.rec_kgh" } },
+    "residue":    { "label": "Leach residue and spent reagents", "stage": "lci", "from": "bioleach", "to": "env", "dim": "mass_hour", "unit": "kg/h", "closes": true,
+                    "expr": "mnox + bfl_milled + feso4_mn + feso4_bfl + na2so4_bfl - metal - metal_bfl" }
+  },
+
+  "derived": {
+    "mnox_frac": { "label": "Mn-ox concentrate fraction of feed", "stage": "mass", "dim": "fraction", "unit": "fraction", "expr": "mnox / ncl_dry", "basis": "Balance O4 = L11 / L3" },
+    "bfl_frac":  { "label": "BFL fraction of feed", "stage": "mass", "dim": "fraction", "unit": "fraction", "expr": "bfl / ncl_dry", "basis": "L5 / L3" },
+    "mnox_dry":  { "label": "Mn-ox concentrate leached (dry basis applied again)", "stage": "mass", "dim": "mass_hour", "unit": "kg/h", "expr": "mnox_frac * (1 - moist) * ncl_dry", "basis": "D30 × (1 - moist) × B2", "notes": ["q_dry_twice"] },
+    "bfl_dry":   { "label": "BFL leached (dry basis applied again)", "stage": "mass", "dim": "mass_hour", "unit": "kg/h", "expr": "bfl_frac * (1 - moist) * ncl_dry", "notes": ["q_dry_twice"] },
+
+    "mnox_wt_rec": { "label": "wt% used by the recovery formula", "stage": "mass", "dim": "fraction", "unit": "%", "table": "mnox_comp", "column": "wt_rec",
+                     "expr": "if(row.rec_uses_si == 1, mnox_comp.si.wt, row.wt)" },
+    "mnox_n":      { "label": "kg recovered per kg concentrate", "stage": "mass", "dim": "mass_intensity", "unit": "kg/kg", "table": "mnox_comp", "column": "n",
+                     "expr": "row.wt_rec * row.rec", "basis": "Balance N = wt%/100 × rec%/100" },
+    "mnox_rec_kgh": { "label": "kg/h recovered", "stage": "mass", "dim": "mass_hour", "unit": "kg/h", "table": "mnox_comp", "column": "rec_kgh",
+                     "expr": "row.n * mnox_dry", "basis": "Energy sheet B42–B47 = N × D30 × (1 - moist) × B2" },
+    "mnox_wt_total": { "label": "Mn-ox concentrate assay total", "stage": "mass", "dim": "fraction", "unit": "%", "expr": "sum(col(mnox_comp, wt))" },
+
+    "bfl_wt":     { "label": "Metal wt% in BFL", "stage": "mass", "dim": "fraction", "unit": "%", "table": "bfl_comp", "column": "wt",
+                    "expr": "if(isnull(row.ppm), row.oxide_pct * row.n_metal * row.mw_metal / (row.n_metal * row.mw_metal + row.n_oxygen * mw.o), row.ppm / 1e6)",
+                    "basis": "Balance L25–L34: oxide assay × metal share of the oxide molar mass; ppm / 10⁴ for Ni and Co" },
+    "bfl_wt_rec": { "label": "wt% used by the recovery formula", "stage": "mass", "dim": "fraction", "unit": "%", "table": "bfl_comp", "column": "wt_rec",
+                    "expr": "if(row.rec_uses_si == 1, bfl_comp.si.wt, row.wt)" },
+    "bfl_n":      { "label": "kg recovered per kg BFL", "stage": "mass", "dim": "mass_intensity", "unit": "kg/kg", "table": "bfl_comp", "column": "n",
+                    "expr": "row.wt_rec * row.rec", "basis": "Balance N = wt%/100 × rec%/100" },
+    "bfl_rec_kgh": { "label": "kg/h recovered", "stage": "mass", "dim": "mass_hour", "unit": "kg/h", "table": "bfl_comp", "column": "rec_kgh",
+                    "expr": "row.n * bfl_dry" },
+    "bfl_wt_total": { "label": "BFL metal assay total", "stage": "mass", "dim": "fraction", "unit": "%", "expr": "sum(col(bfl_comp, wt))" },
+
+    "op_hours": { "label": "Operating hours per year", "stage": "lci", "dim": "hours", "unit": "h/y", "expr": "op_days * 24", "basis": "F2 × 24" },
+    "q_msens":  { "label": "Moisture sensible heat to 100 °C", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "moist * cp_w * (t_oven - t_cold) * ncl_dry / 1000", "basis": "Energy sheet B3" },
+    "q_mevap":  { "label": "Moisture evaporation heat", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "moist * h_evap * ncl_dry / 1000", "basis": "Energy sheet B7" },
+    "q_ssens":  { "label": "Solid sensible heat to 100 °C", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "(1 - moist) * cp_s * (t_oven - t_cold) * ncl_dry / 1000", "basis": "Energy sheet B8" },
+    "q_oven":   { "label": "Total oven dry heat", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "(q_msens + q_mevap + q_ssens) / eff_oven", "basis": "Energy sheet B9", "hit": "oven" },
+    "q_dry40":  { "label": "Raw material drying at 40 °C", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "ncl_dry * (1 - moist) * (t_dry40 - t_cold) * cp_s / 1000", "basis": "Energy sheet B11", "hit": "dry40" },
+    "e_crush_spec": { "label": "Crushing specific energy (Bond)", "stage": "lci", "dim": "energy_per_mass", "unit": "MJ/kg", "role": "energy", "expr": "bond(bwi_crush, crush_in, crush_out) / 1000", "basis": "Energy sheet B12: 10 × BWI × (1/√P80 − 1/√F80)", "hit": "crusher" },
+    "e_crush":  { "label": "Crushing energy", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "e_crush_spec * 3.6 * (1 - moist) * ncl_dry", "basis": "Energy sheet B15", "hit": "crusher" },
+    "attr_frac_fine":   { "label": "Fine fraction per kg NCL", "stage": "lci", "dim": "fraction", "unit": "fraction", "expr": "bcl_fine / ncl_dry", "basis": "Energy sheet D23" },
+    "attr_frac_mozl":   { "label": "Mozley fraction per kg NCL", "stage": "lci", "dim": "fraction", "unit": "fraction", "expr": "bcl_mozl / ncl_dry", "basis": "Energy sheet D17" },
+    "attr_frac_coarse": { "label": "Coarse remainder per kg NCL", "stage": "lci", "dim": "fraction", "unit": "fraction", "expr": "(bcl_attr - bcl_fine - bcl_mozl) / ncl_dry", "basis": "Energy sheet D20 = (L7 − L8 − L9) / L3", "notes": ["q_mozley_double"] },
+    "e_attr_spec": { "label": "Attrition & wet sieving specific energy (PSD-weighted Bond)", "stage": "lci", "dim": "energy_per_mass", "unit": "MJ/kg", "role": "energy",
+                     "expr": "(bond(bwi_attr, attr_f80, attr_p80_mozl) * attr_frac_mozl + bond(bwi_attr, attr_f80, attr_p80_coarse) * attr_frac_coarse + bond(bwi_attr, attr_f80, attr_p80_fine) * attr_frac_fine) / 1000",
+                     "basis": "Energy sheet B16: Bond work from 20 mm to each fraction's P80, weighted by the fraction of NCL", "hit": "attrition" },
+    "e_attr":   { "label": "Attrition & wet sieving energy", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "e_attr_spec * 3.6 * (1 - moist) * ncl_dry", "basis": "Energy sheet B16", "hit": "attrition" },
+    "e_mozl":   { "label": "Mozley separation energy", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "attr_frac_mozl * mozl_kwht * 3.6 * (1 - moist) * ncl_dry", "basis": "Energy sheet B26 = D20 × D26 × 3.6/1000 × (1 − moist) × B2", "hit": "mozley" },
+    "ealloc":   { "label": "Electricity allocated to Mn-ox concentrate", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy",
+                  "expr": "q_oven * mnox / ncl_wet + (q_dry40 + e_crush) * mnox / ncl_dry + (e_attr + e_mozl) * mnox / bcl_attr",
+                  "basis": "Energy sheet B27: each step's energy × mass share of the concentrate in that step's feed", "notes": ["q_alloc"] },
+    "q_bio_mn": { "label": "Bioleach heating to 46 °C — Mn-ox concentrate", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy",
+                  "expr": "liquor_mn / 1000 * ((rho_water - solidc) / 1000 * cp_w + solidc / 1000 * cp_s) * (t_bio - t_cold)", "basis": "Energy sheet B32", "hit": "bioleach" },
+    "q_bio_bfl": { "label": "Bioleach heating to 46 °C — BFL", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy",
+                  "expr": "liquor_bfl / 1000 * ((rho_water - solidc) / 1000 * cp_w + solidc / 1000 * cp_s) * (t_bio - t_cold)", "basis": "BFL sheet B36", "hit": "bioleach" },
+    "e_disk_spec": { "label": "Disk milling specific energy (Bond, 20 → 5 mm)", "stage": "lci", "dim": "energy_per_mass", "unit": "MJ/kg", "role": "energy", "expr": "bond(bwi_attr, attr_f80, disk_p80) / 1000", "basis": "BFL sheet B16", "hit": "disk_mill" },
+    "bfl_disk": { "label": "Disk milling energy — BFL", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "bfl_frac * (1 - moist) * ncl_dry * e_disk_spec * 3.6", "basis": "BFL sheet B19", "hit": "disk_mill", "notes": ["q_dry_twice"] },
+    "bfl_elec": { "label": "Electricity — BFL line (unallocated)", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "(q_oven + q_dry40 + e_crush) * bfl_frac + bfl_disk", "basis": "BFL sheet B31" },
+    "noalloc_elec": { "label": "Electricity — coarse line (unallocated)", "stage": "lci", "dim": "energy_rate", "unit": "MJ/h", "role": "energy", "expr": "(q_oven + q_dry40 + e_crush) * bcl / ncl_dry + e_attr + e_mozl", "basis": "Energy GWP-MnO no-alloc B27", "notes": ["q_alloc"] },
+    "elec_tjy": { "label": "Electricity demand", "stage": "lci", "dim": "energy_year", "unit": "TJ/y", "role": "lci", "expr": "(noalloc_elec + bfl_elec) * op_hours / 1000", "basis": "TEA B17", "notes": ["q_alloc"] },
+    "heat_tjy": { "label": "Heat demand", "stage": "lci", "dim": "energy_year", "unit": "TJ/y", "role": "lci", "expr": "(q_bio_mn + q_bio_bfl) * op_hours / 1000", "basis": "TEA B18" },
+    "reag_tpa": { "label": "Reagent consumption", "stage": "lci", "dim": "mass_year", "unit": "t/y", "role": "lci", "expr": "(feso4_mn + na2so4_bfl + feso4_bfl) * op_hours", "basis": "TEA B16" },
+    "crit_tpa": { "label": "Critical metal streams to bioleach (Mn-ox conc. + BFL)", "stage": "lci", "dim": "mass_year", "unit": "t/y", "role": "lci", "expr": "(mnox_frac + bfl_frac) * ncl_dry * op_hours", "basis": "TEA B24" },
+    "lat_tpa":  { "label": "Raw laterite consumed", "stage": "lci", "dim": "mass_year", "unit": "t/y", "role": "lci", "expr": "ncl_dry * op_hours", "basis": "TEA B23" },
+
+    "gwp_fe":  { "label": "GWP — ferrous sulfate", "stage": "lcia", "dim": "gwp_rate", "unit": "kg CO2e/h", "role": "impact", "group": "gwp", "expr": "feso4_mn * ef_feso4", "basis": "B33" },
+    "gwp_el":  { "label": "GWP — electricity allocated", "stage": "lcia", "dim": "gwp_rate", "unit": "kg CO2e/h", "role": "impact", "group": "gwp", "expr": "ealloc * ef_elec", "basis": "B34" },
+    "gwp_ht":  { "label": "GWP — heating to 46 °C", "stage": "lcia", "dim": "gwp_rate", "unit": "kg CO2e/h", "role": "impact", "group": "gwp", "expr": "q_bio_mn * ef_heat", "basis": "B35" },
+    "gwp_nu":  { "label": "GWP — nutrient (basal salt) medium", "stage": "lcia", "dim": "gwp_rate", "unit": "kg CO2e/h", "role": "impact", "group": "gwp", "expr": "liquor_mn * ef_nutrient", "basis": "B36" },
+    "gwp_sum": { "label": "Total GWP — Mn-ox concentrate bioleaching", "stage": "lcia", "dim": "gwp_rate", "unit": "kg CO2e/h", "role": "impact", "group": "gwp", "expr": "gwp_fe + gwp_el + gwp_ht + gwp_nu" },
+    "gwp_ncl": { "label": "Total GWP per kg NCL", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp", "expr": "gwp_sum / ncl_dry", "basis": "B37" },
+    "gwp_metal": { "label": "GWP per kg metal recovered", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp_fu", "expr": "gwp_ncl * ncl_dry / metal", "basis": "B38 = B37 ÷ B49 × B2", "kpi": true },
+    "gwp_fe_fu": { "label": "GWP per kg metal — ferrous sulfate", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp_fu", "expr": "gwp_fe / metal" },
+    "gwp_el_fu": { "label": "GWP per kg metal — electricity", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp_fu", "expr": "gwp_el / metal" },
+    "gwp_ht_fu": { "label": "GWP per kg metal — heat", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp_fu", "expr": "gwp_ht / metal" },
+    "gwp_nu_fu": { "label": "GWP per kg metal — nutrients", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp_fu", "expr": "gwp_nu / metal" },
+    "gwp_mn": { "label": "GWP allocated to Mn", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "coproduct", "expr": "gwp_metal * metal / mnox_comp.mn.rec_kgh / coprod_n", "basis": "C43 = B38 × B49 ÷ B43 ÷ 3", "notes": ["q_third"] },
+    "gwp_ni": { "label": "GWP allocated to Ni", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "coproduct", "expr": "gwp_metal * metal / mnox_comp.ni.rec_kgh / coprod_n", "basis": "C46 = B38 × B49 ÷ B46 ÷ 3", "notes": ["q_third"] },
+    "gwp_co": { "label": "GWP allocated to Co", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "coproduct", "expr": "gwp_metal * metal / mnox_comp.co.rec_kgh / coprod_n", "basis": "C47 = B38 × B49 ÷ B47 ÷ 3", "notes": ["q_third"] },
+
+    "capex_size": { "label": "Current size", "stage": "capex", "dim": "mass_hour", "unit": "kg/h", "table": "capex", "column": "size",
+                    "expr": "row.size_key == 1 ? ncl_wet : row.size_key == 2 ? ncl_dry : row.size_key == 3 ? bfl : row.size_key == 4 ? bcl_attr : row.size_key == 5 ? bcl_mozl : (mnox + bfl_milled) / 1000",
+                    "basis": "TEA column F; the bioleach row is (Mn-ox conc. + BFL) / 1000" },
+    "capex_cost": { "label": "Cost", "stage": "capex", "dim": "currency", "unit": "$M", "role": "capex", "table": "capex", "column": "cost",
+                    "expr": "six_tenths(row.base_cost, row.size, row.base_size, row.n, row.cepci_base, cepci_now)",
+                    "basis": "TEA H4–H11: base × (size / base size)ⁿ × CEPCI_now / CEPCI_base" },
+    "dcost": { "label": "Delivered equipment cost", "stage": "capex", "dim": "currency", "unit": "$M", "role": "capex", "expr": "sum(col(capex, cost))", "basis": "TEA H12" },
+    "tci":   { "label": "Total capital investment", "stage": "capex", "dim": "currency", "unit": "$M", "role": "capex", "expr": "dcost * lang", "basis": "TEA H13 = H12 × 3", "kpi": true },
+
+    "vop_reag": { "label": "Reagent cost", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable", "expr": "reag_tpa * preag / 1000 / 1e6", "basis": "TEA F16" },
+    "vop_elec": { "label": "Electricity cost", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable", "expr": "elec_tjy * pelec / 1e6", "basis": "TEA F17" },
+    "vop_heat": { "label": "Heat cost", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable", "expr": "heat_tjy * pheat / 1e6", "basis": "TEA F18" },
+    "var_opex": { "label": "Variable opex", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable", "expr": "vop_reag + vop_elec + vop_heat", "basis": "TEA B30" },
+    "capex_ann": { "label": "Annual capital charge", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed", "expr": "tci * acc", "basis": "TEA B27 = TCI × B19" },
+    "indir_opex": { "label": "Indirect cost-dependent fixed opex", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed", "expr": "capex_ann * indir_frac", "basis": "TEA B28 = 6% of B27" },
+    "lab_opex":  { "label": "Labour cost-dependent opex", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed", "expr": "crit_tpa / 1e6 * jobs_kt * plab * lab_overhead / 1e6", "basis": "TEA B29 = kt product × 23 jobs/kt × salary × 1.9" },
+    "feed_cost": { "label": "Feedstock — raw laterite", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "feedstock", "expr": "lat_tpa / 1000 * plat / 1e6", "basis": "TEA B31" },
+    "misc_opex": { "label": "Miscellaneous opex", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed", "expr": "misc_frac * (indir_opex + lab_opex + var_opex)", "basis": "TEA B32 = 30% × (indirect + labour + variable)" },
+    "tot_opex":  { "label": "Total opex", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "expr": "indir_opex + lab_opex + var_opex + feed_cost + misc_opex", "basis": "TEA B33", "kpi": true },
+    "prod_val":  { "label": "Product value", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "revenue", "expr": "crit_tpa / 1000 * pmet / 1e6", "basis": "TEA G24 = B24 × D24 / 1000" },
+
+    "tot_cost":   { "label": "Total annual cost (capital charge + opex)", "stage": "dcf", "dim": "currency_year", "unit": "$M/y", "role": "metric", "expr": "capex_ann + tot_opex", "basis": "TEA B34" },
+    "net_margin": { "label": "Product value − total cost", "stage": "dcf", "dim": "currency_year", "unit": "$M/y", "role": "metric", "expr": "prod_val - tot_cost", "basis": "TEA B36", "kpi": true },
+    "dcf_year": { "label": "Discounted cash flow", "stage": "dcf", "dim": "currency_year", "unit": "$M/y", "role": "series", "table": "years", "column": "dcf",
+                  "expr": "if(row.t == 0, -tci, net_margin / (1 + irr) ^ row.t)", "basis": "TEA column F = B36 / (1 + B20)^E" },
+    "cum_npv":  { "label": "Cumulative NPV", "stage": "dcf", "dim": "currency", "unit": "$M", "role": "series", "table": "years", "column": "cum",
+                  "expr": "-tci + net_margin * annuity(irr, row.t)", "basis": "TEA column G, running sum of column F" },
+    "cashflow": { "label": "Cash flow series (year 0 … life)", "stage": "dcf", "dim": "currency_year", "unit": "$M/y", "role": "series", "expr": "concat(-tci, repeat(net_margin, life))" },
+    "npv":  { "label": "NPV over 10 years", "stage": "dcf", "dim": "currency", "unit": "$M", "role": "metric", "expr": "-tci + net_margin * annuity(irr, life)", "basis": "TEA G37", "kpi": true },
+    "project_irr": { "label": "Project IRR", "stage": "dcf", "dim": "fraction", "unit": "%", "role": "metric", "expr": "irr(cashflow)" },
+    "payback_years": { "label": "Undiscounted payback", "stage": "dcf", "dim": "years", "unit": "y", "role": "metric", "expr": "payback(cashflow)" },
+    "msp":  { "label": "Break-even metal price (total cost ÷ product)", "stage": "dcf", "dim": "price_mass", "unit": "$/kg", "role": "metric", "expr": "tot_cost * 1e9 / crit_tpa", "basis": "Annual cost per kg of critical metal stream", "kpi": true },
+    "msp_npv": { "label": "Metal price for NPV = 0", "stage": "dcf", "dim": "price_mass", "unit": "$/kg", "role": "metric", "solve": { "target": "npv", "vary": "pmet", "lo": 0, "hi": 1e6, "equals": 0 } }
+  },
+
+  "checks": {
+    "ore_closure":  { "kind": "closure", "stage": "mass", "label": "Ore balance closure (NCL dry → BFL + storage + attrition)", "unit": "kg/h", "in": ["ncl_dry"], "out": ["bfl", "bcl_stor", "bcl_attr"], "tolerance": 0.001 },
+    "attr_closure": { "kind": "closure", "stage": "mass", "label": "Attrition closure (fines + Mozley + heavies + Mn-ox concentrate)", "unit": "kg/h", "in": ["bcl_attr"], "out": ["bcl_fine", "bcl_mozl", "heav", "mnox"], "tolerance": 0.001 },
+    "positive_feed": { "kind": "constraint", "stage": "mass", "severity": "hard", "expr": "ncl > 0", "message": "NCL must be > 0." },
+    "moisture_range": { "kind": "constraint", "stage": "mass", "severity": "hard", "expr": "moist >= 0 && moist < 1", "message": "Moisture must be 0–99.9%." },
+    "positive_solids": { "kind": "constraint", "stage": "lci", "severity": "hard", "expr": "solidc > 0", "message": "Solid concentration must be > 0." },
+    "assay_total": { "kind": "constraint", "stage": "mass", "severity": "soft", "expr": "mnox_wt_total <= 1", "message": "Concentrate assay exceeds 100%." }
+  },
+
+  "lcia": {
+    "method": "Spreadsheet GWP factors (Energy GWP-MnO w allocation, column D)",
+    "categories": [
+      { "id": "gwp", "label": "Global warming — Mn-ox concentrate bioleaching", "unit": "kg CO₂e/h", "total": "gwp_sum",
+        "contributions": { "Ferrous sulfate": "gwp_fe", "Electricity (allocated)": "gwp_el", "Heating to 46 °C": "gwp_ht", "Nutrient medium": "gwp_nu" } },
+      { "id": "gwp_fu", "label": "Global warming per kg metal recovered", "unit": "kg CO₂e/kg metal", "total": "gwp_metal",
+        "contributions": { "Ferrous sulfate": "gwp_fe_fu", "Electricity (allocated)": "gwp_el_fu", "Heating to 46 °C": "gwp_ht_fu", "Nutrient medium": "gwp_nu_fu" } }
+    ],
+    "benchmarks": []
+  },
+
+  "allocation": {
+    "lca": { "method": "mass", "basis": "Each energy step is charged to the Mn-oxide concentrate in proportion to its mass share of that step's feed (oven on wet feed, drying and crushing on dry feed, attrition and Mozley on attrition feed).", "nodes": ["ealloc"] },
+    "coproducts": { "method": "equal split", "basis": "The concentrate GWP is divided by each metal's recovered mass and then by 3 across Mn, Ni and Co.", "nodes": ["gwp_mn", "gwp_ni", "gwp_co"] },
+    "tea": { "method": "none", "basis": "Operating cost charges the unallocated coarse line plus the whole bulk-fine line.", "nodes": ["noalloc_elec", "bfl_elec", "elec_tjy"] }
+  },
+
+  "targets": {
+    "gwp":     { "label": "Climate impact per FU", "nodes": ["gwp_metal", "gwp_mn", "gwp_ni", "gwp_co"] },
+    "capital": { "label": "Capital cost", "nodes": ["dcost", "tci"] },
+    "econ":    { "label": "Economics", "nodes": ["tot_cost", "net_margin", "msp", "msp_npv", "npv"] },
+    "mass":    { "label": "Product and concentrate flows", "nodes": ["metal", "mnox", "bfl"] }
+  },
+
+  "sensitivity": {
+    "tornado_npv": { "kind": "oat", "label": "What moves the NPV?", "target": "npv", "params": "editable", "delta": 0.1 },
+    "tornado_gwp": { "kind": "oat", "label": "What moves the footprint per kg metal?", "target": "gwp_metal", "params": "editable", "delta": 0.1 },
+    "price_sweep": { "kind": "sweep", "label": "NPV against metal price", "target": "npv", "param": "pmet", "from": 5, "to": 40, "steps": 14 },
+    "grid_feed_price": { "kind": "sweep", "label": "NPV against ore price and feed rate", "target": "npv",
+                         "param": "plat", "from": 0, "to": 150, "steps": 6, "param2": "ncl", "from2": 180, "to2": 1800, "steps2": 5 },
+    "cases": { "kind": "scenario", "label": "Named cases", "targets": ["gwp_metal", "tci", "msp", "npv"],
+               "scenarios": {
+                 "wetter_ore":      { "moist": 40 },
+                 "dilute_bioleach": { "solidc": 20 },
+                 "less_feso4":      { "feso4m": 10 },
+                 "free_ore":        { "plat": 0 },
+                 "reset_na2so4":    { "na2so4": 60 },
+                 "double_feed":     { "ncl": 720 }
+               } },
+    "mc": { "kind": "montecarlo", "label": "NPV uncertainty", "target": "npv", "n": 2000, "seed": 42,
+            "params": {
+              "pmet":  { "dist": "triangular", "min": 10, "mode": 18.5, "max": 30 },
+              "plat":  { "dist": "uniform", "min": 0, "max": 150 },
+              "pelec": { "dist": "lognormal", "median": 0.0644, "sigma": 0.3 },
+              "moist": { "dist": "uniform", "min": 15, "max": 40 },
+              "plab":  { "dist": "triangular", "min": 60000, "mode": 85000, "max": 120000 }
+            } }
+  },
+
+  "diagram": {
+    "rank": { "oven": 0, "dry40": 1, "crusher": 2, "screen": 3, "disk_mill": 4, "bcl_split": 4, "storage": 5, "attrition": 5, "mozley": 6, "bioleach": 7 },
+    "order": { "disk_mill": 0, "bcl_split": 1, "storage": 0, "attrition": 1 }
+  }
+}

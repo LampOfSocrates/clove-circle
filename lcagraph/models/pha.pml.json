@@ -1,0 +1,802 @@
+{
+  "pml": "0.1",
+  "meta": {
+    "id": "pha",
+    "title": "PHA biocomposite from lignocellulose",
+    "subtitle": "Pretreatment, fermentation to PHA copolymers, compounding with the cellulose biofiller, and CHP on the residue",
+    "functionalUnit": "1 kg PHA biocomposite at the factory gate",
+    "boundary": "Cradle-to-gate: dry lignocellulosic biomass delivered to the plant through pretreatment, fermentation, PHA recovery, compounding and forming, with anaerobic digestion and CHP on the fermentation residue. Reagent, steam and transport burdens come from a fixed per-kg inventory; the mass balance sets throughput, equipment size and cost.",
+    "currency": "$",
+    "source": "Reproduces standalone/PHA-from-lignocellulose-lca-tea.html (calcAll, DEF_EQ, DEF_GW) and its baseline tests/case_studies/baselines/pha-lignocellulose.baseline.json.",
+    "notes": [
+      {
+        "id": "q_biofiller",
+        "level": "quirk",
+        "title": "The biofiller is the pretreatment reject",
+        "text": "The cellulose that pretreatment fails to send to the fermenter (13% of it at the default recovery) is not a loss: the dashboard reuses it as the biofiller that is compounded with the PHA. Raising cellulose recovery therefore shrinks the biofiller and, through it, the biocomposite output.",
+        "nodes": ["biofiller"]
+      },
+      {
+        "id": "q_chp_feed",
+        "level": "quirk",
+        "title": "CHP feedstock is built from the raw lignin, not the recovered lignin",
+        "text": "The residue sent to digestion and CHP is lignin + fermentable sugars − biofiller − PHA, where the lignin term is the whole lignin in the dry biomass (E7), not the 79% that pretreatment actually recovers to the fermenter (F7), and the biofiller is subtracted although it never entered the fermenter. The fermentation-train closure therefore does not balance; the closure check shows the gap rather than hiding it.",
+        "nodes": ["chp_feed", "ferm_train.error"]
+      },
+      {
+        "id": "q_lci_fixed",
+        "level": "quirk",
+        "title": "The inventory is a fixed per-kg table, not a scaled mass balance",
+        "text": "Every LCI flow is a per-kg-of-biocomposite figure the user edits directly. Changing the feedstock, the recoveries or the PHA yield changes the tonnage but not the GWP per kg; only the annual burden scales. Net electricity, which the mass balance does compute, is not in the inventory at all.",
+        "nodes": ["gwp_total", "gwp_annual"]
+      },
+      {
+        "id": "q_reagent_subset",
+        "level": "quirk",
+        "title": "Reagent cost sums only a subset of the inventory rows",
+        "text": "The reagent bill adds up the flows of 13 of the 15 inventory rows (all the chemicals plus water) and prices them at one average price per kg. Process steam and transport are excluded; steam is costed separately, transport is not costed at all. The 'reagent' column in the table carries that selection.",
+        "nodes": ["reag_sum", "reagent_cost"]
+      },
+      {
+        "id": "q_misc_opex",
+        "level": "quirk",
+        "title": "Miscellaneous opex ignores the electricity line",
+        "text": "Miscellaneous operating cost is 30% of indirect fixed opex + labour + reagents + heat. The electricity line is left out, which matters because it is usually negative (the CHP exports power) and would otherwise reduce the miscellaneous charge.",
+        "nodes": ["misc_opex"]
+      },
+      {
+        "id": "q_no_escalation",
+        "level": "quirk",
+        "title": "Equipment without a CEPCI base year is not escalated",
+        "text": "Four rows (CHP, twin-screw extrusion, injection moulding, 3D printing) have no base-year cost index. The dashboard substitutes the current index for the missing one, so those costs are taken at face value while the other nine are escalated from 402 or 394.3 to the current CEPCI.",
+        "nodes": ["equipment.chp.cost", "equipment.extrusion.cost", "equipment.injection_moulding.cost", "equipment.printing_3d.cost"]
+      },
+      {
+        "id": "q_positional_sizes",
+        "level": "quirk",
+        "title": "Equipment rows are paired to size drivers by position",
+        "text": "The dashboard sizes its 13 equipment rows from a positional list of six size drivers: the first six rows on fermenter feed + ash, then digester wastewater, CHP output, wet biomass, dry biomass, and the last three rows on the biocomposite precursor. Nothing in the equipment table says which driver a row uses; here the pairing is written down in the 'driver' column so it can be inspected.",
+        "nodes": ["size_drivers", "equipment_size"]
+      },
+      {
+        "id": "q_totals_no_ash",
+        "level": "quirk",
+        "title": "The dry-biomass total omits ash",
+        "text": "The Totals row of the mass balance table adds hemicellulose, cellulose and lignin only (3,360 tpa at the defaults), although ash is listed in the same column. The sizing basis for pretreatment adds the ash back in.",
+        "nodes": ["dry_organics"]
+      },
+      {
+        "id": "q_gwp_ann_unit",
+        "level": "quirk",
+        "title": "Annual GWP burden is a thousand times too small",
+        "text": "The dashboard multiplies the GWP per kg by the biocomposite tonnage and divides by 1,000, then labels the result 't CO₂e / y'. kg CO₂e/kg × t/y ÷ 1,000 is kt CO₂e/y, so the displayed '2' is really about 1,500 t CO₂e/y. The model keeps the dashboard's number and labels it in kt.",
+        "nodes": ["gwp_annual"]
+      },
+      {
+        "id": "i_carry_through",
+        "level": "info",
+        "title": "No purification balance",
+        "text": "The dashboard has one PHA figure. The model carries that mass unchanged through inoculation, fermentation, centrifugation, solvent extraction, washing and drying, and sizes all six units on the fermenter feed plus ash, exactly as the dashboard does.",
+        "nodes": ["size_ferm", "pha"]
+      },
+      {
+        "id": "i_scaling_bases",
+        "level": "info",
+        "title": "Three different scaling bases for utilities",
+        "text": "Reagent demand and electricity demand scale with the biocomposite precursor (PHA + biofiller, before the 95.4% compounding recovery); steam scales with the finished biocomposite; the GWP per kg does not scale at all.",
+        "nodes": ["reagent_demand", "elec_demand", "steam_demand"]
+      },
+      {
+        "id": "i_elec_export",
+        "level": "info",
+        "title": "Exported electricity is credited at the purchase price",
+        "text": "Net electricity is plant demand minus CHP generation. When generation wins, the stream and its cost go negative: the export is valued at the same $/MJ as imported power, which turns the electricity line into revenue.",
+        "nodes": ["elec_import", "elec_cost"]
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "mass",
+      "title": "Mass balance",
+      "verb": "Do mass balance",
+      "tryIt": "Click the dry biomass stream and change the composition to 20% hemicellulose, 35% cellulose, 40% lignin, 5% ash, then run the balance again. The biocomposite falls from 1,000 to 730 tpa while the CHP feedstock rises — lignin never becomes PHA, it only becomes electricity. Now click the Pretreatment block and push cellulose recovery to 1.0: the biofiller disappears and the biocomposite output drops, because the unrecovered cellulose was never a loss."
+    },
+    {
+      "id": "lci",
+      "title": "Life cycle inventory",
+      "verb": "Build inventory",
+      "tryIt": "Double the dry biomass to 7,000 tpa and rebuild the inventory. Reagent, steam and electricity demand all double, but every flow in the inventory table is still the same number per kg of biocomposite. That is the point to notice: this inventory is a table you edit, not a balance the flowsheet computes."
+    },
+    {
+      "id": "lcia",
+      "title": "Impact assessment",
+      "verb": "Run impact assessment",
+      "tryIt": "Sort the contribution list. Sodium hydroxide and sodium phosphate carry most of the 1.51 kg CO₂e per kg. Halve the sodium hydroxide flow from 0.4 to 0.2 kg/kg and re-run — a third of the total goes with it. Then try halving the transport flow instead and see how little moves."
+    },
+    {
+      "id": "capex",
+      "title": "Capital cost",
+      "verb": "Estimate CAPEX",
+      "tryIt": "Set the moisture content to 45% and re-run. Only the biomass handling and digester sizes change, yet total capital drops by almost a fifth, because handling is the largest single item and it is sized on wet tonnes. Then change the exponent of the drying row from 0.8 to 0.6 and watch a single scaling exponent move the total."
+    },
+    {
+      "id": "opex",
+      "title": "Operating cost & revenue",
+      "verb": "Cost the operation",
+      "tryIt": "Look at the electricity line: it is negative. The CHP makes more power than the plant uses, and the export is credited at the purchase price. Set the electrical efficiency to 0.20 and re-run — the line turns positive and the miscellaneous charge does not notice, because it never included electricity in the first place."
+    },
+    {
+      "id": "dcf",
+      "title": "Profitability",
+      "verb": "Run cash flow",
+      "tryIt": "Push the discount rate from 10% to 20% and re-run; the cumulative NPV still crosses zero, but two years later. Then set the biocomposite price to 3 $/kg and compare it with the minimum selling price the solver reports."
+    }
+  ],
+  "stepCopy": {
+    "scope": {
+      "tryIt": "Before touching anything, note the functional unit. Every number you are about to calculate is “per 1 kg of PHA biocomposite” — a blend of PHA copolymers and cellulose biofiller, not pure PHA — and the GWP figures are per kg of that blend."
+    },
+    "interpret": {
+      "tryIt": "Go back and change one input at a time by 10%, re-running to the end each time. The biocomposite price, the PHA yield and the cellulose recovery move the profit far more than the rest; the GWP per kg, by contrast, moves only when you edit the inventory table itself. Those are the numbers worth arguing about — and the reason the inventory needs to be tied to the balance."
+    }
+  },
+  "components": {
+    "hemicellulose": { "label": "Hemicellulose" },
+    "cellulose": { "label": "Cellulose" },
+    "lignin": { "label": "Lignin" },
+    "ash": { "label": "Ash" }
+  },
+  "params": {
+    "basis_tpa": {
+      "label": "Dry biomass", "stage": "mass", "dim": "mass_year", "unit": "t/y",
+      "default": 3500, "range": [500, 200000], "editable": true,
+      "source": "Dashboard feedstock basis: 3,500 tpa dry lignocellulose.", "hit": "dry_biomass"
+    },
+    "moisture": {
+      "label": "Moisture content", "stage": "mass", "dim": "fraction", "unit": "%",
+      "default": 76, "range": [10, 90], "editable": true,
+      "source": "Mass % of the wet feedstock; wet input = dry / (1 − moisture).", "hit": "wet_biomass"
+    },
+    "hemi_pct": {
+      "label": "Hemicellulose in dry biomass", "stage": "mass", "dim": "fraction", "unit": "%",
+      "default": 30, "range": [10, 40], "editable": true,
+      "source": "Dry composition, mass %.", "hit": "dry_biomass"
+    },
+    "cell_pct": {
+      "label": "Cellulose in dry biomass", "stage": "mass", "dim": "fraction", "unit": "%",
+      "default": 46, "range": [30, 55], "editable": true,
+      "source": "Dry composition, mass %.", "hit": "dry_biomass"
+    },
+    "lign_pct": {
+      "label": "Lignin in dry biomass", "stage": "mass", "dim": "fraction", "unit": "%",
+      "default": 20, "range": [10, 40], "editable": true,
+      "source": "Dry composition, mass %.", "hit": "dry_biomass"
+    },
+    "ash_pct": {
+      "label": "Ash in dry biomass", "stage": "mass", "dim": "fraction", "unit": "%",
+      "default": 4, "range": [1, 10], "editable": true,
+      "source": "Dry composition, mass %.", "hit": "dry_biomass"
+    },
+    "comp_tol": {
+      "label": "Composition sum tolerance", "stage": "mass", "dim": "fraction", "unit": "%",
+      "default": 0.05, "editable": false,
+      "source": "Dashboard flags the composition sum red when it is more than 0.05% away from 100%."
+    },
+    "rec_hemi": {
+      "label": "Hemicellulose → fermenter", "stage": "mass", "dim": "fraction", "unit": "fraction",
+      "default": 0.95, "range": [0.5, 1], "editable": true,
+      "source": "Fraction of hemicellulose recovered by pretreatment to the fermenter feed.", "hit": "pretreatment"
+    },
+    "rec_cell": {
+      "label": "Cellulose → fermenter", "stage": "mass", "dim": "fraction", "unit": "fraction",
+      "default": 0.87, "range": [0.5, 1], "editable": true,
+      "source": "Fraction of cellulose recovered to the fermenter; the remainder is the biofiller.", "hit": "pretreatment"
+    },
+    "rec_lign": {
+      "label": "Lignin → fermenter", "stage": "mass", "dim": "fraction", "unit": "fraction",
+      "default": 0.79, "range": [0.5, 1], "editable": true,
+      "source": "Fraction of lignin recovered to the fermenter feed.", "hit": "pretreatment"
+    },
+    "rec_pha": {
+      "label": "PHA copolymer yield", "stage": "mass", "dim": "fraction", "unit": "fraction",
+      "default": 0.35, "range": [0.2, 0.6], "editable": true,
+      "source": "kg PHA copolymer per kg of fermentable sugars (recovered hemicellulose + cellulose).", "hit": "fermenters"
+    },
+    "biocomp_rec": {
+      "label": "Biocomposite recovery", "stage": "mass", "dim": "fraction", "unit": "%",
+      "default": 95.358, "range": [80, 100], "editable": true,
+      "source": "Compounding recovery of PHA + biofiller into finished biocomposite.", "hit": "extrusion"
+    },
+    "calorific": {
+      "label": "Calorific value of CHP feedstock", "stage": "mass", "dim": "energy_intensity", "unit": "GJ/t",
+      "default": 20, "range": [10, 25], "editable": true,
+      "source": "Dashboard energy card: 20 GJ per tonne of residue.", "hit": "chp"
+    },
+    "elec_eff": {
+      "label": "CHP electrical efficiency", "stage": "mass", "dim": "fraction", "unit": "fraction",
+      "default": 0.35, "range": [0.2, 0.5], "editable": true,
+      "source": "Fraction of feedstock energy delivered as electricity.", "hit": "chp"
+    },
+    "elec_consump": {
+      "label": "Plant electricity consumption", "stage": "lci", "dim": "energy_intensity", "unit": "MWh/t",
+      "default": 2.6, "range": [1, 5], "editable": true,
+      "source": "MWh per tonne of biocomposite precursor (PHA + biofiller).", "hit": "utilities"
+    },
+    "op_days": {
+      "label": "Operating days", "stage": "capex", "dim": "days", "unit": "d/y",
+      "default": 290, "range": [200, 350], "editable": true,
+      "source": "Operating days per year; converts annual tonnages to hourly equipment sizes."
+    },
+    "cepci": {
+      "label": "Current CEPCI", "stage": "capex", "dim": "count",
+      "default": 820, "range": [500, 1000], "editable": true,
+      "source": "Chemical Engineering Plant Cost Index used to escalate base costs."
+    },
+    "tci_ratio": {
+      "label": "TCI / DCE ratio", "stage": "capex", "dim": "count",
+      "default": 3, "range": [2, 6], "editable": true,
+      "source": "Lang-type multiplier from delivered equipment cost to total capital investment."
+    },
+    "biomass_p": {
+      "label": "Dry biomass price", "stage": "opex", "dim": "price_mass", "unit": "$/dry t",
+      "default": 100, "range": [30, 200], "editable": true,
+      "source": "Feedstock purchase price per dry tonne.", "hit": "dry_biomass"
+    },
+    "biocomp_p": {
+      "label": "PHA biocomposite price", "stage": "opex", "dim": "price_mass", "unit": "$/kg",
+      "default": 7, "range": [2, 12], "editable": true,
+      "source": "Selling price of the biocomposite.", "hit": "biocomposite"
+    },
+    "reagent_p": {
+      "label": "Reagents (average) price", "stage": "opex", "dim": "price_mass", "unit": "$/kg",
+      "default": 0.26, "range": [0.1, 1], "editable": true,
+      "source": "One average price applied to the summed reagent flows."
+    },
+    "elec_p": {
+      "label": "Electricity price", "stage": "opex", "dim": "price_energy", "unit": "$/MJ",
+      "default": 0.06, "range": [0.01, 0.15], "editable": true,
+      "source": "Applied to net electricity; exports are credited at the same price.", "hit": "elec_import"
+    },
+    "heat_p": {
+      "label": "Heat / steam price", "stage": "opex", "dim": "price_energy", "unit": "$/MJ",
+      "default": 0.01, "range": [0.002, 0.05], "editable": true,
+      "source": "Applied to the process steam demand from the inventory table."
+    },
+    "ann_cc": {
+      "label": "Annual capital charge", "stage": "opex", "dim": "fraction", "unit": "fraction",
+      "default": 0.1, "range": [0.05, 0.25], "editable": true,
+      "source": "Fraction of TCI charged each year."
+    },
+    "ind_factor": {
+      "label": "Indirect cost factor", "stage": "opex", "dim": "fraction", "unit": "fraction",
+      "default": 0.06, "range": [0.02, 0.15], "editable": true,
+      "source": "Indirect fixed opex as a fraction of the annual capital charge."
+    },
+    "labor_oh": {
+      "label": "Labour overhead multiplier", "stage": "opex", "dim": "count",
+      "default": 1.9, "range": [1, 3], "editable": true,
+      "source": "Multiplier on direct labour cost."
+    },
+    "labor_cost": {
+      "label": "Cost per job", "stage": "opex", "dim": "salary", "unit": "$/y",
+      "default": 50000, "range": [20000, 120000], "editable": true,
+      "source": "Annual cost per job."
+    },
+    "jobs_per_kt": {
+      "label": "Jobs per kt product", "stage": "opex", "dim": "jobs", "unit": "jobs/kt",
+      "default": 3, "range": [1, 10], "editable": true,
+      "source": "Labour intensity per kt of biocomposite."
+    },
+    "misc_frac": {
+      "label": "Miscellaneous opex fraction", "stage": "opex", "dim": "fraction", "unit": "fraction",
+      "default": 0.3, "editable": false,
+      "source": "Dashboard literal: misc opex = 0.3 × (indirect + labour + reagents + heat).",
+      "notes": ["q_misc_opex"]
+    },
+    "irr": {
+      "label": "Discount rate (IRR)", "stage": "dcf", "dim": "fraction", "unit": "fraction",
+      "default": 0.1, "range": [0.05, 0.25], "editable": true,
+      "source": "Rate used to discount the constant annual net profit."
+    },
+    "project_years": {
+      "label": "Project life", "stage": "dcf", "dim": "years", "unit": "y",
+      "default": 10, "editable": false,
+      "source": "Dashboard DCF table runs 10 operating years after the year-0 investment."
+    }
+  },
+  "tables": {
+    "equipment": {
+      "label": "Equipment cost basis (six-tenths scaling)", "stage": "capex",
+      "columns": {
+        "label": { "type": "text" },
+        "base_cost": { "label": "Base cost", "dim": "currency", "unit": "$M", "editable": true },
+        "n": { "label": "Scale exponent", "dim": "count", "editable": true },
+        "base_size": { "label": "Base size", "dim": "count" },
+        "size_unit": { "type": "text" },
+        "cepci_base": { "label": "CEPCI at base cost", "dim": "count", "nullable": true },
+        "driver": { "label": "Size driver index", "dim": "count" }
+      },
+      "rows": {
+        "inoculation":        { "label": "Inoculation",          "base_cost": 0.26,       "n": 0.6,  "base_size": 3.53,   "size_unit": "tph",            "cepci_base": 402,   "driver": 0 },
+        "fermenters":         { "label": "Fermenters",           "base_cost": 0.67,       "n": 0.8,  "base_size": 1.04,   "size_unit": "tph",            "cepci_base": 402,   "driver": 0 },
+        "centrifugation":     { "label": "Centrifugation",       "base_cost": 2.92,       "n": 0.7,  "base_size": 18.466, "size_unit": "tph",            "cepci_base": 402,   "driver": 0 },
+        "solvent_extraction": { "label": "Solvent extraction",   "base_cost": 2.96,       "n": 0.7,  "base_size": 18.466, "size_unit": "tph",            "cepci_base": 402,   "driver": 0 },
+        "washing":            { "label": "Washing",              "base_cost": 0.41,       "n": 1.0,  "base_size": 33.5,   "size_unit": "tph",            "cepci_base": 394.3, "driver": 0 },
+        "drying":             { "label": "Drying",               "base_cost": 7.6,        "n": 0.8,  "base_size": 33.5,   "size_unit": "tph",            "cepci_base": 394.3, "driver": 0 },
+        "anaerobic_digestion":{ "label": "Anaerobic digestion",  "base_cost": 1.54,       "n": 0.6,  "base_size": 43.0,   "size_unit": "tph wastewater", "cepci_base": 402,   "driver": 1 },
+        "chp":                { "label": "CHP",                  "base_cost": 1.0,        "n": 1.0,  "base_size": 5.0,    "size_unit": "GWh",            "cepci_base": null,  "driver": 2 },
+        "biomass_handling":   { "label": "Biomass handling",     "base_cost": 14.1,       "n": 0.78, "base_size": 83.3,   "size_unit": "tph wet",        "cepci_base": 402,   "driver": 3 },
+        "pretreatment":       { "label": "Biomass pretreatment", "base_cost": 5.62,       "n": 0.78, "base_size": 83.3,   "size_unit": "tph dry",        "cepci_base": 402,   "driver": 4 },
+        "extrusion":          { "label": "Twin-screw extrusion", "base_cost": 0.07792208, "n": 1.0,  "base_size": 1.0,    "size_unit": "tph",            "cepci_base": null,  "driver": 5 },
+        "injection_moulding": { "label": "Injection moulding",   "base_cost": 0.10389610, "n": 1.0,  "base_size": 1.0,    "size_unit": "tph",            "cepci_base": null,  "driver": 5 },
+        "printing_3d":        { "label": "3D printing",          "base_cost": 0.07792208, "n": 1.0,  "base_size": 1.0,    "size_unit": "tph",            "cepci_base": null,  "driver": 5 }
+      }
+    },
+    "lci": {
+      "label": "Life cycle inventory per kg biocomposite", "stage": "lci",
+      "columns": {
+        "label": { "type": "text" },
+        "flow": { "label": "Flow per kg biocomposite", "dim": "count", "editable": true },
+        "flow_unit": { "type": "text" },
+        "cf": { "label": "GWP factor", "dim": "emission_factor", "unit": "kg CO2e/unit", "editable": true },
+        "cf_unit": { "type": "text" },
+        "reagent": { "label": "Counted as reagent (1/0)", "dim": "count" }
+      },
+      "rows": {
+        "naoh":            { "label": "Sodium hydroxide",       "flow": 0.4,      "flow_unit": "kg",   "cf": 1.3132269,     "cf_unit": "per kg",   "reagent": 1 },
+        "na_phosphate":    { "label": "Sodium phosphate",       "flow": 0.145,    "flow_unit": "kg",   "cf": 2.8194834,     "cf_unit": "per kg",   "reagent": 1 },
+        "steam":           { "label": "Process steam",          "flow": 2.2,      "flow_unit": "MJ",   "cf": 0.07121196,    "cf_unit": "per MJ",   "reagent": 0 },
+        "map_fertiliser":  { "label": "Monoammonium phosphate", "flow": 0.115,    "flow_unit": "kg",   "cf": 0.9197997,     "cf_unit": "per kg",   "reagent": 1 },
+        "solvent":         { "label": "Solvent",                "flow": 0.1,      "flow_unit": "kg",   "cf": 0.85517497,    "cf_unit": "per kg",   "reagent": 1 },
+        "nh4cl":           { "label": "Ammonium chloride",      "flow": 0.05,     "flow_unit": "kg",   "cf": 1.60147896,    "cf_unit": "per kg",   "reagent": 1 },
+        "transport":       { "label": "Transport",              "flow": 100,      "flow_unit": "ktkm", "cf": 0.00054090589, "cf_unit": "per ktkm", "reagent": 0 },
+        "mgso4":           { "label": "Magnesium sulphate",     "flow": 0.025,    "flow_unit": "kg",   "cf": 1.35399832,    "cf_unit": "per kg",   "reagent": 1 },
+        "h2so4":           { "label": "Sulfuric acid",          "flow": 0.2,      "flow_unit": "kg",   "cf": 0.167097855,   "cf_unit": "per kg",   "reagent": 1 },
+        "citric_acid":     { "label": "Citric acid",            "flow": 0.0025,   "flow_unit": "kg",   "cf": 6.1545092,     "cf_unit": "per kg",   "reagent": 1 },
+        "lime":            { "label": "Lime",                   "flow": 0.01,     "flow_unit": "kg",   "cf": 0.92369312,    "cf_unit": "per kg",   "reagent": 1 },
+        "manganese":       { "label": "Manganese",              "flow": 0.00025,  "flow_unit": "kg",   "cf": 5.5776652,     "cf_unit": "per kg",   "reagent": 1 },
+        "chemical_generic":{ "label": "Chemical (generic)",     "flow": 0.000526, "flow_unit": "kg",   "cf": 2.059101141,   "cf_unit": "per kg",   "reagent": 1 },
+        "cacl2":           { "label": "Calcium chloride",       "flow": 0.0005,   "flow_unit": "kg",   "cf": 0.82054810,    "cf_unit": "per kg",   "reagent": 1 },
+        "water":           { "label": "Water",                  "flow": 0.11,     "flow_unit": "kg",   "cf": 0.0004875577,  "cf_unit": "per kg",   "reagent": 1 }
+      }
+    }
+  },
+  "units": {
+    "env": { "kind": "env" },
+    "biomass_handling":   { "label": "Biomass handling",     "sub": "receiving, wet storage", "kind": "separator", "params": ["basis_tpa", "moisture"] },
+    "pretreatment":       { "label": "Biomass pretreatment", "sub": "fractionation",          "kind": "separator", "params": ["hemi_pct", "cell_pct", "lign_pct", "ash_pct", "rec_hemi", "rec_cell", "rec_lign"] },
+    "inoculation":        { "label": "Inoculation",          "sub": "seed train",             "kind": "reactor" },
+    "fermenters":         { "label": "Fermenters",           "sub": "PHA accumulation",       "kind": "reactor",    "params": ["rec_pha"] },
+    "centrifugation":     { "label": "Centrifugation",       "sub": "cell harvest",           "kind": "separator" },
+    "solvent_extraction": { "label": "Solvent extraction",   "sub": "PHA recovery",           "kind": "separator" },
+    "washing":            { "label": "Washing",              "kind": "separator" },
+    "drying":             { "label": "Drying",               "kind": "separator" },
+    "anaerobic_digestion":{ "label": "Anaerobic digestion",  "sub": "residue + wastewater",   "kind": "reactor" },
+    "chp":                { "label": "CHP",                  "sub": "combined heat and power","kind": "converter",  "params": ["calorific", "elec_eff"] },
+    "utilities":          { "label": "Plant electricity",    "sub": "demand vs generation",   "kind": "mixer",      "params": ["elec_consump"] },
+    "extrusion":          { "label": "Twin-screw extrusion", "sub": "compounding",            "kind": "mixer",      "params": ["biocomp_rec"] },
+    "injection_moulding": { "label": "Injection moulding",   "kind": "converter" },
+    "printing_3d":        { "label": "3D printing",          "kind": "converter" }
+  },
+  "streams": {
+    "wet_biomass": {
+      "label": "Wet biomass", "from": "env", "to": "biomass_handling",
+      "dim": "mass_year", "unit": "t/y", "expr": "basis_tpa / (1 - moisture)",
+      "basis": "Dry basis divided by the dry fraction"
+    },
+    "dry_biomass": {
+      "label": "Dry biomass", "from": "biomass_handling", "to": "pretreatment",
+      "dim": "mass_year", "unit": "t/y",
+      "components": {
+        "hemicellulose": "basis_tpa * hemi_pct",
+        "cellulose": "basis_tpa * cell_pct",
+        "lignin": "basis_tpa * lign_pct",
+        "ash": "basis_tpa * ash_pct"
+      }
+    },
+    "process_water": {
+      "label": "Feedstock moisture to digester", "from": "biomass_handling", "to": "anaerobic_digestion",
+      "dim": "mass_year", "unit": "t/y", "expr": "wet_biomass * moisture",
+      "basis": "The dashboard sizes the digester on the feedstock moisture plus the CHP feedstock"
+    },
+    "ferm_feed": {
+      "label": "Fermenter feed (recovered)", "from": "pretreatment", "to": "inoculation",
+      "dim": "mass_year", "unit": "t/y",
+      "components": {
+        "hemicellulose": "dry_biomass.hemicellulose * rec_hemi",
+        "cellulose": "dry_biomass.cellulose * rec_cell",
+        "lignin": "dry_biomass.lignin * rec_lign"
+      }
+    },
+    "biofiller": {
+      "label": "Biofiller (unrecovered cellulose)", "from": "pretreatment", "to": "extrusion",
+      "dim": "mass_year", "unit": "t/y", "product": "co",
+      "components": { "cellulose": "dry_biomass.cellulose - ferm_feed.cellulose" },
+      "notes": ["q_biofiller"]
+    },
+    "pretreat_reject": {
+      "label": "Pretreatment reject", "from": "pretreatment", "to": "env",
+      "dim": "mass_year", "unit": "t/y", "closes": true,
+      "components": {
+        "hemicellulose": "dry_biomass.hemicellulose - ferm_feed.hemicellulose",
+        "lignin": "dry_biomass.lignin - ferm_feed.lignin",
+        "ash": "dry_biomass.ash"
+      }
+    },
+    "inoculated_feed": {
+      "label": "Inoculated feed", "from": "inoculation", "to": "fermenters",
+      "dim": "mass_year", "unit": "t/y", "expr": "ferm_feed",
+      "basis": "Carried through unchanged", "notes": ["i_carry_through"]
+    },
+    "broth": {
+      "label": "Fermentation broth", "from": "fermenters", "to": "centrifugation",
+      "dim": "mass_year", "unit": "t/y", "expr": "inoculated_feed",
+      "basis": "Carried through unchanged", "notes": ["i_carry_through"]
+    },
+    "pha_crude": {
+      "label": "PHA copolymers (cell mass)", "from": "centrifugation", "to": "solvent_extraction",
+      "dim": "mass_year", "unit": "t/y",
+      "expr": "(ferm_feed.hemicellulose + ferm_feed.cellulose) * rec_pha",
+      "basis": "PHA yield on the recovered hemicellulose + cellulose"
+    },
+    "chp_feed": {
+      "label": "CHP feedstock (fermentation residue)", "from": "centrifugation", "to": "anaerobic_digestion",
+      "dim": "mass_year", "unit": "t/y", "closes": true,
+      "expr": "dry_biomass.lignin + ferm_feed.hemicellulose + ferm_feed.cellulose - biofiller - pha_crude",
+      "basis": "Dashboard I12 = E7 + F5 + F6 − G6 − H10", "notes": ["q_chp_feed"]
+    },
+    "pha_extract": {
+      "label": "PHA extract", "from": "solvent_extraction", "to": "washing",
+      "dim": "mass_year", "unit": "t/y", "expr": "pha_crude",
+      "basis": "Carried through unchanged", "notes": ["i_carry_through"]
+    },
+    "pha_washed": {
+      "label": "Washed PHA", "from": "washing", "to": "drying",
+      "dim": "mass_year", "unit": "t/y", "expr": "pha_extract",
+      "basis": "Carried through unchanged", "notes": ["i_carry_through"]
+    },
+    "pha": {
+      "label": "PHA copolymers (dry)", "from": "drying", "to": "extrusion",
+      "dim": "mass_year", "unit": "t/y", "expr": "pha_washed"
+    },
+    "biogas": {
+      "label": "Digester output to CHP", "from": "anaerobic_digestion", "to": "chp",
+      "dim": "mass_year", "unit": "t/y", "expr": "chp_feed",
+      "basis": "The dashboard converts the whole CHP feedstock at its calorific value"
+    },
+    "ad_effluent": {
+      "label": "Digester effluent", "from": "anaerobic_digestion", "to": "env",
+      "dim": "mass_year", "unit": "t/y", "expr": "process_water", "closes": true
+    },
+    "chp_exhaust": {
+      "label": "CHP exhaust and ash", "from": "chp", "to": "env",
+      "dim": "mass_year", "unit": "t/y", "expr": "biogas", "closes": true
+    },
+    "elec_gen": {
+      "label": "Electricity generated", "from": "chp", "to": "utilities",
+      "dim": "energy_year", "unit": "GJ/y", "recycle": true,
+      "expr": "biogas / 1000 * calorific * elec_eff",
+      "basis": "Feedstock tonnes × calorific value × electrical efficiency"
+    },
+    "elec_import": {
+      "label": "Net electricity import", "from": "env", "to": "utilities", "stage": "lci",
+      "dim": "energy_year", "unit": "TJ/y", "closes": true,
+      "expr": "elec_demand - elec_gen",
+      "basis": "Negative when the CHP exports", "notes": ["i_elec_export"]
+    },
+    "compound": {
+      "label": "Compounded biocomposite", "from": "extrusion", "to": "injection_moulding",
+      "dim": "mass_year", "unit": "t/y", "expr": "precursor * biocomp_rec"
+    },
+    "compound_loss": {
+      "label": "Compounding loss", "from": "extrusion", "to": "env",
+      "dim": "mass_year", "unit": "t/y", "expr": "precursor - compound", "closes": true
+    },
+    "moulded": {
+      "label": "Moulded biocomposite", "from": "injection_moulding", "to": "printing_3d",
+      "dim": "mass_year", "unit": "t/y", "expr": "compound",
+      "basis": "Carried through unchanged"
+    },
+    "biocomposite": {
+      "label": "PHA biocomposite", "from": "printing_3d", "to": "env",
+      "dim": "mass_year", "unit": "t/y", "expr": "moulded", "product": "main"
+    }
+  },
+  "derived": {
+    "comp_sum": {
+      "label": "Composition sum", "stage": "mass", "dim": "fraction", "unit": "%", "role": "check",
+      "expr": "hemi_pct + cell_pct + lign_pct + ash_pct"
+    },
+    "dry_organics": {
+      "label": "Dry biomass total (hemicellulose + cellulose + lignin)", "stage": "mass", "dim": "mass_year", "unit": "t/y",
+      "expr": "dry_biomass.hemicellulose + dry_biomass.cellulose + dry_biomass.lignin",
+      "basis": "Dashboard Totals row, which omits ash"
+    },
+    "precursor": {
+      "label": "Biocomposite precursor (PHA + biofiller)", "stage": "mass", "dim": "mass_year", "unit": "t/y",
+      "expr": "pha + biofiller"
+    },
+
+    "reag_sum": {
+      "label": "Reagent inventory per kg biocomposite", "stage": "lci", "dim": "mass_intensity", "unit": "kg/kg", "role": "lci",
+      "expr": "sum(col(lci, flow) * col(lci, reagent))",
+      "basis": "Inventory rows flagged as reagents"
+    },
+    "reagent_demand": {
+      "label": "Reagent demand", "stage": "lci", "dim": "mass_year", "unit": "t/y", "role": "lci",
+      "expr": "reag_sum * precursor",
+      "basis": "Scaled on PHA + biofiller, not on the finished biocomposite"
+    },
+    "steam_demand": {
+      "label": "Process steam demand", "stage": "lci", "dim": "energy_year", "unit": "TJ/y", "role": "energy",
+      "expr": "lci.steam.flow * biocomposite / 1000",
+      "basis": "MJ per kg of biocomposite × biocomposite output"
+    },
+    "elec_demand": {
+      "label": "Plant electricity demand", "stage": "lci", "dim": "energy_year", "unit": "TJ/y", "role": "energy",
+      "expr": "elec_consump * precursor / 1000",
+      "basis": "Scaled on PHA + biofiller"
+    },
+
+    "lci_gwp": {
+      "label": "GWP contribution", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp",
+      "table": "lci", "column": "gwp", "expr": "row.flow * row.cf"
+    },
+    "gwp_total": {
+      "label": "GWP per kg biocomposite", "stage": "lcia", "dim": "gwp_intensity", "unit": "kg CO2e/kg", "role": "impact", "group": "gwp", "kpi": true,
+      "expr": "sum(col(lci, gwp))"
+    },
+    "gwp_annual": {
+      "label": "Annual plant GWP burden", "stage": "lcia", "dim": "gwp_year", "unit": "kt CO2e/y", "role": "impact", "group": "gwp",
+      "expr": "gwp_total * biocomposite / 1e6",
+      "basis": "Shown by the dashboard as 't CO₂e / y' but computed in kt", "notes": ["q_gwp_ann_unit"]
+    },
+
+    "size_ferm": {
+      "label": "Fermentation train size basis (fermenter feed + ash)", "stage": "capex", "dim": "mass_hour", "unit": "t/h",
+      "expr": "(ferm_feed + dry_biomass.ash) / op_days / 24",
+      "basis": "Dashboard G4: recovered feed plus ash, per operating hour"
+    },
+    "size_ad": {
+      "label": "Digester size basis (moisture + residue)", "stage": "capex", "dim": "mass_hour", "unit": "t/h",
+      "expr": "(process_water + chp_feed) / op_days / 24",
+      "basis": "Dashboard G10"
+    },
+    "size_handling": {
+      "label": "Handling size basis (wet biomass)", "stage": "capex", "dim": "mass_hour", "unit": "t/h",
+      "expr": "wet_biomass / op_days / 24",
+      "basis": "Dashboard G12"
+    },
+    "size_pretreat": {
+      "label": "Pretreatment size basis (dry biomass incl. ash)", "stage": "capex", "dim": "mass_hour", "unit": "t/h",
+      "expr": "(dry_organics + dry_biomass.ash) / op_days / 24",
+      "basis": "Dashboard G13"
+    },
+    "size_forming": {
+      "label": "Forming size basis (biocomposite precursor)", "stage": "capex", "dim": "mass_hour", "unit": "t/h",
+      "expr": "precursor / op_days / 24",
+      "basis": "Dashboard G14: PHA + biofiller before compounding losses"
+    },
+    "size_drivers": {
+      "label": "Size drivers in table units [tph, tph, GWh, tph, tph, tph]", "stage": "capex", "dim": "count", "role": "series",
+      "expr": "concat(size_ferm / 1000, size_ad / 1000, elec_gen / 3600, size_handling / 1000, size_pretreat / 1000, size_forming / 1000)",
+      "basis": "Positional list the dashboard indexes equipment rows into"
+    },
+    "equipment_size": {
+      "label": "Current size", "stage": "capex", "dim": "count",
+      "table": "equipment", "column": "size", "expr": "at(size_drivers, row.driver)"
+    },
+    "equipment_cost": {
+      "label": "Cost", "stage": "capex", "dim": "currency", "unit": "$M", "role": "capex",
+      "table": "equipment", "column": "cost",
+      "expr": "six_tenths(row.base_cost, abs(row.size), row.base_size, row.n, row.cepci_base, cepci)"
+    },
+    "dce": {
+      "label": "Delivered cost of equipment", "stage": "capex", "dim": "currency", "unit": "$M", "role": "capex",
+      "expr": "sum(col(equipment, cost))"
+    },
+    "tci": {
+      "label": "Total capital investment", "stage": "capex", "dim": "currency", "unit": "$M", "role": "capex", "kpi": true,
+      "expr": "tci_ratio * dce", "basis": "DCE × TCI/DCE ratio"
+    },
+
+    "reagent_cost": {
+      "label": "Reagents", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable",
+      "expr": "reagent_demand / 1000 * reagent_p / 1e6"
+    },
+    "elec_cost": {
+      "label": "Electricity (net)", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable",
+      "expr": "elec_import * elec_p / 1e6", "basis": "Negative = export credit"
+    },
+    "heat_cost": {
+      "label": "Heat / steam", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable",
+      "expr": "steam_demand * heat_p / 1e6"
+    },
+    "feed_cost": {
+      "label": "Feedstock", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable",
+      "expr": "basis_tpa / 1000 * biomass_p / 1e6"
+    },
+    "revenue": {
+      "label": "Product revenue", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "revenue", "kpi": true,
+      "expr": "biocomposite / 1000 * biocomp_p / 1e6"
+    },
+    "cap_charge": {
+      "label": "Capital charge", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed",
+      "expr": "tci * ann_cc", "basis": "TCI × annual capital charge"
+    },
+    "indirect_opex": {
+      "label": "Indirect fixed opex", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed",
+      "expr": "cap_charge * ind_factor", "basis": "Fraction of the capital charge"
+    },
+    "labour_cost": {
+      "label": "Labour", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed",
+      "expr": "jobs_per_kt * biocomposite / 1e6 * labor_cost / 1e6 * labor_oh",
+      "basis": "Jobs per kt × kt product × cost per job × overhead"
+    },
+    "variable_opex": {
+      "label": "Variable opex (reagents + electricity + heat)", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "variable",
+      "expr": "reagent_cost + elec_cost + heat_cost"
+    },
+    "misc_opex": {
+      "label": "Miscellaneous opex", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "group": "fixed",
+      "expr": "misc_frac * (indirect_opex + labour_cost + reagent_cost + heat_cost)",
+      "basis": "30% of indirect + labour + reagents + heat (electricity excluded)"
+    },
+    "opex_total": {
+      "label": "Operating cost excluding capital charge", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex",
+      "expr": "indirect_opex + labour_cost + variable_opex + feed_cost + misc_opex"
+    },
+    "total_cost": {
+      "label": "Total annual cost", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "opex", "kpi": true,
+      "expr": "cap_charge + opex_total"
+    },
+    "net_profit": {
+      "label": "Net annual profit", "stage": "opex", "dim": "currency_year", "unit": "$M/y", "role": "metric", "kpi": true,
+      "expr": "revenue - total_cost"
+    },
+
+    "dcf_cf": {
+      "label": "Discounted cash flow by year (year 0 = −TCI)", "stage": "dcf", "dim": "currency", "unit": "$M", "role": "series",
+      "expr": "concat(-tci, discounted(repeat(net_profit, project_years), irr))"
+    },
+    "dcf_cum": {
+      "label": "Cumulative NPV by year", "stage": "dcf", "dim": "currency", "unit": "$M", "role": "series",
+      "expr": "cumsum(dcf_cf)"
+    },
+    "npv": {
+      "label": "NPV over project life", "stage": "dcf", "dim": "currency", "unit": "$M", "role": "metric", "kpi": true,
+      "expr": "-tci + npv(repeat(net_profit, project_years), irr)"
+    },
+    "payback": {
+      "label": "Discounted payback", "stage": "dcf", "dim": "years", "unit": "y", "role": "metric",
+      "expr": "payback(dcf_cf)"
+    },
+    "project_irr": {
+      "label": "Project IRR", "stage": "dcf", "dim": "fraction", "unit": "%", "role": "metric",
+      "expr": "irr(concat(-tci, repeat(net_profit, project_years)))"
+    },
+    "msp": {
+      "label": "Minimum selling price (NPV = 0)", "stage": "dcf", "dim": "price_mass", "unit": "$/kg", "role": "metric",
+      "solve": { "target": "npv", "vary": "biocomp_p", "lo": 0, "hi": 1000000, "equals": 0 }
+    }
+  },
+  "checks": {
+    "plant_closure": {
+      "kind": "closure", "stage": "mass", "label": "Plant mass closure", "unit": "t/y",
+      "in": ["wet_biomass"],
+      "out": ["pretreat_reject", "biocomposite", "compound_loss", "ad_effluent", "chp_exhaust"],
+      "tolerance": 0.01
+    },
+    "ferm_train": {
+      "kind": "closure", "stage": "mass", "label": "Fermentation train closure", "unit": "t/y",
+      "in": ["ferm_feed"],
+      "out": ["pha_crude", "chp_feed"],
+      "tolerance": 0.01
+    },
+    "comp_sum_check": {
+      "kind": "constraint", "stage": "mass", "severity": "soft",
+      "expr": "abs(comp_sum - 1) <= comp_tol",
+      "message": "Dry composition must sum to 100%."
+    },
+    "positive_feed": {
+      "kind": "constraint", "stage": "mass", "severity": "hard",
+      "expr": "basis_tpa > 0 && moisture < 1",
+      "message": "Dry biomass must be positive and moisture below 100%."
+    }
+  },
+  "lcia": {
+    "method": "GWP100 characterisation factors as tabulated in the dashboard",
+    "categories": [
+      {
+        "id": "gwp", "label": "Global warming", "unit": "kg CO₂e", "total": "gwp_total",
+        "contributions": {
+          "Sodium hydroxide": "lci.naoh.gwp",
+          "Sodium phosphate": "lci.na_phosphate.gwp",
+          "Process steam": "lci.steam.gwp",
+          "Monoammonium phosphate": "lci.map_fertiliser.gwp",
+          "Solvent": "lci.solvent.gwp",
+          "Ammonium chloride": "lci.nh4cl.gwp",
+          "Transport": "lci.transport.gwp",
+          "Magnesium sulphate": "lci.mgso4.gwp",
+          "Sulfuric acid": "lci.h2so4.gwp",
+          "Citric acid": "lci.citric_acid.gwp",
+          "Lime": "lci.lime.gwp",
+          "Manganese": "lci.manganese.gwp",
+          "Chemical (generic)": "lci.chemical_generic.gwp",
+          "Calcium chloride": "lci.cacl2.gwp",
+          "Water": "lci.water.gwp"
+        }
+      }
+    ],
+    "benchmarks": []
+  },
+  "allocation": {
+    "lca": {
+      "method": "none",
+      "basis": "All inventory burdens are charged to the biocomposite; the biofiller is consumed inside the plant and exported electricity earns no credit in the inventory.",
+      "nodes": ["gwp_total"]
+    },
+    "tea": {
+      "method": "system expansion",
+      "basis": "Net electricity export is credited at the purchase price on the electricity cost line; no other by-product is sold.",
+      "nodes": ["elec_cost", "revenue"]
+    }
+  },
+  "targets": {
+    "gwp": { "label": "Climate impact per FU", "nodes": ["gwp_total", "gwp_annual"] },
+    "capital": { "label": "Capital cost", "nodes": ["dce", "tci"] },
+    "cost": { "label": "Production cost and minimum selling price", "nodes": ["total_cost", "msp"] },
+    "profit": { "label": "Profitability", "nodes": ["net_profit", "npv", "project_irr", "payback"] }
+  },
+  "sensitivity": {
+    "tornado_npv": {
+      "kind": "oat", "label": "What moves the NPV?",
+      "target": "npv", "params": "editable", "delta": 0.1
+    },
+    "tornado_gwp": {
+      "kind": "oat", "label": "What moves the GWP per kg?",
+      "target": "gwp_total", "params": "editable", "delta": 0.1
+    },
+    "price_sweep": {
+      "kind": "sweep", "label": "NPV against biocomposite price",
+      "target": "npv", "param": "biocomp_p", "from": 2, "to": 12, "steps": 11
+    },
+    "scale_price_grid": {
+      "kind": "sweep", "label": "NPV against plant scale and price",
+      "target": "npv",
+      "param": "basis_tpa", "from": 2000, "to": 20000, "steps": 7,
+      "param2": "biocomp_p", "from2": 3, "to2": 9, "steps2": 5
+    },
+    "cases": {
+      "kind": "scenario", "label": "Feedstock and yield cases",
+      "targets": ["gwp_total", "tci", "net_profit", "npv"],
+      "scenarios": {
+        "double_dry_biomass": { "basis_tpa": 200000 },
+        "lignin_rich_feed": { "hemi_pct": 20, "cell_pct": 35, "lign_pct": 40, "ash_pct": 5 },
+        "higher_pha_yield": { "rec_pha": 0.45, "biocomp_rec": 95 },
+        "wetter_feedstock": { "moisture": 45 }
+      }
+    },
+    "mc_npv": {
+      "kind": "montecarlo", "label": "NPV uncertainty",
+      "target": "npv", "n": 2000, "seed": 42,
+      "params": {
+        "biocomp_p": { "dist": "triangular", "min": 4, "mode": 7, "max": 10 },
+        "rec_pha": { "dist": "triangular", "min": 0.25, "mode": 0.35, "max": 0.45 },
+        "basis_tpa": { "dist": "uniform", "min": 2000, "max": 6000 },
+        "reagent_p": { "dist": "lognormal", "median": 0.26, "sigma": 0.3 },
+        "tci_ratio": { "dist": "uniform", "min": 2.5, "max": 4 }
+      }
+    }
+  },
+  "diagram": {
+    "rank": {
+      "biomass_handling": 0, "pretreatment": 1, "inoculation": 2, "fermenters": 3, "centrifugation": 4,
+      "solvent_extraction": 5, "washing": 6, "drying": 7,
+      "anaerobic_digestion": 5, "chp": 6, "utilities": 7,
+      "extrusion": 8, "injection_moulding": 9, "printing_3d": 10
+    },
+    "order": { "solvent_extraction": 0, "anaerobic_digestion": 1, "washing": 0, "chp": 1, "drying": 0, "utilities": 1 }
+  }
+}
