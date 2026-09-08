@@ -39,6 +39,7 @@
       if (!n.text || !n.title) warn('meta.notes', 'note ' + (n.id || '?') + ' needs title and text');
       if (!n.nodes || !n.nodes.length) warn('meta.notes', 'note ' + (n.id || '?') + ' names no nodes');
     });
+    (graph.danglingNotes || []).forEach(function (id) { warn('meta.notes', 'refers to unknown node "' + id + '"'); });
 
     var nodes = graph.nodes;
     var kpis = 0;

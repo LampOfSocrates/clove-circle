@@ -19,9 +19,8 @@
     "MODEL_DRAFT": "google/gemini-2.5-flash",
     "MODEL_REPAIR": "google/gemini-2.5-flash",
     "MODEL_FALLBACKS": "openai/gpt-4.1-mini,google/gemini-2.5-flash-lite",
-    // From this repair round on, a stronger model takes over (exempt from the price ceiling).
+    // Used only when the user ticks "stronger model" in the beta page; exempt from the ceiling.
     "MODEL_ESCALATE": "anthropic/claude-sonnet-4",
-    "ESCALATE_AFTER": "3",
     // Hard ceiling: any provider above these prices is refused by OpenRouter.
     "MAX_PRICE_PROMPT": "1",
     "MAX_PRICE_COMPLETION": "5",

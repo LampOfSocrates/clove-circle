@@ -60,7 +60,7 @@ Everything is in `wrangler.jsonc` vars, no code change needed:
 
 | Var | What it does |
 |---|---|
-| `MODEL_CHAT`, `MODEL_DRAFT`, `MODEL_REPAIR` | one model per route; `MODEL` is the fallback for all three |
+| `MODEL_CHAT`, `MODEL_DRAFT`, `MODEL_REPAIR`, `MODEL_ESCALATE` | one model per route; `MODEL` is the fallback. `MODEL_ESCALATE` is used only when the user ticks the stronger-model option on the beta page and is exempt from the price ceiling |
 | `MODEL_FALLBACKS` | comma-separated models tried in order when the first is unavailable |
 | `MAX_PRICE_PROMPT`, `MAX_PRICE_COMPLETION` | ceiling in $ per million tokens; OpenRouter refuses dearer providers |
 | `MONTHLY_BUDGET_USD` | the Worker stops serving once recorded spend for the month reaches this |

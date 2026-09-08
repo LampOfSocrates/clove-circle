@@ -162,11 +162,20 @@ async function callOpenRouter(messages, env, opts) {
 
 /* Strip markdown fences and anything before the first { or after the last }. */
 function extractJson(text) {
-  let t = String(text || '').trim();
-  t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
-  const a = t.indexOf('{'), b = t.lastIndexOf('}');
-  if (a === -1 || b === -1 || b < a) throw new Error('The model did not return a JSON object.');
-  return JSON.parse(t.slice(a, b + 1));
+  const t = String(text || '');
+  const a = t.indexOf('{');
+  if (a === -1) throw new Error('The model did not return a JSON object.');
+  // Walk to the matching brace, honouring strings, so trailing prose or a second object
+  // after the document does not break the parse.
+  let depth = 0, inStr = false, esc = false;
+  for (let i = a; i < t.length; i++) {
+    const c = t[i];
+    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
+    if (c === '"') inStr = true;
+    else if (c === '{') depth++;
+    else if (c === '}') { depth--; if (depth === 0) return JSON.parse(t.slice(a, i + 1)); }
+  }
+  throw new Error('The model returned an unterminated JSON object (output was probably cut off; try again).');
 }
 
 function draftMessages(body) {
@@ -204,7 +213,7 @@ export default {
 
     if (request.method === 'GET' && url.pathname === '/') {
       return json({ ok: true, service: 'lcagraph-beta', kv: !!env.BETA, keyConfigured: !!env.OPENROUTER_API_KEY,
-        models: { chat: modelFor('chat', env), draft: modelFor('draft', env), repair: modelFor('repair', env), escalate: env.MODEL_ESCALATE || null, escalateAfter: Number(env.ESCALATE_AFTER) || 3, fallbacks: env.MODEL_FALLBACKS || '' },
+        models: { chat: modelFor('chat', env), draft: modelFor('draft', env), repair: modelFor('repair', env), escalate: env.MODEL_ESCALATE || null, fallbacks: env.MODEL_FALLBACKS || '' },
         maxPricePerMillion: { prompt: env.MAX_PRICE_PROMPT || null, completion: env.MAX_PRICE_COMPLETION || null },
         monthlyBudgetUsd: env.MONTHLY_BUDGET_USD || null }, 200, cors);
     }
@@ -252,11 +261,9 @@ export default {
       const size = description.length + String(body.data || '').length + JSON.stringify(body.fix || '').length;
       if (size > max) return json({ ok: false, error: 'The request is larger than ' + max + ' characters. Trim the data.' }, 413, cors);
       try {
-        // Cheap model first; from ESCALATE_AFTER onwards a stronger model takes over the
-        // repair, since a cheap model that has failed twice rarely converges on its own.
-        const attempt = Number(body.attempt) || 1;
-        const escalateAfter = Number(env.ESCALATE_AFTER) || 3;
-        const escalate = !!env.MODEL_ESCALATE && attempt >= escalateAfter;
+        // Cheap models by default. The stronger MODEL_ESCALATE is used only when the user
+        // asked for it in the page (body.escalate), never automatically.
+        const escalate = !!env.MODEL_ESCALATE && body.escalate === true;
         const route = escalate ? 'escalate' : (body.fix && body.fix.doc ? 'repair' : 'draft');
         const out = await callOpenRouter(draftMessages(body), env, { model: modelFor(route, env), json: true, maxTokens: Number(env.DRAFT_MAX_TOKENS) || 12000, noCeiling: escalate });
         await bump(auth.code, env, out.cost);

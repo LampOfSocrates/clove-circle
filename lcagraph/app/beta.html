@@ -141,7 +141,7 @@
       <p>Upload a flowsheet picture. The model reads the units and the streams between them, then
          drafts the whole PML document: parameters with sources, mass balance, inventory, impacts,
          costs and cash flow. The draft is compiled and solved in your browser; compiler errors go
-         back to the model for repair, up to five times.</p>
+         back to the model for repair, up to five times. The standard model is cheap; a stronger one is one click away if it keeps failing.</p>
 
       <label>1. Flowsheet image (PNG or JPEG, a block flow diagram or a process sketch)</label>
       <div class="lg-drop" data-drop tabindex="0" role="button" aria-label="Choose or drop a flowsheet image">
@@ -161,7 +161,12 @@
       <textarea id="d-data" data-data placeholder="Straw 60 $/t. Electricity 0.12 $/kWh and 0.25 kg CO2e/kWh. Sulfuric acid 0.03 kg per kg straw, 0.2 kg CO2e/kg. Fermenter 2.5 $M at 10 t/h, exponent 0.65. Lang factor 4. Discount rate 10%, 15 years."></textarea>
       <p class="lg-mini">Anything you leave out is assumed by the model and flagged as an assumption in the draft.</p>
 
-      <div class="lg-inline"><button type="button" data-draft>Draft model</button><span class="lg-mini" data-draft-status></span></div>
+      <label>5. Model</label>
+      <div class="lg-inline">
+        <label class="lg-mini" style="font-weight:400;margin:0;display:flex;gap:6px;align-items:center"><input type="radio" name="model" value="cheap" data-model-cheap checked> Standard (cheap model, default)</label>
+        <label class="lg-mini" style="font-weight:400;margin:0;display:flex;gap:6px;align-items:center"><input type="radio" name="model" value="strong" data-model-strong> Stronger model (about five times the cost, use when the standard one keeps failing)</label>
+      </div>
+      <div class="lg-inline"><button type="button" data-draft>Draft model</button><button type="button" class="lg-secondary" data-retry-strong hidden>Retry the repair with the stronger model</button><span class="lg-mini" data-draft-status></span></div>
       <div class="lg-log" data-log hidden></div>
       <div class="lg-draft-result" data-result hidden>
         <b data-result-title></b>
@@ -352,7 +357,11 @@
       var runs = solver.solveAll();
       var bad = runs.filter(function (r) { return !r.ok; });
       if (bad.length) return { errors: ["stage " + bad[0].stage + " failed to solve: " + bad[0].error], warnings: v.warnings };
-      var nulls = Object.keys(v.graph.nodes).filter(function (id) { var n = v.graph.nodes[id]; if (n.nullable) return false; var x = solver.get(id); return x === null || x === undefined; });
+      var allNulls = Object.keys(v.graph.nodes).filter(function (id) { var n = v.graph.nodes[id]; if (n.nullable) return false; var x = solver.get(id); return x === null || x === undefined; });
+      // IRR and payback are legitimately undefined when a project never pays back; that is
+      // a finding to show, not a compile failure.
+      var softNulls = allNulls.filter(function (id) { return /\b(irr|payback)\s*\(/.test(v.graph.nodes[id].exprText || ""); });
+      var nulls = allNulls.filter(function (id) { return softNulls.indexOf(id) === -1; });
       if (nulls.length) {
         var msgs = nulls.slice(0, 12).map(function (id) {
           var n = v.graph.nodes[id];
@@ -364,7 +373,9 @@
         return { errors: msgs, warnings: v.warnings };
       }
       var kpis = Object.keys(v.graph.nodes).filter(function (id) { return v.graph.nodes[id].kpi; });
-      return { errors: [], warnings: v.warnings, graph: v.graph, solver: solver, kpis: kpis, implausible: sanity(v.graph, solver) };
+      var implausible = sanity(v.graph, solver);
+      var findings = softNulls.map(function (id) { return id + " is undefined: the cash-flow series never turns cumulative-positive at the default inputs, so the project does not pay back. Either the economics really are that bad or a unit or sign is wrong in revenue or cost."; });
+      return { errors: [], warnings: v.warnings, graph: v.graph, solver: solver, kpis: kpis, implausible: implausible, findings: findings };
     } catch (e) {
       return { errors: ["solve failed: " + e.message], warnings: v.warnings };
     }
@@ -407,29 +418,48 @@
     $("[data-open]").hidden = !solved;
   }
 
-  $("[data-draft]").addEventListener("click", function () {
+  var run = null;   // state of the current drafting loop, so the retry button can continue it
+  function startDraft(opts) {
     var code = sessionStorage.getItem(KEY);
     var btn = $("[data-draft]");
+    var retryBtn = $("[data-retry-strong]");
+    var strong = !!$("[data-model-strong]").checked;
+    if (opts && opts.continueWithStrong && run) {
+      run.escalate = true; run.attempt = Math.max(0, run.attempt - 2); run.sanityRoundDone = true;
+      logLine("Continuing with the stronger model…");
+      btn.disabled = true; retryBtn.hidden = true;
+      return run.step();
+    }
     var body = { description: $("[data-desc]").value.trim(), functionalUnit: $("[data-fu]").value.trim(), data: $("[data-data]").value.trim() };
     if (!image) { $("[data-draft-status]").textContent = "Upload a flowsheet image first."; return; }
     body.image = image.dataUrl;
-    log.innerHTML = ""; $("[data-result]").hidden = true; lastDoc = null;
+    log.innerHTML = ""; $("[data-result]").hidden = true; lastDoc = null; retryBtn.hidden = true;
     btn.disabled = true;
-    var attempt = 0;
-    var fix = null;
-    var sanityRoundDone = false;
-    var lastGood = null;
-    function finish(ok) { btn.disabled = false; $("[data-draft-status]").textContent = ok ? "" : "Stopped."; }
+    run = { attempt: 0, fix: null, sanityRoundDone: false, lastGood: null, escalate: strong };
+    function finish(ok) {
+      btn.disabled = false; $("[data-draft-status]").textContent = ok ? "" : "Stopped.";
+      // Offer the stronger model whenever the cheap one did not deliver a clean draft.
+      if (!run.escalate && run.fix) retryBtn.hidden = false;
+    }
+    function keepLastGood(reason) {
+      if (!run.lastGood) return false;
+      logLine(reason + " Keeping the earlier draft that compiled.", "bad");
+      lastDoc = stamp(run.lastGood.doc); showResult(run.lastGood.doc, run.lastGood.chk, true); finish(true);
+      return true;
+    }
     function step() {
-      attempt++;
-      $("[data-draft-status]").textContent = (fix ? "Repairing draft, attempt " : "Drafting, attempt ") + attempt + " of " + MAX_ATTEMPTS + "…";
+      var fix = run.fix;
+      run.attempt++;
+      var attempt = run.attempt;
+      $("[data-draft-status]").textContent = (fix ? "Repairing draft, attempt " : "Drafting, attempt ") + attempt + " of " + MAX_ATTEMPTS + (run.escalate ? " (stronger model)" : "") + "…";
       logLine(fix ? "Asking the model to fix " + fix.errors.length + " problem(s)…" : "Sending the flowsheet to the model for a first draft… (30–90 s)");
-      var req = Object.assign({}, body, { attempt: attempt }); if (fix) req.fix = fix;
+      var req = Object.assign({}, body, { attempt: attempt, escalate: run.escalate }); if (fix) req.fix = fix;
       post("/draft", req, code).then(function (j) {
         if (!j.ok) {
           logLine("Service error: " + (j.error || "unknown"), "bad");
           if (j.raw) logLine("Model output started: " + j.raw.slice(0, 300));
-          if (j.__status === 403) leave();
+          if (j.__status === 403) { leave(); finish(false); return; }
+          if (keepLastGood("The repair round failed.")) return;
           finish(false); return;
         }
         var doc = j.doc;
@@ -437,37 +467,43 @@
         var chk = checkDoc(doc);
         if (chk.errors.length) {
           chk.errors.slice(0, 8).forEach(function (e) { logLine("✗ " + e, "bad"); });
-          if (attempt < MAX_ATTEMPTS) { fix = { doc: doc, errors: chk.errors.slice(0, 12) }; step(); return; }
-          if (lastGood) {
-            logLine("The repaired draft no longer compiles; keeping the earlier draft that did.", "bad");
-            lastDoc = stamp(lastGood.doc); showResult(lastGood.doc, lastGood.chk, true); finish(true); return;
-          }
-          logLine("Gave up after " + attempt + " attempts. Download the last draft and repair it, or add detail and try again.", "bad");
+          if (attempt < MAX_ATTEMPTS) { run.fix = { doc: doc, errors: chk.errors.slice(0, 12) }; step(); return; }
+          if (keepLastGood("The repaired draft no longer compiles.")) return;
+          logLine("Gave up after " + attempt + " attempts. Retry with the stronger model, download the last draft and repair it, or add detail and try again.", "bad");
+          run.fix = { doc: doc, errors: chk.errors.slice(0, 12) };
           lastDoc = stamp(doc); showResult(doc, null, false); finish(true); return;
         }
         logLine("✓ Compiles, lints and solves all six stages.", "ok");
         chk.warnings.slice(0, 6).forEach(function (w) { logLine("  lint: " + w.where + " " + w.message); });
-        if (chk.implausible.length && attempt < MAX_ATTEMPTS && !sanityRoundDone) {
-          sanityRoundDone = true;
+        if (chk.implausible.length && attempt < MAX_ATTEMPTS && !run.sanityRoundDone) {
+          run.sanityRoundDone = true;
           chk.implausible.forEach(function (m) { logLine("? " + m, "bad"); });
-          fix = { doc: doc, errors: ["The document compiles and solves, but these results are implausible. Re-check the unit algebra (t vs kg, $ vs $M, kWh vs MWh, per day vs per year) and the sign of each cost and credit term, then return the whole corrected document:"].concat(chk.implausible) };
-          lastGood = { doc: doc, chk: chk };
+          run.fix = { doc: doc, errors: ["The document compiles and solves, but these results are implausible. Re-check the unit algebra (t vs kg, $ vs $M, kWh vs MWh, per day vs per year) and the sign of each cost and credit term, then return the whole corrected document:"].concat(chk.implausible) };
+          run.lastGood = { doc: doc, chk: chk };
           step(); return;
         }
-        if (chk.implausible.length) {
-          chk.implausible.forEach(function (m) { logLine("? still implausible: " + m, "bad"); });
+        var findings = chk.implausible.concat(chk.findings || []);
+        if (findings.length) {
+          findings.forEach(function (m) { logLine("? " + m, "bad"); });
+          // Leave a repair request in place so the stronger-model button can pick it up.
+          run.fix = { doc: doc, errors: ["The document compiles and solves, but these results still look wrong. Re-check unit algebra and signs, then return the whole corrected document:"].concat(findings) };
           doc.meta.notes = doc.meta.notes || [];
-          doc.meta.notes.push({ id: "implausible", level: "warning", title: "Results look implausible",
-            text: "These values failed a plausibility check and were not corrected by the model: " + chk.implausible.join("; ") + ". Treat every number with suspicion until the unit algebra has been checked.",
-            nodes: chk.implausible.map(function (m) { return m.split(" = ")[0]; }).filter(function (id) { return chk.graph.nodes[id]; }) });
+          doc.meta.notes.push({ id: "implausible", level: "warning", title: "Results need checking",
+            text: "These findings came out of the automatic checks and were not resolved: " + findings.join("; ") + ". Treat every number with suspicion until the unit algebra has been checked.",
+            nodes: findings.map(function (m) { return m.split(" ")[0]; }).filter(function (id) { return chk.graph.nodes[id]; }) });
         }
+        if (!findings.length) run.fix = null;
+        run.lastGood = { doc: doc, chk: chk };
         lastDoc = stamp(doc);
         showResult(doc, chk, true);
         finish(true);
-      }).catch(function (e) { logLine("Could not reach the beta service: " + e.message, "bad"); finish(false); });
+      }).catch(function (e) { logLine("Could not reach the beta service: " + e.message, "bad"); if (!keepLastGood("The connection dropped.")) finish(false); });
     }
+    run.step = step;
     step();
-  });
+  }
+  $("[data-draft]").addEventListener("click", function () { startDraft(); });
+  $("[data-retry-strong]").addEventListener("click", function () { startDraft({ continueWithStrong: true }); });
 
   $("[data-open]").addEventListener("click", function () {
     if (!lastDoc) return;

@@ -69,6 +69,16 @@ test('compile: builds nodes, infers deps, finds tear', () => {
   assert.equal(g.nodes['mw.a'].value, 10);
 });
 
+test('compile: a note naming an unknown node is dropped and linted, not fatal', () => {
+  const doc = JSON.parse(JSON.stringify(MINI));
+  doc.meta.notes.push({ id: 'q2', level: 'info', title: 'Dangling', text: 'points nowhere', nodes: ['nothere'] });
+  const g = compile(doc);
+  assert.deepEqual(g.danglingNotes, ['nothere']);
+  const v = require('../src/validate.js').validate(JSON.parse(JSON.stringify(doc)));
+  assert.equal(v.errors.length, 0);
+  assert.ok(v.warnings.some((w) => /unknown node "nothere"/.test(w.message)));
+});
+
 test('compile: rejects later-stage deps, unknown ids, bare cycles', () => {
   const bad = JSON.parse(JSON.stringify(MINI));
   bad.derived.early = { label: 'x', stage: 'mass', dim: 'count', expr: 'tci' };

@@ -53,7 +53,7 @@ MISTAKES THAT GET DRAFTS REJECTED (avoid them)
 - Currency: use $M, £M or MGBP for capital and annual money, $/t, £/t or GBP/t for prices, $/kWh, £/kWh or GBP/kWh for electricity. Pick one currency and keep it.
 - String or object literals inside an expression. There are none. Select per-row values with a numeric column and at(), never by comparing labels.
 - Declaring the same table column twice. A computed column is ONE derived entry with "table" and "column"; it creates the cell for every row. Never write one derived per row.
-- A param or derived with dim "count" must have unit "" (or omit unit). Put the human unit in "basis".
+- A param or derived with dim "count" must have unit "" (or omit unit). Put the human unit in "basis". There is no "series" dimension: a node whose value is an array (a cash-flow series, a list of sizes) uses dim "count" too.
 - Series are arrays: [-tci, repeat(cash_flow, life)] builds year 0 followed by years 1..life. Then npv(series, r, 0), irr(series), payback(series).
 
 WORKED PATTERN: SCALED EQUIPMENT COSTS

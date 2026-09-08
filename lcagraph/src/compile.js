@@ -299,8 +299,11 @@
     var order = topoOrder(nodes, streams);
 
     /* notes */
+    var danglingNotes = [];
     each(notesByNode, function (id, ids) {
-      if (!nodes[id]) fail('meta.notes refers to unknown node "' + id + '"');
+      // A note pointing at a node that does not exist is a documentation slip, not a
+      // broken graph; keep the note, drop the pointer, and let the lint report it.
+      if (!nodes[id]) { danglingNotes.push(id); return; }
       nodes[id].notes = (nodes[id].notes || []).concat(ids);
     });
 
@@ -322,7 +325,8 @@
       allocation: doc.allocation || null,
       targets: doc.targets || {},
       sensitivity: doc.sensitivity || {},
-      diagram: doc.diagram || {}
+      diagram: doc.diagram || {},
+      danglingNotes: danglingNotes
     };
     graph.ancestors = function (ids) { return ancestorsOf(nodes, ids); };
     graph.descendants = function (ids) { return descendantsOf(nodes, ids); };
