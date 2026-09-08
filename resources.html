@@ -34,7 +34,13 @@
       max-width: 96ch; margin: 0 auto 14px; font-size: 14px; line-height: 1.6;
       color: var(--cc-text-muted, #5e7a6a); text-align: center;
     }
-    #step-by-step #sbsTabs { margin-bottom: 14px !important; }
+    /* The hash scrolls to the section; keep it clear of the sticky navbar. */
+    #case-studies, #step-by-step, #lca-graph { scroll-margin-top: 118px; }
+    /* Sub-tabs and intro share one row: pills left, explanation right. */
+    .cc-sbs-toprow { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px 28px; flex-wrap: wrap; margin-bottom: 12px; }
+    #step-by-step .cc-sbs-toprow .cc-sbs-intro { margin: 0; text-align: right; max-width: 54ch; font-size: 13px; line-height: 1.5; flex: 1 1 320px; }
+    .cc-sbs-toprow #sbsTabs { flex: 0 0 auto; }
+    @media (max-width: 900px) { #step-by-step .cc-sbs-toprow .cc-sbs-intro { text-align: left; } }
     @media (max-width: 640px) {
       #step-by-step .cc-sbs-fullbleed, #lca-graph .cc-sbs-fullbleed { padding-left: 8px; padding-right: 8px; }
     }
@@ -81,7 +87,7 @@
 </nav>
 
 <!-- ===== RESOURCES CONTENT ===== -->
-<section class="cc-section cc-section-light" style="padding-top: 32px;">
+<section class="cc-section cc-section-light" style="padding-top: 18px;">
   <div class="container">
     <div class="tab-content cc-tab-content" id="resourcesTabContent">
 
@@ -203,12 +209,8 @@
       <!-- LCA Step by Step -->
       <div class="tab-pane fade" id="step-by-step" role="region" aria-label="LCA step by step">
 
-        <p class="cc-sbs-intro">Learn the method, not just the answer &mdash; the same eight steps
-           on every case study, the four ISO 14040 phases with the techno-economic sequence
-           interleaved. Click any stream or unit on the flowsheet to change it, then run each step
-           and watch what moves downstream.</p>
-
-        <ul class="nav nav-pills cc-tab-nav cc-case-study-tabs mb-4" id="sbsTabs" role="tablist">
+        <div class="cc-sbs-toprow">
+          <ul class="nav nav-pills cc-tab-nav cc-case-study-tabs mb-0" id="sbsTabs" role="tablist">
           <li class="nav-item" role="presentation">
             <button class="nav-link active" id="sbs-flue2chem-tab" data-bs-toggle="pill" data-bs-target="#sbs-flue2chem-pane" type="button" role="tab" aria-controls="sbs-flue2chem-pane" aria-selected="true">
               <i class="fa-solid fa-industry me-2"></i>Flue2Chem
@@ -230,6 +232,11 @@
             </button>
           </li>
         </ul>
+          <p class="cc-sbs-intro">Learn the method, not just the answer &mdash; the same eight steps
+           on every case study, the four ISO 14040 phases with the techno-economic sequence
+           interleaved. Click any stream or unit on the flowsheet to change it, then run each step
+           and watch what moves downstream.</p>
+        </div>
 
         <div class="tab-content" id="sbsTabContent">
 
