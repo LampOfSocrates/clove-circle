@@ -19,6 +19,12 @@
       canonical: 'kg/y',
       units: { 'kg/y': 1, 't/y': 1000, 'g/y': 0.001 }
     },
+    /* Annual tonnages, the natural basis for a biorefinery: keeping the canonical
+       unit in tonnes keeps the mass-balance closure readable. */
+    mass_tpa: {
+      canonical: 't/y',
+      units: { 't/y': 1, 'kt/y': 1000, 'kg/y': 0.001 }
+    },
     mass_hour: {
       canonical: 'kg/h',
       units: { 'kg/h': 1, 't/h': 1000, 't/d': 1000 / 24, 'g/h': 0.001 }

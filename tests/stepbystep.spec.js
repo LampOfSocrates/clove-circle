@@ -43,6 +43,17 @@ const CASES = [
     stream: 'stream-ncl',
     inputField: '#f_ncl',
     kpis: ['0.295 kg/h', '3.45 $M', '1.33 $M']
+  },
+  {
+    name: 'PHA biocomposite',
+    file: 'pha.html',
+    stream: 'stream-dry',
+    inputField: '#f_basis',
+    kpis: ['1,000.0 t/y', '1.51 kg CO2e/kg', '16.18 $M', '2,632.2 $/t', '4.37 $M', '10.66 $M'],
+    // The published formulae lose 7.5% of the feed; the model reports that rather
+    // than papering over it, so this is the one case whose balance does not close.
+    closureError: '-7.48%',
+    closureOk: false
   }
 ];
 
@@ -340,7 +351,7 @@ test.describe('Resources page', () => {
     await expect(page.locator('#case-studies-tab')).toBeVisible();
     await expect(page.locator('#step-by-step-tab')).toBeVisible();
     await page.click('#step-by-step-tab');
-    await expect(page.locator('#sbsTabs button')).toHaveCount(3);
+    await expect(page.locator('#sbsTabs button')).toHaveCount(4);
   });
 
   test('leaves the existing four case studies untouched', async ({ page }) => {

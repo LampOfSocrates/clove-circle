@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Learn LCA and TEA step by step using the PHA biocomposite from lignocellulose case study.">
+<title>LCA Step by Step | PHA biocomposite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="../../css/cc-model.css" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f4f8f5; padding: 22px; }
+  @media (max-width: 640px) { body { padding: 12px; } }
+
+  /* Known defect notice. Deliberately at the very top: the published balance
+     does not close, and nobody should read the numbers below without knowing. */
+  .cc-sbs-alert {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    border: 1px solid #d9a441;
+    border-left-width: 4px;
+    background: #fdf6e7;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+  }
+  .cc-sbs-alert-tag {
+    flex: 0 0 auto;
+    font: 700 10.5px Inter, system-ui, sans-serif;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #7a5410;
+    background: #f5e3bd;
+    border-radius: 999px;
+    padding: 4px 10px;
+    margin-top: 1px;
+    white-space: nowrap;
+  }
+  .cc-sbs-alert p {
+    margin: 0;
+    font: 400 12px/1.45 Inter, system-ui, sans-serif;
+    color: #5c4514;
+  }
+  .cc-sbs-alert b { font-weight: 600; }
+  .cc-sbs-alert code {
+    font: 500 11.5px ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: #f5e3bd; border-radius: 4px; padding: 1px 5px; color: #6b4a0f;
+  }
+  @media (max-width: 640px) {
+    .cc-sbs-alert { flex-direction: column; gap: 7px; }
+  }
+  /* Escape hatch for anyone who opens this page directly — resources.html links
+     it with target="_blank", so the tab has no history to go back through.
+     It sits in the existing chrome row rather than floating, which would land
+     on top of it. Hidden in-frame, where resources.html supplies the chrome. */
+  .cc-sbs-chrome .cc-back-home {
+    border-color: rgba(61, 139, 104, 0.5);
+    color: #2a5c45;
+  }
+  .cc-sbs-chrome .cc-back-home:hover,
+  .cc-sbs-chrome .cc-back-home:focus {
+    background: #3d8b68;
+    border-color: #3d8b68;
+    color: #fff;
+  }
+  body.in-frame .cc-back-home { display: none; }
+  @media print { .cc-back-home { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="cc-sbs" id="sbs">
+
+  <div class="cc-sbs-alert" role="note">
+    <span class="cc-sbs-alert-tag">Error being looked at</span>
+    <p><b>The published mass balance does not close.</b> <b>261.8 t/y &mdash; 7.5% of the dry
+       feed</b> &mdash; reaches neither a product nor the boiler. 52.5 t/y of that is unrecovered
+       hemicellulose; the other 209.3 t/y is the biofiller, which the published CHP-feed formula
+       (<code>lignin + recovered sugars &minus; biofiller &minus; PHA</code>) deducts from a lignin
+       pool that never contained it. The formulae below are reproduced unchanged, so the
+       mass-balance closure check reads &minus;7.48% rather than zero.</p>
+  </div>
+
+  <div class="cc-sbs-header">
+    <div class="cc-sbs-headrow">
+      <div>
+        <span class="cc-sbs-eyebrow">Calculate LCA step by step</span>
+        <h2>PHA biocomposite from lignocellulose</h2>
+        <p>Work through a full life cycle assessment and techno-economic analysis one step at a
+           time. Click anything on the flowsheet to see what it is or to change it, then run each
+           step yourself and watch what moves.</p>
+      </div>
+      <div class="cc-sbs-chrome">
+        <a class="cc-back-home" href="../../resources.html#step-by-step"><span aria-hidden="true">&#8592;</span> Clove Circle</a>
+        <button type="button" data-cc-solve-all>Run all steps</button>
+        <button type="button" data-cc-reset>Reset to published case</button>
+        <a href="../../standalone/PHA-from-lignocellulose-lca-tea.html" target="_blank" rel="noopener">Full dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="cc-rail" data-cc-rail aria-label="The eight steps of an LCA and TEA"></nav>
+
+  <div class="cc-kpis" data-cc-kpis></div>
+
+  <div class="cc-sbs-grid">
+
+    <div class="cc-main-split">
+      <div class="cc-diagram-col">
+      <p class="cc-diagram-hint">
+        <span><span class="cc-legend-swatch" style="background:#b57a17"></span><b>Amber</b> — yours to set</span>
+        <span><span class="cc-legend-swatch" style="background:#8aa398"></span><b>Grey</b> — calculated</span>
+        <span>Dashed — stale</span>
+      </p>
+
+      <div class="cc-diagram-wrap" data-cc-diagram>
+        <svg viewBox="0 0 1300 500" role="img" aria-label="Simplified PHA biocomposite flowsheet, deduced from the published balance equations and equipment sizing basis. Click a stream or unit to inspect it.">
+          <defs>
+            <marker id="ccarr" viewBox="0 0 10 10" refX="9" refY="5"
+                    markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M1 1 L9 5 L1 9" fill="none" stroke="#8aa398" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+
+          <!-- ══ UNIT BLOCKS ══ -->
+          <g class="cc-hit" data-hit="block-pretreat" data-title="Handling, drying &amp; pretreatment"
+             data-vars="moisture,rec_hemi,rec_cell,rec_lign">
+            <rect class="cc-hit-pad" x="150" y="225" width="190" height="70" rx="10"/>
+            <rect class="cc-blk" x="155" y="230" width="180" height="60" rx="8"/>
+            <text class="cc-blk-label" x="245" y="254" text-anchor="middle">Pretreatment</text>
+            <text class="cc-blk-sub" x="245" y="276" text-anchor="middle">dry &amp; fractionate</text>
+          </g>
+
+          <g class="cc-hit" data-hit="block-ferm" data-title="Fermentation" data-vars="yield_pha">
+            <rect class="cc-hit-pad" x="425" y="225" width="190" height="70" rx="10"/>
+            <rect class="cc-blk" x="430" y="230" width="180" height="60" rx="8"/>
+            <text class="cc-blk-label" x="520" y="254" text-anchor="middle">Fermentation</text>
+            <text class="cc-blk-sub" x="520" y="276" text-anchor="middle">PHA in cells</text>
+          </g>
+
+          <g class="cc-hit" data-hit="block-recovery" data-title="PHA recovery" data-vars="pha,elec_consump">
+            <rect class="cc-hit-pad" x="700" y="225" width="190" height="70" rx="10"/>
+            <rect class="cc-blk" x="705" y="230" width="180" height="60" rx="8"/>
+            <text class="cc-blk-label" x="795" y="254" text-anchor="middle">PHA recovery</text>
+            <text class="cc-blk-sub" x="795" y="276" text-anchor="middle">centrifuge &amp; dry</text>
+          </g>
+
+          <g class="cc-hit" data-hit="block-compound" data-title="Compounding" data-vars="biocomp_rec">
+            <rect class="cc-hit-pad" x="975" y="225" width="190" height="70" rx="10"/>
+            <rect class="cc-blk" x="980" y="230" width="180" height="60" rx="8"/>
+            <text class="cc-blk-label" x="1070" y="254" text-anchor="middle">Compounding</text>
+            <text class="cc-blk-sub" x="1070" y="276" text-anchor="middle">extrude &amp; mould</text>
+          </g>
+
+          <g class="cc-hit" data-hit="block-chp" data-title="Combined heat &amp; power"
+             data-vars="calorific,elec_eff">
+            <rect class="cc-hit-pad" x="975" y="395" width="190" height="70" rx="10"/>
+            <rect class="cc-blk" x="980" y="400" width="180" height="60" rx="8"/>
+            <text class="cc-blk-label" x="1070" y="424" text-anchor="middle">CHP</text>
+            <text class="cc-blk-sub" x="1070" y="446" text-anchor="middle">power &amp; heat</text>
+          </g>
+
+          <!-- ══ STREAMS ══ -->
+          <g class="cc-hit" data-hit="stream-wet" data-title="Wet biomass as received"
+             data-vars="moisture,wet_in">
+            <rect class="cc-hit-pad" x="8" y="222" width="140" height="76" rx="7"/>
+            <path class="cc-flow" data-flow="wet_in" d="M18 260 H155" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="78" y="242" text-anchor="middle">Wet biomass</text>
+            <text class="cc-stream-label" id="fs_wet" x="78" y="284" text-anchor="middle">—</text>
+          </g>
+
+          <path class="cc-flow" data-flow="basis" d="M335 260 H430" marker-end="url(#ccarr)"/>
+          <g class="cc-hit" data-hit="stream-dry" data-title="Dry biomass to fractionation"
+             data-vars="basis,hemi_pct,cell_pct,lign_pct,ash_pct">
+            <rect class="cc-hit-pad" x="300" y="150" width="190" height="50" rx="7"/>
+            <text class="cc-stream-name" x="308" y="170">Dry biomass</text>
+            <text class="cc-stream-label" id="fs_dry" x="308" y="194">—</text>
+          </g>
+
+          <path class="cc-flow" data-flow="ferm_feed" d="M610 260 H705" marker-end="url(#ccarr)"/>
+          <g class="cc-hit" data-hit="stream-ferm" data-title="Pretreated stream to fermentation"
+             data-vars="ferm_feed">
+            <rect class="cc-hit-pad" x="560" y="150" width="200" height="50" rx="7"/>
+            <text class="cc-stream-name" x="568" y="170">To fermentation</text>
+            <text class="cc-stream-label" id="fs_ferm" x="568" y="194">—</text>
+          </g>
+
+          <path class="cc-flow" data-flow="pha" d="M885 260 H980" marker-end="url(#ccarr)"/>
+          <g class="cc-hit" data-hit="stream-pha" data-title="PHA copolymer" data-vars="pha">
+            <rect class="cc-hit-pad" x="840" y="150" width="185" height="50" rx="7"/>
+            <text class="cc-stream-name" x="848" y="170">PHA copolymer</text>
+            <text class="cc-stream-label" id="fs_pha" x="848" y="194">—</text>
+          </g>
+
+          <path class="cc-flow" data-flow="biofiller" d="M290 230 V96 H1070 V230" marker-end="url(#ccarr)"/>
+          <g class="cc-hit" data-hit="stream-biof" data-title="Biofiller to compounding"
+             data-vars="biofiller">
+            <rect class="cc-hit-pad" x="620" y="40" width="180" height="48" rx="7"/>
+            <text class="cc-stream-name" x="628" y="60">Biofiller</text>
+            <text class="cc-stream-label" id="fs_biof" x="628" y="82">—</text>
+          </g>
+
+          <g class="cc-hit" data-hit="stream-prod" data-title="PHA biocomposite product"
+             data-vars="biocomposite">
+            <rect class="cc-hit-pad" x="1170" y="222" width="125" height="76" rx="7"/>
+            <path class="cc-flow" data-flow="biocomposite" d="M1160 260 H1284" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="1232" y="242" text-anchor="middle">Biocomposite</text>
+            <text class="cc-stream-label" id="fs_prod" x="1232" y="284" text-anchor="middle">—</text>
+          </g>
+
+          <path class="cc-flow" data-flow="water_out" d="M200 290 V400" marker-end="url(#ccarr)"/>
+          <g class="cc-hit" data-hit="stream-water" data-title="Water removed on drying"
+             data-vars="water_out">
+            <rect class="cc-hit-pad" x="140" y="402" width="200" height="50" rx="7"/>
+            <text class="cc-stream-name" x="148" y="422">Water removed</text>
+            <text class="cc-stream-label" id="fs_water" x="148" y="446">—</text>
+          </g>
+
+          <path class="cc-flow" data-flow="unaccounted" d="M520 290 V400" marker-end="url(#ccarr)"/>
+          <g class="cc-hit" data-hit="stream-loss" data-title="Unaccounted solids — see the notice"
+             data-vars="unaccounted">
+            <rect class="cc-hit-pad" x="440" y="402" width="215" height="50" rx="7"/>
+            <text class="cc-stream-name" x="448" y="422">Unaccounted solids</text>
+            <text class="cc-stream-label" id="fs_loss" x="448" y="446">—</text>
+          </g>
+
+          <g class="cc-hit" data-hit="stream-chp" data-title="Residue to the boiler" data-vars="chp_feed">
+            <rect class="cc-hit-pad" x="690" y="340" width="190" height="50" rx="7"/>
+            <path class="cc-flow" data-flow="chp_feed" d="M800 290 V430 H980" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="698" y="360">Residue to CHP</text>
+            <text class="cc-stream-label" id="fs_chp" x="698" y="384">—</text>
+          </g>
+
+          <g class="cc-hit" data-hit="stream-elec" data-title="Electricity generated" data-vars="elec_gen">
+            <rect class="cc-hit-pad" x="1170" y="396" width="125" height="58" rx="7"/>
+            <path class="cc-flow" data-flow="elec_gen" d="M1160 430 H1284" marker-end="url(#ccarr)"/>
+            <text class="cc-stream-name" x="1232" y="416" text-anchor="middle">Electricity</text>
+            <text class="cc-stream-label" id="fs_elec" x="1232" y="444" text-anchor="middle">—</text>
+          </g>
+        </svg>
+        </div>
+        <div data-cc-tryit></div>
+        <div class="cc-sbs-panel cc-inspector-panel" data-cc-inspector></div>
+      </div>
+
+      <div class="cc-sbs-panel" data-cc-card></div>
+    </div>
+
+    <div>
+      <div class="cc-sbs-panel" data-cc-fields></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../../js/cc-model/units.js"></script>
+<script src="../../js/cc-model/engine.js"></script>
+<script src="../../js/cc-model/diagram.js"></script>
+<script src="../../js/cc-model/inspector.js"></script>
+<script src="../../js/cc-model/steps.js"></script>
+<script src="../models/pha.model.js"></script>
+<script>
+  new CCSteps({ root: document.getElementById('sbs'), model: CC_MODELS.pha });
+</script>
+<script>
+  // resources.html embeds this page; hide the chrome it already provides.
+  if (window.self !== window.top) document.body.classList.add('in-frame');
+</script>
+</body>
+</html>
