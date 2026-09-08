@@ -115,10 +115,20 @@ test.describe('Expert Mode — laterite', () => {
   });
 
   test('the practice questions sit under Goal & scope', async ({ page }) => {
+    const block = page.locator('.cc-questions');
+    await expect(block).toHaveCount(1);
+
+    // The block is collapsed as a whole: the opening step must fit one screen,
+    // and six open prompts is exactly the clutter Guided Mode set out to remove.
+    await expect(block).not.toHaveAttribute('open', /.*/);
     const qs = page.locator('.cc-question');
     expect(await qs.count()).toBeGreaterThanOrEqual(5);
+    await expect(qs.first()).toBeHidden();
 
-    // Collapsed by default, so the list reads as a menu rather than an essay.
+    await block.locator('.cc-questions-summary').click();
+    await expect(qs.first()).toBeVisible();
+
+    // Each question is then collapsed in turn, so the list reads as a menu.
     await expect(qs.first().locator('.cc-question-how')).toBeHidden();
     await qs.first().locator('summary').click();
     await expect(qs.first().locator('.cc-question-how')).toBeVisible();

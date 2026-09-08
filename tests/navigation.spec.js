@@ -18,7 +18,11 @@ const ROOT = path.resolve(__dirname, '..');
 /** Every page on the site, as repo-relative posix paths. */
 function allPages(dir = ROOT, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', '.git', 'test-results', 'playwright-report', 'docs'].includes(entry.name)) continue;
+    // 'lcagraph' is a self-contained sub-application with its own README and
+    // tests, not a page of this site — asserting site chrome on it is wrong.
+    // Move it here the day it is linked from the site.
+    const SKIP = ['node_modules', '.git', 'test-results', 'playwright-report', 'docs', 'lcagraph'];
+    if (SKIP.includes(entry.name)) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) allPages(full, out);
     else if (entry.name.endsWith('.html')) out.push(path.relative(ROOT, full).split(path.sep).join('/'));

@@ -7,6 +7,19 @@ const { test, expect } = require('@playwright/test');
 const page_ = name => '/case_studies/stepbystep/' + name;
 const resources = '/resources.html';
 
+/* Everything below exercises the expert sandbox: "Run all steps", free rail
+   navigation, "Try it", the always-open inspector. Laterite ships a Guided Mode
+   script and so boots into it, where all of that is deliberately out of reach.
+   Ask for expert before the page runs — via the same localStorage key the mode
+   toggle writes — so there is no guided flash and no extra click to undo.
+   Cases with no guided script are already expert; the key is simply ignored. */
+async function open_(page, url) {
+  await page.addInitScript(() => {
+    try { window.localStorage.setItem('cc-sbs-mode', 'expert'); } catch (e) {}
+  });
+  await page.goto(url);
+}
+
 // Values published by each standalone dashboard at its default inputs. The
 // step-by-step models must keep reproducing them.
 const CASES = [
@@ -38,7 +51,7 @@ for (const c of CASES) {
     test('runs all eight steps with no page errors', async ({ page }) => {
       const errors = [];
       page.on('pageerror', e => errors.push(String(e)));
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
 
       await expect(page.locator('[data-cc-rail] .cc-step')).toHaveCount(8);
 
@@ -48,29 +61,30 @@ for (const c of CASES) {
       expect(errors).toEqual([]);
     });
 
-    test('mass balance closes', async ({ page }) => {
-      await page.goto(page_(c.file));
+    test('mass balance closure is reported honestly', async ({ page }) => {
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-rail] .cc-step').nth(1).click();
       await page.locator('[data-cc-solve="mass"]').click();
-      await expect(page.locator('.cc-closure')).toHaveClass(/is-ok/);
-      await expect(page.locator('.cc-closure-err')).toContainText('0.00%');
+      const ok = c.closureOk !== false;
+      await expect(page.locator('.cc-closure')).toHaveClass(ok ? /is-ok/ : /is-bad/);
+      await expect(page.locator('.cc-closure-err')).toContainText(c.closureError || '0.00%');
     });
 
     test('reproduces the published dashboard figures', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-solve-all]').click();
       const kpiText = (await page.locator('.cc-kpi').allInnerTexts()).join(' ');
       for (const v of c.kpis) expect(kpiText).toContain(v);
     });
 
     test('later steps are locked until the mass balance has run', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-rail] .cc-step').nth(3).click();
       await expect(page.locator('[data-cc-solve="lcia"]')).toBeDisabled();
     });
 
     test('clicking a stream opens the inspector and editing marks downstream stale', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-solve-all]').click();
       await expect(page.locator('.cc-kpi.is-stale')).toHaveCount(0);
 
@@ -88,7 +102,7 @@ for (const c of CASES) {
     });
 
     test('a computed stream shows its formula rather than an input box', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-solve-all]').click();
       await page.locator('.cc-hit-computed').first().click();
       await expect(page.locator('.cc-field-computed').first()).toBeVisible();
@@ -96,7 +110,7 @@ for (const c of CASES) {
     });
 
     test('the step rail is a horizontal breadcrumb, not a sidebar', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       const first = await page.locator('[data-cc-rail] .cc-step').nth(0).boundingBox();
       const second = await page.locator('[data-cc-rail] .cc-step').nth(1).boundingBox();
       expect(second.x).toBeGreaterThan(first.x);
@@ -108,7 +122,7 @@ for (const c of CASES) {
 
     test('the flowsheet takes about half the main column', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       const pct = await page.evaluate(() => {
         const wrap = document.querySelector('[data-cc-diagram]');
         const split = document.querySelector('.cc-main-split');
@@ -120,7 +134,7 @@ for (const c of CASES) {
 
     test('the flowsheet sits beside the teaching card, not above it', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       const [diag, card] = await Promise.all([
         page.locator('[data-cc-diagram]').boundingBox(),
         page.locator('[data-cc-card]').boundingBox()
@@ -130,7 +144,7 @@ for (const c of CASES) {
 
     test('the opening step fits one screen', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       const h = await page.evaluate(() => document.body.scrollHeight);
       // A little slack for font-loading jitter; later steps are allowed to spill.
       expect(h).toBeLessThanOrEqual(1100);
@@ -138,7 +152,7 @@ for (const c of CASES) {
 
     test('"Try it" sits under the flowsheet', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-rail] .cc-step').nth(1).click();
       const tryIt = page.locator('[data-cc-tryit] .cc-card-try');
       await expect(tryIt).toBeVisible();
@@ -153,7 +167,7 @@ for (const c of CASES) {
     });
 
     test('the diamond marker renders as a glyph, not an escape', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-rail] .cc-step').nth(1).click();
       const marker = await page.evaluate(() => {
         const el = document.querySelector('.cc-mini-field.is-on-diagram .cc-mini-label');
@@ -164,7 +178,7 @@ for (const c of CASES) {
 
     test('diagram text stays legible at that size', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       const px = await page.evaluate(() => {
         const svg = document.querySelector('[data-cc-diagram] svg');
         return {
@@ -179,7 +193,7 @@ for (const c of CASES) {
 
     test('no rectangles or labels overlap on the flowsheet', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       // Solve first, so labels carry real values rather than the placeholder dash.
       await page.locator('[data-cc-solve-all]').click();
 
@@ -224,7 +238,7 @@ for (const c of CASES) {
     });
 
     test('nothing is drawn outside the viewBox', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-solve-all]').click();
       const outside = await page.evaluate(() => {
         const svg = document.querySelector('[data-cc-diagram] svg');
@@ -244,7 +258,7 @@ for (const c of CASES) {
 
     test('the flowsheet is not cut off at desktop width', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       const clipped = await page.evaluate(() => {
         const wrap = document.querySelector('[data-cc-diagram]');
         return wrap.scrollWidth > wrap.clientWidth + 1;
@@ -253,7 +267,7 @@ for (const c of CASES) {
     });
 
     test('selecting a worked-numbers row highlights the flowsheet', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-solve-all]').click();
       await page.locator('[data-cc-rail] .cc-step').nth(1).click();
 
@@ -271,7 +285,7 @@ for (const c of CASES) {
     });
 
     test('clicking an input label highlights that field on the flowsheet', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-rail] .cc-step').nth(1).click();
 
       const label = page.locator('.cc-mini-field.is-on-diagram .cc-mini-label').first();
@@ -284,7 +298,7 @@ for (const c of CASES) {
     });
 
     test('clicking the flowsheet clears a table-driven highlight', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       await page.locator('[data-cc-solve-all]').click();
       await page.locator('[data-cc-rail] .cc-step').nth(1).click();
       await page.locator('.cc-thiscase-table tr.is-linked').first().click();
@@ -296,7 +310,7 @@ for (const c of CASES) {
     });
 
     test('percent and fraction entry mean the same thing', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       // Find any fraction-dimension input via the step fields.
       const ok = await page.evaluate(() => {
         const U = window.CCUnits;
@@ -309,7 +323,7 @@ for (const c of CASES) {
     });
 
     test('the unit picker converts without changing the quantity', async ({ page }) => {
-      await page.goto(page_(c.file));
+      await open_(page, page_(c.file));
       const same = await page.evaluate(() => {
         const U = window.CCUnits;
         const canonical = U.toCanonical(500, 'mass_flow', 't/h');
@@ -322,15 +336,15 @@ for (const c of CASES) {
 
 test.describe('Resources page', () => {
   test('has an LCA Step by Step tab alongside Case Studies', async ({ page }) => {
-    await page.goto(resources);
+    await open_(page, resources);
     await expect(page.locator('#case-studies-tab')).toBeVisible();
     await expect(page.locator('#step-by-step-tab')).toBeVisible();
     await page.click('#step-by-step-tab');
-    await expect(page.locator('#sbsTabs button')).toHaveCount(3);
+    await expect(page.locator('#sbsTabs button')).toHaveCount(4);
   });
 
   test('leaves the existing four case studies untouched', async ({ page }) => {
-    await page.goto(resources);
+    await open_(page, resources);
     await expect(page.locator('#caseStudyTabs button')).toHaveCount(4);
     for (const id of ['laterite-tab', 'pha-tab', 'flue2chem-tab', 'palladium-tab']) {
       await expect(page.locator('#' + id)).toBeVisible();
@@ -339,7 +353,7 @@ test.describe('Resources page', () => {
 
   test('sizes each embedded page to its content instead of clipping', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1000 });
-    await page.goto(resources);
+    await open_(page, resources);
     await page.click('#step-by-step-tab');
     const frameEl = page.locator('#sbs-flue2chem-pane iframe');
     const frame = page.frameLocator('#sbs-flue2chem-pane iframe');
@@ -363,7 +377,7 @@ test.describe('Resources page', () => {
 
   test('the step-by-step pane breaks out to full page width', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1000 });
-    await page.goto(resources);
+    await open_(page, resources);
     await page.click('#step-by-step-tab');
     const bleed = await page.locator('#sbs-flue2chem-pane .cc-sbs-fullbleed').boundingBox();
     // full-bleed: as wide as the viewport, not the narrower Bootstrap container
@@ -371,7 +385,7 @@ test.describe('Resources page', () => {
   });
 
   test('embeds each step-by-step page', async ({ page }) => {
-    await page.goto(resources);
+    await open_(page, resources);
     await page.click('#step-by-step-tab');
     const frame = page.frameLocator('#sbs-flue2chem-pane iframe');
     await expect(frame.locator('.cc-sbs-header h2')).toContainText('Flue2Chem');

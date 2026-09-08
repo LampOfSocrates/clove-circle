@@ -338,8 +338,15 @@
   CCSteps.prototype.renderQuestions = function () {
     var qs = this.model.questions || [];
     if (!qs.length) return null;
-    var wrap = el('div', 'cc-questions');
-    wrap.appendChild(el('span', 'cc-slot-label', 'Questions to answer with this model'));
+
+    /* Collapsed as a block, not just per question. Six open prompts pushed the
+       opening step off one screen, which is the clutter this work set out to
+       remove — and the first screen's job is the scope, not the exercises. */
+    var wrap = el('details', 'cc-questions');
+    var sum = el('summary', 'cc-questions-summary');
+    sum.appendChild(el('span', 'cc-slot-label', 'Questions to answer with this model'));
+    sum.appendChild(el('span', 'cc-questions-count', String(qs.length)));
+    wrap.appendChild(sum);
     wrap.appendChild(el('p', 'cc-questions-lead',
       'Each is answerable by changing one input and re-running the steps it feeds.'));
     var list = el('ol', 'cc-question-list');

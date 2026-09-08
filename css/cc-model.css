@@ -572,3 +572,17 @@ body.is-embedded .cc-sbs-headrow { justify-content: flex-end; }
 /* The task text already says what to do; the stale/locked note beside the
    button just contradicts it on a step that has simply never been run. */
 .cc-sbs[data-mode="guided"] .cc-card-lock { display: none; }
+
+/* The questions block is collapsed as a whole: the opening step has to fit one
+   screen, and its job is the scope, not the exercise list. */
+.cc-questions-summary {
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  list-style: revert;
+}
+.cc-questions-summary .cc-slot-label { margin: 0; }
+.cc-questions-count {
+  background: var(--sbs-green-pale); color: var(--sbs-green);
+  border-radius: 999px; padding: 1px 8px;
+  font: 700 11px/1.6 Inter, system-ui, sans-serif;
+}
+.cc-questions:not([open]) .cc-questions-lead { display: none; }
