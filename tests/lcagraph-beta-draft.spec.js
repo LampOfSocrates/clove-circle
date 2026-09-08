@@ -9,7 +9,7 @@ const WORKER = 'https://lcagraph-beta.lampofsocrates.workers.dev';
 // 1x1 white PNG
 const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=', 'base64');
 
-test('draft loop: bad draft is sent back for repair, good draft opens in LCA Graph', async ({ page, context }) => {
+test('draft loop: bad draft is sent back for repair, good draft opens in LCA Model', async ({ page, context }) => {
   const calls = [];
   await page.route(WORKER + '/**', async (route) => {
     const req = route.request();

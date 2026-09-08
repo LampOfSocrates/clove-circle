@@ -1,5 +1,5 @@
 // @ts-check
-/* Smoke test for the LCA Graph app (lcagraph/app). Runs against every model in
+/* Smoke test for the LCA Model app (lcagraph/app). Runs against every model in
    lcagraph/models over the http server the config starts, because the app fetches its
    model JSON. Engine correctness is covered by `node --test` in lcagraph/tests. */
 const { test, expect } = require('@playwright/test');
@@ -10,7 +10,7 @@ const MODELS = fs.readdirSync(path.join(__dirname, '..', 'lcagraph', 'models'))
   .filter((f) => f.endsWith('.pml.json')).map((f) => f.replace('.pml.json', ''));
 
 for (const id of MODELS) {
-  test.describe('LCA Graph — ' + id, () => {
+  test.describe('LCA Model — ' + id, () => {
     test('loads, draws the flowsheet, runs all steps, inspects, runs a tornado', async ({ page }) => {
       const errors = [];
       page.on('pageerror', (e) => errors.push(String(e)));
@@ -59,7 +59,7 @@ for (const id of MODELS) {
   });
 }
 
-test('resources page has an LCA Graph tab that embeds the app', async ({ page }) => {
+test('resources page has an LCA Model tab that embeds the app', async ({ page }) => {
   await page.goto('/resources.html#lca-graph');
   const tab = page.locator('#lca-graph-tab');
   await expect(tab).toBeVisible();

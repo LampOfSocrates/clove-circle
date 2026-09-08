@@ -58,11 +58,12 @@
         <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle cc-nav-calc active" aria-current="page" href="#" id="calcMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-calculator"></i>Try our Process Calculators</a>
+          <a class="nav-link dropdown-toggle cc-nav-calcs active" aria-current="page" href="#" id="calcMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">Try our Process Calculators</a>
           <ul class="dropdown-menu cc-dropdown" aria-labelledby="calcMenu">
-            <li><a class="dropdown-item" href="resources.html"><i class="fa-solid fa-file-lines me-2"></i>Case Studies &amp; Step by Step</a></li>
-            <li><a class="dropdown-item" href="resources.html#lca-graph"><i class="fa-solid fa-diagram-project me-2"></i>LCA Graph</a></li>
-            <li><a class="dropdown-item" href="lcagraph/app/beta.html"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>LCA Graph (Beta) <span class="badge rounded-pill text-bg-warning ms-1" style="font-size:.62em;vertical-align:middle">beta</span></a></li>
+            <li><a class="dropdown-item" href="resources.html#case-studies"><i class="fa-solid fa-file-lines me-2"></i>Case Studies</a></li>
+            <li><a class="dropdown-item" href="resources.html#step-by-step"><i class="fa-solid fa-list-ol me-2"></i>LCA Step by Step</a></li>
+            <li><a class="dropdown-item" href="resources.html#lca-graph"><i class="fa-solid fa-diagram-project me-2"></i>LCA Model</a></li>
+            <li><a class="dropdown-item" href="lcagraph/app/beta.html"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>LCA Model (Beta) <span class="badge rounded-pill text-bg-warning ms-1" style="font-size:.62em;vertical-align:middle">beta</span></a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -95,7 +96,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="lca-graph-tab" data-bs-toggle="pill" data-bs-target="#lca-graph" type="button" role="tab" aria-controls="lca-graph" aria-selected="false">
-          <i class="fa-solid fa-diagram-project me-2"></i>LCA Graph
+          <i class="fa-solid fa-diagram-project me-2"></i>LCA Model
         </button>
       </li>
     </ul>
@@ -346,11 +347,11 @@
         </div>
       </div>
 
-      <!-- LCA Graph -->
+      <!-- LCA Model -->
       <div class="tab-pane fade" id="lca-graph" role="tabpanel" aria-labelledby="lca-graph-tab">
 
         <p class="cc-sbs-intro">A different way in: the same four case studies, but described as a
-           process model rather than as code. LCA Graph compiles the flowsheet, its parameters
+           process model rather than as code. LCA Model compiles the flowsheet, its parameters
            and its equations into a calculation graph, draws the flowsheet from it, and walks
            the eight steps on any model you load. Pick a calculation target to see exactly which
            inputs it needs, then run tornado, sweep, scenario and Monte Carlo sensitivity on it.
@@ -360,7 +361,7 @@
           <div class="cc-card cc-case-study-shell">
             <div class="cc-case-study-head">
               <div>
-                <h3 class="cc-case-study-title">LCA Graph &mdash; calculate from a process model</h3>
+                <h3 class="cc-case-study-title">LCA Model &mdash; calculate from a process model</h3>
                 <p class="cc-case-study-copy mb-0">Choose a model inside the tool, or upload your own <code>.pml.json</code>. Four models ship: Flue2Chem, Laterite, Palladium and PHA, each verified against its standalone dashboard.</p>
               </div>
               <a class="btn cc-btn-outline cc-btn-embed" href="lcagraph/app/index.html?model=flue2chem" target="_blank" rel="noopener">
@@ -369,7 +370,7 @@
             </div>
             <iframe
               class="cc-case-study-frame"
-              title="LCA Graph: step-by-step LCA and TEA from a process model"
+              title="LCA Model: step-by-step LCA and TEA from a process model"
               src="lcagraph/app/index.html?model=flue2chem"
               loading="lazy"
               style="background:#f4f8f5;min-height:1800px;"></iframe>
@@ -451,11 +452,16 @@
 
 <!-- Restore active tab from URL hash -->
 <script>
-  const hash = window.location.hash;
-  if (hash) {
+  // Runs on load and again whenever the hash changes, so the Process Calculators menu
+  // switches tabs even when the visitor is already on this page.
+  function showTabForHash() {
+    const hash = window.location.hash;
+    if (!hash) return;
     const tab = document.querySelector('[data-bs-target="' + hash + '"]');
     if (tab) bootstrap.Tab.getOrCreateInstance(tab).show();
   }
+  showTabForHash();
+  window.addEventListener('hashchange', showTabForHash);
   document.querySelectorAll('[data-bs-toggle="pill"]').forEach(btn => {
     btn.addEventListener('shown.bs.tab', () => {
       history.replaceState(null, '', btn.getAttribute('data-bs-target'));

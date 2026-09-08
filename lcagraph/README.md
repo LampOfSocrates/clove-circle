@@ -1,4 +1,4 @@
-# LCA Graph
+# LCA Model (code name: lcagraph)
 
 A life cycle assessment and techno-economic calculation engine that works from a
 declarative process model instead of hand-written code.

@@ -1,4 +1,4 @@
-/* LCA Graph - the generic step-by-step app.
+/* LCA Model - the generic step-by-step app.
 
    Loads a PML document (built-in by name, or uploaded), compiles it into a calc graph,
    draws the flowsheet from the topology, and walks the eight steps: goal & scope, the
@@ -135,7 +135,7 @@
     this.sensResults = {};
     this.$('[data-lg-title]').textContent = doc.meta.title || doc.meta.id;
     this.$('[data-lg-subtitle]').textContent = doc.meta.subtitle || '';
-    document.title = (doc.meta.title || 'LCA Graph') + ' | LCA Graph';
+    document.title = (doc.meta.title || 'LCA Model') + ' | LCA Model';
     this.status(Object.keys(this.graph.nodes).length + ' nodes in the calc graph · ' +
       (Object.keys(this.graph.units).length - 1) + ' units · ' + Object.keys(this.graph.streams).length + ' streams' +
       (this.graph.tears.length ? ' · recycle solved by iteration: ' + this.graph.tears.join(', ') : ''));

@@ -1,5 +1,5 @@
 // @ts-check
-/* Gate page for the LCA Graph beta. The access check happens in the Cloudflare Worker, so
+/* Gate page for the LCA Model beta. The access check happens in the Cloudflare Worker, so
    these tests need `wrangler dev` running on 127.0.0.1:8787 with a .dev.vars master code
    of local-master-code-123456; without it the Worker-backed tests are skipped. */
 const { test, expect } = require('@playwright/test');
@@ -15,13 +15,15 @@ test('every page links to the beta from the Process Calculators menu', async ({ 
   await page.goto('/index.html');
   const link = page.locator('#calcMenu + .dropdown-menu a.dropdown-item[href="lcagraph/app/beta.html"]');
   await expect(link).toHaveCount(1);
-  await expect(link).toContainText('LCA Graph (Beta)');
+  await expect(link).toContainText('LCA Model (Beta)');
   await expect(page.locator('#calcMenu + .dropdown-menu a.dropdown-item[href="resources.html#lca-graph"]')).toHaveCount(1);
+  await expect(page.locator('#calcMenu + .dropdown-menu a.dropdown-item')).toHaveCount(4);
+  await expect(page.locator('#calcMenu')).not.toHaveClass(/cc-nav-calc\b/);
 });
 
 test('gate page explains the beta and hides the tool', async ({ page }) => {
   await page.goto('/lcagraph/app/beta.html');
-  await expect(page.locator('.lg-gate h1')).toContainText('LCA Graph Beta');
+  await expect(page.locator('.lg-gate h1')).toContainText('LCA Model Beta');
   await expect(page.locator('nav.cc-navbar #calcMenu')).toBeVisible();
   await expect(page.locator('[data-gate]')).toContainText('third-party model provider');
   await expect(page.locator('[data-app]')).toBeHidden();
