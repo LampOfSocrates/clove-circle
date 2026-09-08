@@ -80,36 +80,13 @@
   </div>
 </nav>
 
-<!-- ===== RESOURCES TAB BAR ===== -->
-<div class="cc-resources-bar">
-  <div class="container">
-    <ul class="nav nav-pills cc-tab-nav justify-content-center" id="resourcesTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="case-studies-tab" data-bs-toggle="pill" data-bs-target="#case-studies" type="button" role="tab" aria-controls="case-studies" aria-selected="true">
-          <i class="fa-solid fa-file-lines me-2"></i>Case Studies
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="step-by-step-tab" data-bs-toggle="pill" data-bs-target="#step-by-step" type="button" role="tab" aria-controls="step-by-step" aria-selected="false">
-          <i class="fa-solid fa-list-ol me-2"></i>LCA Step by Step
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="lca-graph-tab" data-bs-toggle="pill" data-bs-target="#lca-graph" type="button" role="tab" aria-controls="lca-graph" aria-selected="false">
-          <i class="fa-solid fa-diagram-project me-2"></i>LCA Model
-        </button>
-      </li>
-    </ul>
-  </div>
-</div>
-
 <!-- ===== RESOURCES CONTENT ===== -->
 <section class="cc-section cc-section-light" style="padding-top: 32px;">
   <div class="container">
     <div class="tab-content cc-tab-content" id="resourcesTabContent">
 
       <!-- Case Studies -->
-      <div class="tab-pane fade show active" id="case-studies" role="tabpanel" aria-labelledby="case-studies-tab">
+      <div class="tab-pane fade show active" id="case-studies" role="region" aria-label="Case studies">
 
         <!-- Case study sub-tabs -->
         <ul class="nav nav-pills cc-tab-nav cc-case-study-tabs mb-4" id="caseStudyTabs" role="tablist">
@@ -224,7 +201,7 @@
       </div>
 
       <!-- LCA Step by Step -->
-      <div class="tab-pane fade" id="step-by-step" role="tabpanel" aria-labelledby="step-by-step-tab">
+      <div class="tab-pane fade" id="step-by-step" role="region" aria-label="LCA step by step">
 
         <p class="cc-sbs-intro">Learn the method, not just the answer &mdash; the same eight steps
            on every case study, the four ISO 14040 phases with the techno-economic sequence
@@ -348,7 +325,7 @@
       </div>
 
       <!-- LCA Model -->
-      <div class="tab-pane fade" id="lca-graph" role="tabpanel" aria-labelledby="lca-graph-tab">
+      <div class="tab-pane fade" id="lca-graph" role="region" aria-label="LCA Model">
 
         <p class="cc-sbs-intro">A different way in: the same four case studies, but described as a
            process model rather than as code. LCA Model compiles the flowsheet, its parameters
@@ -450,23 +427,24 @@
   });
 </script>
 
-<!-- Restore active tab from URL hash -->
+<!-- The section shown is chosen by the URL hash (from the Process Calculators menu):
+     #case-studies (default), #step-by-step, #lca-graph. -->
 <script>
-  // Runs on load and again whenever the hash changes, so the Process Calculators menu
-  // switches tabs even when the visitor is already on this page.
-  function showTabForHash() {
-    const hash = window.location.hash;
-    if (!hash) return;
-    const tab = document.querySelector('[data-bs-target="' + hash + '"]');
-    if (tab) bootstrap.Tab.getOrCreateInstance(tab).show();
-  }
-  showTabForHash();
-  window.addEventListener('hashchange', showTabForHash);
-  document.querySelectorAll('[data-bs-toggle="pill"]').forEach(btn => {
-    btn.addEventListener('shown.bs.tab', () => {
-      history.replaceState(null, '', btn.getAttribute('data-bs-target'));
-    });
-  });
+  (function () {
+    var panes = ['case-studies', 'step-by-step', 'lca-graph'];
+    function showPane() {
+      var id = (window.location.hash || '#case-studies').slice(1);
+      if (panes.indexOf(id) === -1) id = 'case-studies';
+      panes.forEach(function (p) {
+        var el = document.getElementById(p);
+        if (!el) return;
+        el.classList.toggle('show', p === id);
+        el.classList.toggle('active', p === id);
+      });
+    }
+    showPane();
+    window.addEventListener('hashchange', showPane);
+  })();
 </script>
 </body>
 </html>

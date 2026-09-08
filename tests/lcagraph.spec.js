@@ -59,11 +59,10 @@ for (const id of MODELS) {
   });
 }
 
-test('resources page has an LCA Model tab that embeds the app', async ({ page }) => {
+test('resources page shows the LCA Model section for #lca-graph and embeds the app', async ({ page }) => {
   await page.goto('/resources.html#lca-graph');
-  const tab = page.locator('#lca-graph-tab');
-  await expect(tab).toBeVisible();
-  await tab.click();
+  await expect(page.locator('#lca-graph')).toHaveClass(/active/);
+  await expect(page.locator('#case-studies')).not.toHaveClass(/active/);
   const frame = page.locator('#lca-graph iframe');
   await expect(frame).toBeVisible();
   await expect(frame).toHaveAttribute('src', /lcagraph\/app\/index\.html/);

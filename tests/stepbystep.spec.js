@@ -346,11 +346,19 @@ for (const c of CASES) {
 }
 
 test.describe('Resources page', () => {
-  test('has an LCA Step by Step tab alongside Case Studies', async ({ page }) => {
+  // The page has no tab strip of its own any more; the Process Calculators menu sets the
+  // URL hash and the page shows the matching section.
+  const showStepByStep = async (page) => {
+    await page.evaluate(() => { window.location.hash = '#step-by-step'; });
+    await expect(page.locator('#step-by-step')).toHaveClass(/active/);
+  };
+
+  test('shows the LCA Step by Step section for #step-by-step', async ({ page }) => {
     await open_(page, resources);
-    await expect(page.locator('#case-studies-tab')).toBeVisible();
-    await expect(page.locator('#step-by-step-tab')).toBeVisible();
-    await page.click('#step-by-step-tab');
+    await expect(page.locator('#case-studies')).toHaveClass(/active/);
+    await expect(page.locator('#calcMenu + .dropdown-menu a[href="resources.html#step-by-step"]')).toHaveCount(1);
+    await showStepByStep(page);
+    await expect(page.locator('#case-studies')).not.toHaveClass(/active/);
     await expect(page.locator('#sbsTabs button')).toHaveCount(4);
   });
 
@@ -365,7 +373,7 @@ test.describe('Resources page', () => {
   test('sizes each embedded page to its content instead of clipping', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1000 });
     await open_(page, resources);
-    await page.click('#step-by-step-tab');
+    await showStepByStep(page);
     const frameEl = page.locator('#sbs-flue2chem-pane iframe');
     const frame = page.frameLocator('#sbs-flue2chem-pane iframe');
 
@@ -389,7 +397,7 @@ test.describe('Resources page', () => {
   test('the step-by-step pane breaks out to full page width', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1000 });
     await open_(page, resources);
-    await page.click('#step-by-step-tab');
+    await showStepByStep(page);
     const bleed = await page.locator('#sbs-flue2chem-pane .cc-sbs-fullbleed').boundingBox();
     // full-bleed: as wide as the viewport, not the narrower Bootstrap container
     expect(bleed.width).toBeGreaterThan(1500);
@@ -397,7 +405,7 @@ test.describe('Resources page', () => {
 
   test('embeds each step-by-step page', async ({ page }) => {
     await open_(page, resources);
-    await page.click('#step-by-step-tab');
+    await showStepByStep(page);
     const frame = page.frameLocator('#sbs-flue2chem-pane iframe');
     await expect(frame.locator('.cc-sbs-header h2')).toContainText('Flue2Chem');
   });
