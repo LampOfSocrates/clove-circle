@@ -21,11 +21,11 @@
     energy_rate:      { canonical: 'MJ/h',       units: { 'MJ/h': 1, 'GJ/h': 1000, 'kWh/h': 3.6, 'MWh/h': 3600, 'kW': 3.6, 'MW': 3600 } },
     energy_intensity: { canonical: 'GJ/t',       units: { 'GJ/t': 1, 'kWh/t': 0.0036, 'MJ/kg': 1, 'MWh/t': 3.6 } },
     power:            { canonical: 'MW',         units: { 'MW': 1, 'kW': 0.001, 'MWe': 1, 'GW': 1000 } },
-    price_mass:       { canonical: '$/t',        units: { '$/t': 1, '$/kg': 1000, '$/g': 1e6, '£/t': 1, '£/kg': 1000, '$/dry t': 1 } },
+    price_mass:       { canonical: '$/t',        units: { '$/t': 1, '$/kg': 1000, '$/g': 1e6, '£/t': 1, '£/kg': 1000, 'GBP/t': 1, 'GBP/kg': 1000, '$/dry t': 1 } },
     price_energy:     { canonical: '$/GJ',       units: { '$/GJ': 1, '$/MWh': 1 / 3.6, '$/kWh': 1000 / 3.6, '$/MJ': 1000, '£/kWh': 1000 / 3.6, '$M/TJ': 1000 } },
     price_volume:     { canonical: '$/m³',       units: { '$/m³': 1, '$/m3': 1, '$/L': 1000 } },
-    currency:         { canonical: '$M',         units: { '$M': 1, '$': 1e-6, '$k': 1e-3, '£M': 1, 'M$': 1, 'MM$': 1 } },
-    currency_year:    { canonical: '$M/y',       units: { '$M/y': 1, '$/y': 1e-6, '$k/y': 1e-3, '£M/y': 1 } },
+    currency:         { canonical: '$M',         units: { '$M': 1, '$': 1e-6, '$k': 1e-3, '£M': 1, 'M$': 1, 'MM$': 1, 'MGBP': 1, 'GBP': 1e-6, '£': 1e-6, 'kGBP': 1e-3 } },
+    currency_year:    { canonical: '$M/y',       units: { '$M/y': 1, '$/y': 1e-6, '$k/y': 1e-3, '£M/y': 1, 'MGBP/y': 1, 'GBP/y': 1e-6 } },
     fraction:         { canonical: 'fraction',   units: { 'fraction': 1, '%': 0.01, 'w/w': 1 } },
     gwp_intensity:    { canonical: 'kg CO2e/kg', units: { 'kg CO2e/kg': 1, 't CO2e/t': 1, 'g CO2e/kg': 0.001, 'kg CO₂e/kg': 1 } },
     gwp_year:         { canonical: 'kt CO2e/y',  units: { 'kt CO2e/y': 1, 't CO2e/y': 0.001, 'kg CO2e/y': 1e-6 } },
@@ -44,7 +44,7 @@
     length:           { canonical: 'mm',         units: { 'mm': 1, 'm': 1000, 'um': 0.001, 'µm': 0.001 } },
     work_index:       { canonical: 'kWh/t',      units: { 'kWh/t': 1 } },
     jobs:             { canonical: 'jobs/kt',    units: { 'jobs/kt': 1, 'jobs/ktpa': 1 } },
-    salary:           { canonical: '$/y',        units: { '$/y': 1, '$k/y': 1000, '£/y': 1 } },
+    salary:           { canonical: '$/y',        units: { '$/y': 1, '$k/y': 1000, '£/y': 1, 'GBP/y': 1 } },
     count:            { canonical: '',           units: { '': 1 } }
   };
 

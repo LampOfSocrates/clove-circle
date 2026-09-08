@@ -11,16 +11,18 @@ async function workerUp() {
   try { const r = await fetch(WORKER + '/'); return r.ok; } catch (e) { return false; }
 }
 
-test('every page links to the beta from the Resources menu', async ({ page }) => {
+test('every page links to the beta from the Process Calculators menu', async ({ page }) => {
   await page.goto('/index.html');
-  const link = page.locator('a.dropdown-item[href="lcagraph/app/beta.html"]');
+  const link = page.locator('#calcMenu + .dropdown-menu a.dropdown-item[href="lcagraph/app/beta.html"]');
   await expect(link).toHaveCount(1);
-  await expect(link).toContainText('LCA Graph Beta');
+  await expect(link).toContainText('LCA Graph (Beta)');
+  await expect(page.locator('#calcMenu + .dropdown-menu a.dropdown-item[href="resources.html#lca-graph"]')).toHaveCount(1);
 });
 
 test('gate page explains the beta and hides the tool', async ({ page }) => {
   await page.goto('/lcagraph/app/beta.html');
-  await expect(page.locator('h1')).toContainText('LCA Graph Beta');
+  await expect(page.locator('.lg-gate h1')).toContainText('LCA Graph Beta');
+  await expect(page.locator('nav.cc-navbar #calcMenu')).toBeVisible();
   await expect(page.locator('[data-gate]')).toContainText('third-party model provider');
   await expect(page.locator('[data-app]')).toBeHidden();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
@@ -38,6 +40,8 @@ test('wrong code is refused, right code opens the tool, leaving closes it', asyn
   await page.click('[data-submit]');
   await expect(page.locator('[data-app]')).toBeVisible();
   await expect(page.locator('[data-who]')).toContainText('master');
+  await expect(page.locator('[data-hub] a[href="index.html"]')).toBeVisible();
+  await expect(page.locator('[data-hub] a[href="#draft"]')).toBeVisible();
 
   // survives a reload through sessionStorage
   await page.reload();

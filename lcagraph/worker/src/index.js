@@ -134,7 +134,7 @@ async function callOpenRouter(messages, env, opts) {
   if (fallbacks.length) body.models = [body.model].concat(fallbacks.filter((m) => m !== body.model));
   const provider = { sort: 'price' };
   const maxP = Number(env.MAX_PRICE_PROMPT), maxC = Number(env.MAX_PRICE_COMPLETION);
-  if (maxP > 0 || maxC > 0) provider.max_price = { prompt: maxP > 0 ? maxP : undefined, completion: maxC > 0 ? maxC : undefined };
+  if (!(opts && opts.noCeiling) && (maxP > 0 || maxC > 0)) provider.max_price = { prompt: maxP > 0 ? maxP : undefined, completion: maxC > 0 ? maxC : undefined };
   body.provider = provider;
   if (opts && opts.json) body.response_format = { type: 'json_object' };
   const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -204,7 +204,7 @@ export default {
 
     if (request.method === 'GET' && url.pathname === '/') {
       return json({ ok: true, service: 'lcagraph-beta', kv: !!env.BETA, keyConfigured: !!env.OPENROUTER_API_KEY,
-        models: { chat: modelFor('chat', env), draft: modelFor('draft', env), repair: modelFor('repair', env), fallbacks: env.MODEL_FALLBACKS || '' },
+        models: { chat: modelFor('chat', env), draft: modelFor('draft', env), repair: modelFor('repair', env), escalate: env.MODEL_ESCALATE || null, escalateAfter: Number(env.ESCALATE_AFTER) || 3, fallbacks: env.MODEL_FALLBACKS || '' },
         maxPricePerMillion: { prompt: env.MAX_PRICE_PROMPT || null, completion: env.MAX_PRICE_COMPLETION || null },
         monthlyBudgetUsd: env.MONTHLY_BUDGET_USD || null }, 200, cors);
     }
@@ -252,8 +252,13 @@ export default {
       const size = description.length + String(body.data || '').length + JSON.stringify(body.fix || '').length;
       if (size > max) return json({ ok: false, error: 'The request is larger than ' + max + ' characters. Trim the data.' }, 413, cors);
       try {
-        const route = body.fix && body.fix.doc ? 'repair' : 'draft';
-        const out = await callOpenRouter(draftMessages(body), env, { model: modelFor(route, env), json: true, maxTokens: Number(env.DRAFT_MAX_TOKENS) || 12000 });
+        // Cheap model first; from ESCALATE_AFTER onwards a stronger model takes over the
+        // repair, since a cheap model that has failed twice rarely converges on its own.
+        const attempt = Number(body.attempt) || 1;
+        const escalateAfter = Number(env.ESCALATE_AFTER) || 3;
+        const escalate = !!env.MODEL_ESCALATE && attempt >= escalateAfter;
+        const route = escalate ? 'escalate' : (body.fix && body.fix.doc ? 'repair' : 'draft');
+        const out = await callOpenRouter(draftMessages(body), env, { model: modelFor(route, env), json: true, maxTokens: Number(env.DRAFT_MAX_TOKENS) || 12000, noCeiling: escalate });
         await bump(auth.code, env, out.cost);
         let doc;
         try { doc = extractJson(out.text); }

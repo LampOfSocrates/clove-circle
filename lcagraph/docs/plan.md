@@ -298,6 +298,11 @@ literals in expressions; solve nodes widen their bracket automatically. Live res
 Flue2Chem flowsheet image: compiling model in 2 rounds, about 130 s, topology read
 correctly from the picture; the numbers still need a human, as expected.
 
+Also done: cost controls in the Worker (per-route models, MODEL_ESCALATE from round 3,
+price ceiling, monthly budget, per-code spend in KV), GBP unit aliases, pre-lint for
+streams without from/to, null-IRR guidance, menu reorganisation (Process Calculators
+dropdown), beta gate with site chrome and a two-page hub.
+
 Next steps in order:
 1. Topology confirmation step: show the auto-drawn flowsheet from the first reply and let
    the user fix units/streams before the numeric draft. Editor for params/expressions.

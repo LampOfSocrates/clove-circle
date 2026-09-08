@@ -48,6 +48,9 @@ MISTAKES THAT GET DRAFTS REJECTED (avoid them)
 - An expression referring to an id that was never declared, or to a node in a later stage.
 - A solve node whose bracket [lo, hi] does not contain the root. Prefer a closed-form expression for MSP (annualised capital + opex - co-product credit, divided by production) and only use solve when there is no closed form; then give a generous bracket such as lo 0, hi 1e7 in the param's canonical unit.
 - Dividing by a quantity that can be zero at the defaults.
+- A stream without both "from" and "to" (use "env" for the surroundings), or a stream component not declared in "components".
+- Writing null, undefined or NaN in an expression. If IRR or payback come out null, the cash flows are wrong (units or signs), so fix the economics.
+- Currency: use $M, £M or MGBP for capital and annual money, $/t, £/t or GBP/t for prices, $/kWh, £/kWh or GBP/kWh for electricity. Pick one currency and keep it.
 - String or object literals inside an expression. There are none. Select per-row values with a numeric column and at(), never by comparing labels.
 - Declaring the same table column twice. A computed column is ONE derived entry with "table" and "column"; it creates the cell for every row. Never write one derived per row.
 - A param or derived with dim "count" must have unit "" (or omit unit). Put the human unit in "basis".

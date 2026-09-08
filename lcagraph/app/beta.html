@@ -8,10 +8,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="../../css/eco-theme.css" rel="stylesheet">
 <link href="app.css" rel="stylesheet">
 <style>
-  body { margin: 0; background: #f4f8f5; padding: 22px; }
-  .lg-gate { max-width: 760px; margin: 40px auto; }
+  body { margin: 0; background: #f4f8f5; }
+  .lg-gate { max-width: 760px; margin: 40px auto; padding: 0 16px 40px; }
   .lg-gate .lg-panel { padding: 26px 28px; }
   .lg-gate h1 { font-size: 30px; margin: 6px 0 10px; }
   .lg-gate h2 { font-size: 22px; margin: 6px 0 8px; }
@@ -45,16 +48,54 @@
   .lg-hello textarea { min-height: 80px; margin-top: 8px; }
   .lg-hello .lg-reply { white-space: pre-wrap; background: #f4f8f5; border-radius: 8px; padding: 12px 14px; font-size: 14px; margin-top: 10px; min-height: 40px; }
 
-  /* Every menu links this page with target="_blank", so the tab has no history
-     to go back through and the page needs its own way out. */
-  body.in-frame .cc-back-home { display: none; }
-  @media print { .cc-back-home { display: none; } }
+  .lg-gate { margin-top: 28px; }
+  .lg-hub { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 4px 0 18px; }
+  @media (max-width: 640px) { .lg-hub { grid-template-columns: 1fr; } }
+  .lg-hub a { display: block; text-decoration: none; color: inherit; border: 1px solid #d3ddd6; border-radius: 12px; padding: 14px 16px; background: #fff; }
+  .lg-hub a:hover { border-color: #3d8b68; }
+  .lg-hub b { display: block; font-family: Fraunces, Georgia, serif; font-size: 18px; color: #1a3d2e; margin-bottom: 4px; }
+  .lg-hub span { font-size: 13px; color: #5e7a6a; }
 </style>
 </head>
 <body>
-<div class="lg lg-gate" id="gate">
 
-  <p class="lg-mini"><a class="cc-back-home" href="../../resources.html#lca-graph">&larr; Clove Circle</a></p>
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar navbar-expand-lg cc-navbar sticky-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="../../index.html">
+      <img src="../../img/logo_transparent.png" alt="" height="56">
+      <span class="cc-brand-name">Clove Circle</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="../../services.html">Services</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle cc-nav-calc active" aria-current="page" href="#" id="calcMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-calculator"></i>Try our Process Calculators</a>
+          <ul class="dropdown-menu cc-dropdown" aria-labelledby="calcMenu">
+            <li><a class="dropdown-item" href="../../resources.html"><i class="fa-solid fa-file-lines me-2"></i>Case Studies &amp; Step by Step</a></li>
+            <li><a class="dropdown-item" href="../../resources.html#lca-graph"><i class="fa-solid fa-diagram-project me-2"></i>LCA Graph</a></li>
+            <li><a class="dropdown-item" href="beta.html"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>LCA Graph (Beta) <span class="badge rounded-pill text-bg-warning ms-1" style="font-size:.62em;vertical-align:middle">beta</span></a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle cc-nav-resources" href="#" id="resourcesMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">Resources</a>
+          <ul class="dropdown-menu dropdown-menu-end cc-dropdown" aria-labelledby="resourcesMenu">
+            <li><a class="dropdown-item" href="../../infographics/infographics.html"><i class="fa-solid fa-chart-pie me-2"></i>Infographics</a></li>
+            <li><a class="dropdown-item" href="../../references.html"><i class="fa-solid fa-book me-2"></i>References</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="../../about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link cc-nav-cta" href="../../contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="lg lg-gate" id="gate">
 
   <div class="lg-panel" data-gate>
     <span class="lg-eyebrow">LCA Graph</span>
@@ -84,12 +125,23 @@
     <div class="lg-banner"><b>Beta.</b> AI-drafted content is unverified until a person has checked it. Nothing you upload is stored by Clove Circle; it is sent to the model provider once and the draft returned to your browser.</div>
     <div class="lg-signed"><span data-who></span><button type="button" data-signout>Leave beta</button></div>
 
-    <div class="lg-draft">
+    <div class="lg-hub" data-hub>
+      <a href="index.html" target="_blank" rel="noopener">
+        <b>LCA Graph</b>
+        <span>The finished tool: four verified case studies, step-by-step LCA and TEA, targets and sensitivity. Opens in a new tab.</span>
+      </a>
+      <a href="#draft">
+        <b>Draft a model from a flowsheet <span class="lg-pill">beta</span></b>
+        <span>Upload a flowsheet picture and the AI drafts a complete model you can open in LCA Graph. Below on this page.</span>
+      </a>
+    </div>
+
+    <div class="lg-draft" id="draft">
       <h2>Draft a model from a flowsheet</h2>
       <p>Upload a flowsheet picture. The model reads the units and the streams between them, then
          drafts the whole PML document: parameters with sources, mass balance, inventory, impacts,
          costs and cash flow. The draft is compiled and solved in your browser; compiler errors go
-         back to the model for repair, up to four times.</p>
+         back to the model for repair, up to five times.</p>
 
       <label>1. Flowsheet image (PNG or JPEG, a block flow diagram or a process sketch)</label>
       <div class="lg-drop" data-drop tabindex="0" role="button" aria-label="Choose or drop a flowsheet image">
@@ -130,6 +182,51 @@
   </div>
 
 </div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="cc-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <img src="../../img/logo_transparent.png" alt="Clove Circle" height="52" class="mb-3 cc-footer-logo">
+        <p>A specialist consulting firm delivering net zero, life cycle assessment, and sustainability solutions. Founded by Professor Jhuma Sadhukhan.</p>
+        <a href="mailto:jhuma@clovecircle.com" class="cc-footer-email">
+          <i class="fa-solid fa-envelope me-2"></i>jhuma@clovecircle.com
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <h6>Navigate</h6>
+        <ul>
+          <li><a href="../../index.html">Home</a></li>
+          <li><a href="../../services.html">Services</a></li>
+          <li><a href="../../about.html">About Us</a></li>
+          <li><a href="../../contact.html">Contact</a></li>
+          <li><a href="../../resources.html">Resources</a></li>
+          <li><a href="../../portfolio.html">Portfolio</a></li>
+          <li><a href="../../pricing.html">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <h6>Expertise</h6>
+        <ul>
+          <li><a href="../../services.html">Net Zero Strategies</a></li>
+          <li><a href="../../services.html">Life Cycle Assessment</a></li>
+          <li><a href="../../services.html">Sustainability Consulting</a></li>
+          <li><a href="../../services.html">Carbon Reporting</a></li>
+          <li><a href="../../services.html">Circular Economy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cc-footer-bottom">
+      <span>&copy; Clove Circle 2026. All rights reserved. &nbsp;&middot;&nbsp; Last updated: <span id="last-updated">&mdash;</span></span>
+      <div class="cc-footer-social">
+        <a href="https://www.linkedin.com/in/professor-jhuma-sadhukhan-1b5600b9/" target="_blank" rel="noopener" title="LinkedIn">
+          <i class="fa-brands fa-linkedin"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
 
 <script src="../src/units.js"></script>
 <script src="../src/expr.js"></script>
@@ -261,6 +358,7 @@
           var n = v.graph.nodes[id];
           if (n.kind === "solve") return id + ": the solve node found no root for " + n.solve.vary + " even after widening the bracket; check the target really depends on it with the right sign, or compute it in closed form instead";
           var upstream = n.deps.filter(function (d) { var x = solver.get(d); return x === null || x === undefined; });
+          if (/\b(irr|payback)\s*\(/.test(n.exprText || "")) return id + ": " + (n.exprText.indexOf("irr") !== -1 ? "IRR" : "payback") + " is null because the cash-flow series never turns cumulative-positive at the default inputs. That means revenue is far below cost: check the unit algebra of production (t/d vs t/y), price (per t vs per kg) and cost terms ($ vs $M), and the sign of each term. Do not replace the formula with a constant or a null.";
           return id + ": evaluates to null (" + (upstream.length ? "null upstream: " + upstream.join(", ") : "division by zero or a null input") + ")";
         });
         return { errors: msgs, warnings: v.warnings };
@@ -326,7 +424,7 @@
       attempt++;
       $("[data-draft-status]").textContent = (fix ? "Repairing draft, attempt " : "Drafting, attempt ") + attempt + " of " + MAX_ATTEMPTS + "…";
       logLine(fix ? "Asking the model to fix " + fix.errors.length + " problem(s)…" : "Sending the flowsheet to the model for a first draft… (30–90 s)");
-      var req = Object.assign({}, body); if (fix) req.fix = fix;
+      var req = Object.assign({}, body, { attempt: attempt }); if (fix) req.fix = fix;
       post("/draft", req, code).then(function (j) {
         if (!j.ok) {
           logLine("Service error: " + (j.error || "unknown"), "bad");
@@ -335,7 +433,7 @@
           finish(false); return;
         }
         var doc = j.doc;
-        logLine("Draft received (" + (j.usage && j.usage.completion_tokens ? j.usage.completion_tokens + " tokens" : "ok") + "). Compiling…");
+        logLine("Draft received from " + (j.model || "model") + (j.usage && j.usage.completion_tokens ? " (" + j.usage.completion_tokens + " tokens" + (typeof j.cost === "number" ? ", $" + j.cost.toFixed(3) : "") + ")" : "") + ". Compiling…");
         var chk = checkDoc(doc);
         if (chk.errors.length) {
           chk.errors.slice(0, 8).forEach(function (e) { logLine("✗ " + e, "bad"); });
@@ -407,9 +505,7 @@
   if (saved) verify(saved);
 })();
 </script>
-<script>
-  // resources.html embeds this page; hide the chrome it already provides.
-  if (window.self !== window.top) document.body.classList.add('in-frame');
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/site.js"></script>
 </body>
 </html>

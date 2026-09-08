@@ -134,6 +134,7 @@
     Object.keys(doc.streams || {}).forEach(function (id) {
       var st = doc.streams[id] || {}; declare(id, 'streams.' + id);
       checkUnit('streams.' + id, st.dim, st.unit); checkStage('streams.' + id, st.stage);
+      if (!st.from || !st.to) err('streams.' + id, 'from and to are required (use "env" for the surroundings)');
       if (st.from && !unitIds[st.from]) err('streams.' + id, 'unknown unit "' + st.from + '" in from');
       if (st.to && !unitIds[st.to]) err('streams.' + id, 'unknown unit "' + st.to + '" in to');
       Object.keys(st.components || {}).forEach(function (c) {
@@ -179,6 +180,7 @@
           if (!tableCols[x.table] || !tableCols[x.table][col]) err(x.where, 'row.' + col + ': table ' + x.table + ' has no column "' + col + '"');
           return;
         }
+        if (ref === 'null' || ref === 'undefined' || ref === 'NaN') { err(x.where, 'there is no ' + ref + ' literal; a quantity that does not exist should not be a node, and a series that never pays back is an economics problem, not a formula problem'); return; }
         if (!declared[ref]) err(x.where, 'unknown identifier "' + ref + '"');
       });
       d.cols.forEach(function (tc) {
