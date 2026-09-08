@@ -24,6 +24,14 @@ test('expr: deps and dotted ids', () => {
   assert.deepEqual(d.cols, ['t.c']);
 });
 
+test('expr: array literals', () => {
+  assert.deepEqual(ev('[1, 2, 3] * 2'), [2, 4, 6]);
+  assert.deepEqual(ev('[-a, repeat(b, 2)]', { a: 5, b: 1 }), [-5, 1, 1]);
+  assert.equal(ev('sum([a, b])', { a: 2, b: 3 }), 5);
+  assert.deepEqual(Expr.deps(Expr.parse('[x, y]')).ids, ['x', 'y']);
+  assert.equal(Expr.print(Expr.parse('[x, 2]')), '[x, 2]');
+});
+
 test('expr: arrays and null', () => {
   assert.deepEqual(ev('repeat(2, 3) * 2'), [4, 4, 4]);
   assert.equal(ev('sum(repeat(1.5, 4))'), 6);

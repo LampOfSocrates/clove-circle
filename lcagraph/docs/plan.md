@@ -285,10 +285,22 @@ paste the id into `wrangler.jsonc`, `wrangler secret put OPENROUTER_API_KEY`,
 `wrangler secret put BETA_MASTER_CODE`, `wrangler deploy`, then put the printed workers.dev
 URL into `beta.html` (`WORKER_URL`). See `lcagraph/worker/README.md`.
 
+Done 2026-09-08 (slice 1, flowsheet first): `/draft` route with the generated system prompt
+(`worker/scripts/build-prompt.js` -> `src/prompt.generated.js`), multimodal input (the
+uploaded image, downscaled to 1600 px JPEG in the browser, plus description, functional
+unit and data). The beta page compiles, lints and solves each reply in the browser; the
+pre-lint in `src/validate.js` reports every structural error at once; compile errors go
+back as `fix = { doc, errors }` for up to 5 rounds; a plausibility pass flags currency in
+the wrong magnitude, negative prices, absurd GWP and sends one extra round; the accepted
+draft is stamped with an "AI-drafted, unverified" warning note and opened in the app via
+`index.html?model=draft` (sessionStorage). Language additions made for the model: array
+literals in expressions; solve nodes widen their bracket automatically. Live result on the
+Flue2Chem flowsheet image: compiling model in 2 rounds, about 130 s, topology read
+correctly from the picture; the numbers still need a human, as expected.
+
 Next steps in order:
-1. `/draft` route: system prompt built from `docs/pml-spec.md` + `docs/authoring.md`, JSON
-   response constrained to the schema, then compile + lint in the browser, feed errors back,
-   retry up to N times. Vision input for the flowsheet image via OpenRouter multimodal.
+1. Topology confirmation step: show the auto-drawn flowsheet from the first reply and let
+   the user fix units/streams before the numeric draft. Editor for params/expressions.
 2. Contribution analysis in the engine (`src/contributions.js`) and a panel in the app.
 3. PML editor in the app (add/edit params, streams, expressions with live compile errors).
 4. "AI-drafted, unverified" badges per node until a person confirms; draft versions.

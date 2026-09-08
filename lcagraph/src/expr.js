@@ -14,7 +14,7 @@
   var TOKEN = {
     num: /^(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/,
     id: /^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*/,
-    op: /^(?:\|\||&&|==|!=|<=|>=|[-+*\/^<>?:(),!])/,
+    op: /^(?:\|\||&&|==|!=|<=|>=|[-+*\/^<>?:(),!\[\]])/,
     ws: /^\s+/
   };
 
@@ -118,6 +118,18 @@
         expect(')');
         return e;
       }
+      if (t.t === 'op' && t.v === '[') {
+        var items = [];
+        if (!(peek().t === 'op' && peek().v === ']')) {
+          for (;;) {
+            items.push(parseExpr(0));
+            if (peek().t === 'op' && peek().v === ',') { next(); continue; }
+            break;
+          }
+        }
+        expect(']');
+        return { k: 'arr', items: items };
+      }
       throw new Error('expr: unexpected ' + (t.t === 'end' ? 'end of expression' : '"' + t.v + '"') +
         ' at ' + t.pos + ' in: ' + src);
     }
@@ -142,6 +154,7 @@
         case 'neg': case 'not': walk(n.a); return;
         case 'bin': walk(n.l); walk(n.r); return;
         case 'cond': walk(n.c); walk(n.a); walk(n.b); return;
+        case 'arr': n.items.forEach(walk); return;
         case 'call':
           if (n.fn === 'col' && n.args.length === 2 && n.args[0].k === 'id' && n.args[1].k === 'id') {
             add(out.cols, n.args[0].v + '.' + n.args[1].v);
@@ -210,6 +223,7 @@
           return zip(ev(n.l), ev(n.r), OPS[n.op]);
         }
         case 'cond': return ev(n.c) ? ev(n.a) : ev(n.b);
+        case 'arr': return [].concat.apply([], n.items.map(function (i) { var v = ev(i); return isArr(v) ? v : [v]; }));
         case 'call': {
           var f = fns[n.fn];
           if (!f) throw new Error('expr: unknown function "' + n.fn + '"');
@@ -238,6 +252,7 @@
         case 'neg': return '-' + p(n.a, 7);
         case 'not': return '!' + p(n.a, 7);
         case 'cond': return '(' + p(n.c, 0) + ' ? ' + p(n.a, 0) + ' : ' + p(n.b, 0) + ')';
+        case 'arr': return '[' + n.items.map(function (i) { return p(i, 0); }).join(', ') + ']';
         case 'call': return n.fn + '(' + n.args.map(function (a) { return p(a, 0); }).join(', ') + ')';
         case 'bin': {
           var prec = BINARY[n.op];

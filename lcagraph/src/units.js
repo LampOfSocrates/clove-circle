@@ -18,7 +18,7 @@
     energy_per_mass:  { canonical: 'kWh/kg',     units: { 'kWh/kg': 1, 'MWh/kg': 1000, 'MWh/t': 1, 'GJ/t': 1 / 3.6, 'kWh/t': 0.001, 'MJ/kg': 1 / 3.6 } },
     energy:           { canonical: 'GJ',         units: { 'GJ': 1, 'MWh': 3.6, 'kWh': 0.0036, 'MJ': 0.001, 'TJ': 1000 } },
     energy_year:      { canonical: 'GJ/y',       units: { 'GJ/y': 1, 'MWh/y': 3.6, 'kWh/y': 0.0036, 'MJ/y': 0.001, 'TJ/y': 1000, 'GWh/y': 3600 } },
-    energy_rate:      { canonical: 'MJ/h',       units: { 'MJ/h': 1, 'GJ/h': 1000, 'kWh/h': 3.6, 'kW': 3.6, 'MW': 3600 } },
+    energy_rate:      { canonical: 'MJ/h',       units: { 'MJ/h': 1, 'GJ/h': 1000, 'kWh/h': 3.6, 'MWh/h': 3600, 'kW': 3.6, 'MW': 3600 } },
     energy_intensity: { canonical: 'GJ/t',       units: { 'GJ/t': 1, 'kWh/t': 0.0036, 'MJ/kg': 1, 'MWh/t': 3.6 } },
     power:            { canonical: 'MW',         units: { 'MW': 1, 'kW': 0.001, 'MWe': 1, 'GW': 1000 } },
     price_mass:       { canonical: '$/t',        units: { '$/t': 1, '$/kg': 1000, '$/g': 1e6, '£/t': 1, '£/kg': 1000, '$/dry t': 1 } },

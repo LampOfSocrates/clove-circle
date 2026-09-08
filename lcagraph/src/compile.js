@@ -34,6 +34,7 @@
         case 'bin': return { k: 'bin', op: n.op, l: walk(n.l), r: walk(n.r) };
         case 'cond': return { k: 'cond', c: walk(n.c), a: walk(n.a), b: walk(n.b) };
         case 'call': return { k: 'call', fn: n.fn, args: n.args.map(walk) };
+        case 'arr': return { k: 'arr', items: n.items.map(walk) };
         default: return n;
       }
     }

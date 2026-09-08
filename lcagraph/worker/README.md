@@ -38,6 +38,45 @@ npx wrangler dev                 # http://127.0.0.1:8787, local KV simulation
 curl -X POST http://127.0.0.1:8787/verify -H "Content-Type: application/json" -d "{\"code\":\"<master code>\"}"
 ```
 
+## Routes
+
+| Route | Body | Returns |
+|---|---|---|
+| `GET /` | | status, no secrets |
+| `POST /verify` | `{ code }` | `{ ok, name, remainingToday }` |
+| `POST /chat` | `{ prompt }` | `{ text, model, usage }` |
+| `POST /draft` | `{ image?, description, functionalUnit, data, fix? }` | `{ doc, model, usage }` |
+
+`/draft` sends the flowsheet image (a data URL, downscaled by the page) and the text to the
+model with the generated system prompt (`src/prompt.generated.js`, built by
+`node scripts/build-prompt.js` from `docs/pml-spec.md`, `src/units.js` and
+`src/functions.js`). The page compiles, lints and solves the reply; on failure it posts
+`fix = { doc, errors }` and the model returns a corrected document. Rebuild the prompt and
+redeploy whenever the spec, units or built-ins change.
+
+## Keeping the bill down
+
+Everything is in `wrangler.jsonc` vars, no code change needed:
+
+| Var | What it does |
+|---|---|
+| `MODEL_CHAT`, `MODEL_DRAFT`, `MODEL_REPAIR` | one model per route; `MODEL` is the fallback for all three |
+| `MODEL_FALLBACKS` | comma-separated models tried in order when the first is unavailable |
+| `MAX_PRICE_PROMPT`, `MAX_PRICE_COMPLETION` | ceiling in $ per million tokens; OpenRouter refuses dearer providers |
+| `MONTHLY_BUDGET_USD` | the Worker stops serving once recorded spend for the month reaches this |
+| `DRAFT_MAX_TOKENS` | completion cap per draft/repair call |
+| per-code `dailyCap`, `DAILY_CAP_GLOBAL` | request counts per day |
+
+Providers are always sorted by price for the chosen model. Spend per code and per month is
+recorded in KV from OpenRouter's own `usage.cost`:
+
+```
+npx wrangler kv key list --binding BETA --prefix "spend:" --remote
+```
+
+`GET /` shows the active models, ceilings and budget. Set a spending limit on the key at
+OpenRouter as well; that is the backstop the Worker cannot bypass.
+
 ## Guards, in order
 
 1. CORS: only origins listed in `ALLOWED_ORIGINS` can call it from a browser.

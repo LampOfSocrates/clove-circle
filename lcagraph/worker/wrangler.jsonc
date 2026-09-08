@@ -11,10 +11,25 @@
   // `wrangler secret put` and never appear here or in git.
   "vars": {
     "ALLOWED_ORIGINS": "https://clovecircle.com,https://www.clovecircle.com,http://127.0.0.1:8123,http://localhost:8123",
-    "MODEL": "anthropic/claude-sonnet-4",
+    // Models per route. Prices are $ per million tokens (prompt / completion) at the time of
+    // writing; check https://openrouter.ai/models before changing. Vision input is required
+    // for draft and repair.
+    "MODEL": "openai/gpt-4.1-mini",
+    "MODEL_CHAT": "openai/gpt-4.1-nano",
+    "MODEL_DRAFT": "google/gemini-2.5-flash",
+    "MODEL_REPAIR": "google/gemini-2.5-flash",
+    "MODEL_FALLBACKS": "openai/gpt-4.1-mini,google/gemini-2.5-flash-lite",
+    // Hard ceiling: any provider above these prices is refused by OpenRouter.
+    "MAX_PRICE_PROMPT": "1",
+    "MAX_PRICE_COMPLETION": "5",
+    // Stop serving when this month's recorded spend (USD, from OpenRouter usage) reaches this.
+    "MONTHLY_BUDGET_USD": "20",
     "DAILY_CAP_PER_CODE": "40",
     "DAILY_CAP_GLOBAL": "200",
-    "MAX_PROMPT_CHARS": "20000"
+    "MAX_PROMPT_CHARS": "20000",
+    "DRAFT_MAX_CHARS": "60000",
+    "DRAFT_MAX_TOKENS": "12000",
+    "DRAFT_MAX_IMAGE_CHARS": "2500000"
   },
 
   // Beta access codes and daily usage counters. Create with

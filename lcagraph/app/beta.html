@@ -11,25 +11,39 @@
 <link href="app.css" rel="stylesheet">
 <style>
   body { margin: 0; background: #f4f8f5; padding: 22px; }
-  .lg-gate { max-width: 720px; margin: 40px auto; }
+  .lg-gate { max-width: 760px; margin: 40px auto; }
   .lg-gate .lg-panel { padding: 26px 28px; }
   .lg-gate h1 { font-size: 30px; margin: 6px 0 10px; }
+  .lg-gate h2 { font-size: 22px; margin: 6px 0 8px; }
   .lg-gate p { font-size: 14.5px; margin: 0 0 12px; }
   .lg-gate ul { font-size: 14px; padding-left: 20px; margin: 0 0 14px; }
   .lg-gate li { margin: 4px 0; }
   .lg-pill { display: inline-block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: #b57a17; background: #fbeed3; border: 1px solid #e2b95c; border-radius: 999px; padding: 2px 10px; vertical-align: middle; margin-left: 8px; }
-  .lg-gate form { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 6px; }
-  .lg-gate input[type=text] { flex: 1; min-width: 220px; padding: 11px 13px; border: 1px solid #d3ddd6; border-radius: 8px; font: inherit; letter-spacing: .04em; }
+  .lg-gate form.lg-codeform { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 6px; }
+  .lg-gate input[type=text], .lg-gate textarea { width: 100%; padding: 10px 12px; border: 1px solid #d3ddd6; border-radius: 8px; font: inherit; }
+  .lg-codeform input[type=text] { flex: 1; width: auto; min-width: 220px; letter-spacing: .04em; }
   .lg-gate button { background: #3d8b68; color: #fff; border: 0; border-radius: 8px; padding: 11px 18px; font: 600 13px Inter, system-ui, sans-serif; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; }
   .lg-gate button[disabled] { background: #d3ddd6; color: #5e7a6a; cursor: wait; }
+  .lg-gate button.lg-secondary { background: #fff; color: #3d8b68; border: 1px solid #3d8b68; }
   .lg-gate .lg-status { min-height: 20px; }
   .lg-gate .lg-mini a { color: #3d8b68; }
-  .lg-hello textarea { width: 100%; min-height: 90px; padding: 10px 12px; border: 1px solid #d3ddd6; border-radius: 8px; font: inherit; }
-  .lg-hello .lg-reply { white-space: pre-wrap; background: #f4f8f5; border-radius: 8px; padding: 12px 14px; font-size: 14px; margin-top: 10px; min-height: 40px; }
   .lg-banner { background: #fbeed3; border: 1px solid #e2b95c; border-radius: 10px; padding: 8px 14px; font-size: 13px; margin-bottom: 14px; }
   .lg-banner b { color: #b57a17; }
   .lg-signed { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: #5e7a6a; margin-bottom: 8px; }
   .lg-signed button { background: #fff; color: #3d8b68; border: 1px solid #3d8b68; padding: 6px 12px; text-transform: none; letter-spacing: 0; font-size: 12.5px; }
+  .lg-draft label { display: block; font-size: 13px; font-weight: 600; color: #1a3d2e; margin: 14px 0 4px; }
+  .lg-draft textarea { min-height: 96px; }
+  .lg-drop { border: 2px dashed #a8d5bd; border-radius: 12px; padding: 18px; text-align: center; background: #fff; cursor: pointer; }
+  .lg-drop.is-over { background: #d4eddf; }
+  .lg-drop input { display: none; }
+  .lg-drop img { max-width: 100%; max-height: 260px; display: block; margin: 8px auto 0; border-radius: 8px; border: 1px solid #d3ddd6; }
+  .lg-drop .lg-mini { margin-top: 4px; }
+  .lg-log { font: 12.5px/1.5 ui-monospace, Menlo, Consolas, monospace; background: #f4f8f5; border-radius: 8px; padding: 10px 12px; margin-top: 10px; white-space: pre-wrap; max-height: 260px; overflow: auto; }
+  .lg-log .ok { color: #3d8b68; } .lg-log .bad { color: #a32d2d; }
+  .lg-draft-result { border: 1px solid #a8d5bd; background: #d4eddf; border-radius: 10px; padding: 12px 14px; margin-top: 12px; }
+  details.lg-hello-wrap summary { cursor: pointer; font-size: 13px; color: #5e7a6a; margin-top: 18px; }
+  .lg-hello textarea { min-height: 80px; margin-top: 8px; }
+  .lg-hello .lg-reply { white-space: pre-wrap; background: #f4f8f5; border-radius: 8px; padding: 12px 14px; font-size: 14px; margin-top: 10px; min-height: 40px; }
 
   /* Every menu links this page with target="_blank", so the tab has no history
      to go back through and the page needs its own way out. */
@@ -57,7 +71,7 @@
           draft. Do not upload anything confidential during the beta.</li>
       <li>Access is by invitation while the service is in beta. Each code has a daily limit.</li>
     </ul>
-    <form data-form>
+    <form class="lg-codeform" data-form>
       <input type="text" data-code placeholder="Access code" autocomplete="off" spellcheck="false" aria-label="Access code" required>
       <button type="submit" data-submit>Enter beta</button>
     </form>
@@ -66,102 +80,336 @@
        AI-free LCA Graph with four verified case studies is <a href="index.html">here</a>.</p>
   </div>
 
-  <div class="lg-panel lg-hello" data-app hidden>
-    <div class="lg-banner"><b>Beta.</b> AI-drafted content is unverified until a person has checked it. Nothing you type here is stored by Clove Circle; it is sent to the model provider once and the reply shown to you.</div>
+  <div class="lg-panel" data-app hidden>
+    <div class="lg-banner"><b>Beta.</b> AI-drafted content is unverified until a person has checked it. Nothing you upload is stored by Clove Circle; it is sent to the model provider once and the draft returned to your browser.</div>
     <div class="lg-signed"><span data-who></span><button type="button" data-signout>Leave beta</button></div>
-    <h2>Hello, model</h2>
-    <p>A first exchange to prove the connection. The flowsheet upload and model drafting arrive in the next step.</p>
-    <textarea data-prompt placeholder="Ask something short, for example: what is a functional unit?"></textarea>
-    <div class="lg-inline"><button type="button" data-send>Send</button><span class="lg-mini" data-remaining></span></div>
-    <div class="lg-reply" data-reply></div>
+
+    <div class="lg-draft">
+      <h2>Draft a model from a flowsheet</h2>
+      <p>Upload a flowsheet picture. The model reads the units and the streams between them, then
+         drafts the whole PML document: parameters with sources, mass balance, inventory, impacts,
+         costs and cash flow. The draft is compiled and solved in your browser; compiler errors go
+         back to the model for repair, up to four times.</p>
+
+      <label>1. Flowsheet image (PNG or JPEG, a block flow diagram or a process sketch)</label>
+      <div class="lg-drop" data-drop tabindex="0" role="button" aria-label="Choose or drop a flowsheet image">
+        <input type="file" accept="image/png,image/jpeg,image/webp" data-file>
+        <div data-drop-text>Click to choose a file, or drop it here</div>
+        <img data-preview alt="" hidden>
+        <div class="lg-mini" data-file-info></div>
+      </div>
+
+      <label for="d-desc">2. What the process does (a few sentences; the image is authoritative for the topology)</label>
+      <textarea id="d-desc" data-desc placeholder="Example: Wheat straw, 1000 t/y dry, is pretreated with dilute acid and fermented to lactic acid at 0.45 kg per kg sugar. Stillage goes to anaerobic digestion; the biogas runs a CHP that supplies the plant. 330 operating days a year. Cradle-to-gate."></textarea>
+
+      <label for="d-fu">3. Functional unit</label>
+      <input id="d-fu" type="text" data-fu placeholder="1 kg lactic acid at the factory gate">
+
+      <label for="d-data">4. Data you have (optional: yields, prices, emission factors, equipment costs, anything numeric)</label>
+      <textarea id="d-data" data-data placeholder="Straw 60 $/t. Electricity 0.12 $/kWh and 0.25 kg CO2e/kWh. Sulfuric acid 0.03 kg per kg straw, 0.2 kg CO2e/kg. Fermenter 2.5 $M at 10 t/h, exponent 0.65. Lang factor 4. Discount rate 10%, 15 years."></textarea>
+      <p class="lg-mini">Anything you leave out is assumed by the model and flagged as an assumption in the draft.</p>
+
+      <div class="lg-inline"><button type="button" data-draft>Draft model</button><span class="lg-mini" data-draft-status></span></div>
+      <div class="lg-log" data-log hidden></div>
+      <div class="lg-draft-result" data-result hidden>
+        <b data-result-title></b>
+        <div class="lg-mini" data-result-sub></div>
+        <div class="lg-inline" style="margin-top:8px">
+          <button type="button" data-open>Open in LCA Graph</button>
+          <button type="button" class="lg-secondary" data-dl>Download .pml.json</button>
+        </div>
+      </div>
+    </div>
+
+    <details class="lg-hello-wrap lg-hello">
+      <summary>Just say hello to the model</summary>
+      <textarea data-prompt placeholder="Ask something short, for example: what is a functional unit?"></textarea>
+      <div class="lg-inline"><button type="button" data-send>Send</button><span class="lg-mini" data-remaining></span></div>
+      <div class="lg-reply" data-reply></div>
+    </details>
   </div>
 
 </div>
 
+<script src="../src/units.js"></script>
+<script src="../src/expr.js"></script>
+<script src="../src/functions.js"></script>
+<script src="../src/compile.js"></script>
+<script src="../src/solve.js"></script>
+<script src="../src/validate.js"></script>
 <script>
 (function () {
-  'use strict';
-  /* Where the beta Worker lives. Locally, wrangler dev on 8787; in production the deployed
-     Worker. Replace the workers.dev host after the first `wrangler deploy`. */
+  "use strict";
+  /* Where the beta Worker lives: wrangler dev locally, the deployed Worker in production. */
   var local = /^(127\.0\.0\.1|localhost)$/.test(location.hostname);
-  var WORKER_URL = window.LCAG_WORKER_URL || (local ? 'http://127.0.0.1:8787' : 'https://lcagraph-beta.lampofsocrates.workers.dev');
-  var KEY = 'lcagraph-beta-code';
+  var WORKER_URL = window.LCAG_WORKER_URL || (local ? "http://127.0.0.1:8787" : "https://lcagraph-beta.lampofsocrates.workers.dev");
+  var KEY = "lcagraph-beta-code";
+  var MAX_ATTEMPTS = 5;
+  var MAX_IMAGE_EDGE = 1600;
 
   var $ = function (s) { return document.querySelector(s); };
-  var status = $('[data-status]');
-  var gate = $('[data-gate]');
-  var app = $('[data-app]');
+  var status = $("[data-status]");
+  var gate = $("[data-gate]");
+  var app = $("[data-app]");
+  var log = $("[data-log]");
+  var image = null;   // { dataUrl, name, width, height }
+  var lastDoc = null;
 
-  function say(msg, isError) { status.textContent = msg || ''; status.classList.toggle('is-error', !!isError); }
+  function say(msg, isError) { status.textContent = msg || ""; status.classList.toggle("is-error", !!isError); }
 
   function post(path, body, code) {
-    var headers = { 'Content-Type': 'application/json' };
-    if (code) headers['X-Beta-Code'] = code;
-    return fetch(WORKER_URL + path, { method: 'POST', headers: headers, body: JSON.stringify(body) })
+    var headers = { "Content-Type": "application/json" };
+    if (code) headers["X-Beta-Code"] = code;
+    return fetch(WORKER_URL + path, { method: "POST", headers: headers, body: JSON.stringify(body) })
       .then(function (r) { return r.json().then(function (j) { j.__status = r.status; return j; }); });
   }
 
+  /* ── gate ─────────────────────────────────────────────────────────────── */
   function enter(code, info) {
     try { sessionStorage.setItem(KEY, code); } catch (e) {}
     gate.hidden = true;
     app.hidden = false;
-    $('[data-who]').textContent = 'Signed in as ' + info.name + ' · ' + info.remainingToday + ' requests left today';
-    $('[data-remaining]').textContent = '';
+    $("[data-who]").textContent = "Signed in as " + info.name + " · " + info.remainingToday + " requests left today";
   }
-
   function leave() {
     try { sessionStorage.removeItem(KEY); } catch (e) {}
     app.hidden = true;
     gate.hidden = false;
-    $('[data-code]').value = '';
-    say('');
+    $("[data-code]").value = "";
+    say("");
   }
-
   function verify(code) {
-    var btn = $('[data-submit]');
+    var btn = $("[data-submit]");
     btn.disabled = true;
-    say('Checking…');
-    return post('/verify', { code: code }).then(function (j) {
+    say("Checking…");
+    return post("/verify", { code: code }).then(function (j) {
       btn.disabled = false;
-      if (j.ok) { say(''); enter(code, j); }
-      else say(j.error || 'That code was not accepted.', true);
+      if (j.ok) { say(""); enter(code, j); }
+      else say(j.error || "That code was not accepted.", true);
     }).catch(function () {
       btn.disabled = false;
-      say('Could not reach the beta service. Try again in a moment.', true);
+      say("Could not reach the beta service. Try again in a moment.", true);
     });
   }
-
-  $('[data-form]').addEventListener('submit', function (e) {
+  $("[data-form]").addEventListener("submit", function (e) {
     e.preventDefault();
-    var code = $('[data-code]').value.trim();
-    if (!code) return;
-    verify(code);
+    var code = $("[data-code]").value.trim();
+    if (code) verify(code);
   });
-  $('[data-signout]').addEventListener('click', leave);
+  $("[data-signout]").addEventListener("click", leave);
 
-  $('[data-send]').addEventListener('click', function () {
+  /* ── image upload: read, downscale, preview ───────────────────────────── */
+  var drop = $("[data-drop]");
+  var fileInput = $("[data-file]");
+  function setImage(file) {
+    if (!file || !/^image\/(png|jpeg|webp)$/.test(file.type)) { $("[data-file-info]").textContent = "Please choose a PNG, JPEG or WebP image."; return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, MAX_IMAGE_EDGE / Math.max(img.width, img.height));
+        var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+        var canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+        image = { dataUrl: dataUrl, name: file.name, width: w, height: h };
+        var prev = $("[data-preview]");
+        prev.src = dataUrl; prev.hidden = false;
+        $("[data-drop-text]").textContent = "Flowsheet: " + file.name + " (click to replace)";
+        $("[data-file-info]").textContent = w + " × " + h + " px sent to the model, " + Math.round(dataUrl.length * 0.75 / 1024) + " KB";
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  drop.addEventListener("click", function () { fileInput.click(); });
+  drop.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInput.click(); } });
+  fileInput.addEventListener("change", function () { setImage(fileInput.files[0]); });
+  ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("is-over"); }); });
+  ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("is-over"); }); });
+  drop.addEventListener("drop", function (e) { if (e.dataTransfer.files[0]) setImage(e.dataTransfer.files[0]); });
+
+  /* ── drafting loop: model -> compile + lint + solve in the browser -> repair -> hand over ── */
+  function logLine(text, cls) {
+    log.hidden = false;
+    var d = document.createElement("div"); if (cls) d.className = cls; d.textContent = text; log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+  function stamp(doc) {
+    doc.meta = doc.meta || {};
+    doc.meta.notes = doc.meta.notes || [];
+    doc.meta.notes.unshift({ id: "ai_drafted", level: "warning", title: "AI-drafted, unverified",
+      text: "This model was drafted by an AI model from an uploaded flowsheet" + (image ? " (" + image.name + ")" : "") +
+        " on " + new Date().toISOString().slice(0, 10) +
+        ". It compiles and solves, which proves its logic is complete, not that its numbers are right. Check every source line before using any result.", nodes: [] });
+    return doc;
+  }
+  function checkDoc(doc) {
+    var v = window.LCAG.validate.validate(doc);
+    if (v.errors.length) return { errors: v.errors.map(function (e) { return e.where + ": " + e.message; }), warnings: v.warnings };
+    try {
+      var solver = new window.LCAG.solve.Solver(v.graph);
+      var runs = solver.solveAll();
+      var bad = runs.filter(function (r) { return !r.ok; });
+      if (bad.length) return { errors: ["stage " + bad[0].stage + " failed to solve: " + bad[0].error], warnings: v.warnings };
+      var nulls = Object.keys(v.graph.nodes).filter(function (id) { var n = v.graph.nodes[id]; if (n.nullable) return false; var x = solver.get(id); return x === null || x === undefined; });
+      if (nulls.length) {
+        var msgs = nulls.slice(0, 12).map(function (id) {
+          var n = v.graph.nodes[id];
+          if (n.kind === "solve") return id + ": the solve node found no root for " + n.solve.vary + " even after widening the bracket; check the target really depends on it with the right sign, or compute it in closed form instead";
+          var upstream = n.deps.filter(function (d) { var x = solver.get(d); return x === null || x === undefined; });
+          return id + ": evaluates to null (" + (upstream.length ? "null upstream: " + upstream.join(", ") : "division by zero or a null input") + ")";
+        });
+        return { errors: msgs, warnings: v.warnings };
+      }
+      var kpis = Object.keys(v.graph.nodes).filter(function (id) { return v.graph.nodes[id].kpi; });
+      return { errors: [], warnings: v.warnings, graph: v.graph, solver: solver, kpis: kpis, implausible: sanity(v.graph, solver) };
+    } catch (e) {
+      return { errors: ["solve failed: " + e.message], warnings: v.warnings };
+    }
+  }
+  /* A document can compile and still be wrong by a factor of a million. These are the
+     slips a reviewer spots at a glance, so the model gets one round to spot them too. */
+  function sanity(graph, solver) {
+    var U = window.LCAG.units;
+    var out = [];
+    Object.keys(graph.nodes).forEach(function (id) {
+      var n = graph.nodes[id];
+      if (solver.isLeaf(id)) return;
+      var v = solver.get(id);
+      if (typeof v !== "number" || !isFinite(v)) return;
+      var shown = U.formatWithUnit(v, n.dim, n.unit);
+      if (n.dim === "currency" && Math.abs(v) > 1e5) out.push(id + " = " + shown + " (currency nodes are in $M; a value above 100,000 $M is almost certainly $ or $k mistaken for $M)");
+      if (n.dim === "currency_year" && Math.abs(v) > 1e5) out.push(id + " = " + shown + " (currency per year is in $M/y; check the unit algebra)");
+      if (n.dim === "price_mass" && v < 0) out.push(id + " = " + shown + " (a negative price or minimum selling price means a sign or unit error in the cost sum)");
+      if (n.dim === "gwp_intensity" && (v > 200 || v < -200)) out.push(id + " = " + shown + " (per-kg climate impact outside -200..200 kg CO2e/kg suggests kg and t, or kWh and MWh, were mixed)");
+      if (n.dim === "fraction" && n.kind !== "constraint" && n.role !== "check" && (v > 1.5 || v < -0.5)) out.push(id + " = " + shown + " (a fraction outside 0..1)");
+      if (n.dim === "years" && (v < 0 || v > 200)) out.push(id + " = " + shown + " (an implausible number of years)");
+    });
+    return out.slice(0, 10);
+  }
+
+  function summarise(doc, chk) {
+    var g = chk.graph, s = chk.solver, U = window.LCAG.units;
+    var kpiText = chk.kpis.slice(0, 6).map(function (id) {
+      var n = g.nodes[id]; var v = s.get(id);
+      return n.label + ": " + (typeof v === "number" ? U.formatWithUnit(v, n.dim, n.unit) : "—");
+    }).join(" · ");
+    return Object.keys(g.nodes).length + " nodes, " + (Object.keys(g.units).length - 1) + " units, " + Object.keys(g.streams).length + " streams, " +
+      (doc.meta.notes || []).length + " notes, " + chk.warnings.length + " lint warnings. " + kpiText;
+  }
+  function showResult(doc, chk, solved) {
+    var box = $("[data-result]");
+    box.hidden = false;
+    $("[data-result-title]").textContent = (doc.meta && doc.meta.title ? doc.meta.title : "Draft") + (solved ? " — ready to open" : " — did not compile");
+    $("[data-result-sub]").textContent = chk ? summarise(doc, chk) : "The last draft can be downloaded so you can repair it by hand.";
+    $("[data-open]").hidden = !solved;
+  }
+
+  $("[data-draft]").addEventListener("click", function () {
     var code = sessionStorage.getItem(KEY);
-    var prompt = $('[data-prompt]').value.trim();
-    var reply = $('[data-reply]');
+    var btn = $("[data-draft]");
+    var body = { description: $("[data-desc]").value.trim(), functionalUnit: $("[data-fu]").value.trim(), data: $("[data-data]").value.trim() };
+    if (!image) { $("[data-draft-status]").textContent = "Upload a flowsheet image first."; return; }
+    body.image = image.dataUrl;
+    log.innerHTML = ""; $("[data-result]").hidden = true; lastDoc = null;
+    btn.disabled = true;
+    var attempt = 0;
+    var fix = null;
+    var sanityRoundDone = false;
+    var lastGood = null;
+    function finish(ok) { btn.disabled = false; $("[data-draft-status]").textContent = ok ? "" : "Stopped."; }
+    function step() {
+      attempt++;
+      $("[data-draft-status]").textContent = (fix ? "Repairing draft, attempt " : "Drafting, attempt ") + attempt + " of " + MAX_ATTEMPTS + "…";
+      logLine(fix ? "Asking the model to fix " + fix.errors.length + " problem(s)…" : "Sending the flowsheet to the model for a first draft… (30–90 s)");
+      var req = Object.assign({}, body); if (fix) req.fix = fix;
+      post("/draft", req, code).then(function (j) {
+        if (!j.ok) {
+          logLine("Service error: " + (j.error || "unknown"), "bad");
+          if (j.raw) logLine("Model output started: " + j.raw.slice(0, 300));
+          if (j.__status === 403) leave();
+          finish(false); return;
+        }
+        var doc = j.doc;
+        logLine("Draft received (" + (j.usage && j.usage.completion_tokens ? j.usage.completion_tokens + " tokens" : "ok") + "). Compiling…");
+        var chk = checkDoc(doc);
+        if (chk.errors.length) {
+          chk.errors.slice(0, 8).forEach(function (e) { logLine("✗ " + e, "bad"); });
+          if (attempt < MAX_ATTEMPTS) { fix = { doc: doc, errors: chk.errors.slice(0, 12) }; step(); return; }
+          if (lastGood) {
+            logLine("The repaired draft no longer compiles; keeping the earlier draft that did.", "bad");
+            lastDoc = stamp(lastGood.doc); showResult(lastGood.doc, lastGood.chk, true); finish(true); return;
+          }
+          logLine("Gave up after " + attempt + " attempts. Download the last draft and repair it, or add detail and try again.", "bad");
+          lastDoc = stamp(doc); showResult(doc, null, false); finish(true); return;
+        }
+        logLine("✓ Compiles, lints and solves all six stages.", "ok");
+        chk.warnings.slice(0, 6).forEach(function (w) { logLine("  lint: " + w.where + " " + w.message); });
+        if (chk.implausible.length && attempt < MAX_ATTEMPTS && !sanityRoundDone) {
+          sanityRoundDone = true;
+          chk.implausible.forEach(function (m) { logLine("? " + m, "bad"); });
+          fix = { doc: doc, errors: ["The document compiles and solves, but these results are implausible. Re-check the unit algebra (t vs kg, $ vs $M, kWh vs MWh, per day vs per year) and the sign of each cost and credit term, then return the whole corrected document:"].concat(chk.implausible) };
+          lastGood = { doc: doc, chk: chk };
+          step(); return;
+        }
+        if (chk.implausible.length) {
+          chk.implausible.forEach(function (m) { logLine("? still implausible: " + m, "bad"); });
+          doc.meta.notes = doc.meta.notes || [];
+          doc.meta.notes.push({ id: "implausible", level: "warning", title: "Results look implausible",
+            text: "These values failed a plausibility check and were not corrected by the model: " + chk.implausible.join("; ") + ". Treat every number with suspicion until the unit algebra has been checked.",
+            nodes: chk.implausible.map(function (m) { return m.split(" = ")[0]; }).filter(function (id) { return chk.graph.nodes[id]; }) });
+        }
+        lastDoc = stamp(doc);
+        showResult(doc, chk, true);
+        finish(true);
+      }).catch(function (e) { logLine("Could not reach the beta service: " + e.message, "bad"); finish(false); });
+    }
+    step();
+  });
+
+  $("[data-open]").addEventListener("click", function () {
+    if (!lastDoc) return;
+    try { sessionStorage.setItem("lcagraph-draft", JSON.stringify(lastDoc)); } catch (e) { alert("Could not store the draft in this browser."); return; }
+    window.open("index.html?model=draft", "_blank");
+  });
+  $("[data-dl]").addEventListener("click", function () {
+    if (!lastDoc) return;
+    var blob = new Blob([JSON.stringify(lastDoc, null, 2)], { type: "application/json" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = ((lastDoc.meta && lastDoc.meta.id) || "draft") + ".draft.pml.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+
+  /* ── hello world ──────────────────────────────────────────────────────── */
+  $("[data-send]").addEventListener("click", function () {
+    var code = sessionStorage.getItem(KEY);
+    var prompt = $("[data-prompt]").value.trim();
+    var reply = $("[data-reply]");
     if (!prompt || !code) return;
-    reply.textContent = 'Thinking…';
-    post('/chat', { prompt: prompt }, code).then(function (j) {
+    reply.textContent = "Thinking…";
+    post("/chat", { prompt: prompt }, code).then(function (j) {
       if (j.ok) {
         reply.textContent = j.text;
-        $('[data-remaining]').textContent = j.remainingToday + ' requests left today · ' + (j.model || '');
+        $("[data-remaining]").textContent = j.remainingToday + " requests left today · " + (j.model || "");
       } else {
-        reply.textContent = 'Error: ' + (j.error || 'unknown');
+        reply.textContent = "Error: " + (j.error || "unknown");
         if (j.__status === 403) leave();
       }
-    }).catch(function () { reply.textContent = 'Could not reach the beta service.'; });
+    }).catch(function () { reply.textContent = "Could not reach the beta service."; });
   });
-
-  if (window.self !== window.top) document.body.classList.add('in-frame');
 
   var saved = null;
   try { saved = sessionStorage.getItem(KEY); } catch (e) {}
   if (saved) verify(saved);
 })();
+</script>
+<script>
+  // resources.html embeds this page; hide the chrome it already provides.
+  if (window.self !== window.top) document.body.classList.add('in-frame');
 </script>
 </body>
 </html>

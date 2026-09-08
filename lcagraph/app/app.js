@@ -99,6 +99,14 @@
 
   LGApp.prototype.loadBuiltin = function (id) {
     var self = this;
+    // A draft handed over by the beta page lives in sessionStorage, not on disk.
+    if (id === 'draft') {
+      var raw = null;
+      try { raw = sessionStorage.getItem('lcagraph-draft'); } catch (e) {}
+      if (!raw) { this.status('No draft found in this browser session. Go back to the beta page and draft a model first.', true); return; }
+      try { this.load(JSON.parse(raw)); } catch (e) { this.status('The draft could not be read: ' + e.message, true); }
+      return;
+    }
     this.status('Loading ' + id + '…');
     fetch('../models/' + id + '.pml.json').then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);

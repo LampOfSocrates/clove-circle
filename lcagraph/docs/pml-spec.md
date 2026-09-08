@@ -285,7 +285,7 @@ Grammar (precedence low → high): `?:` · `||` · `&&` · `== !=` · `< <= > >=
 - Numbers: `3`, `0.5`, `1e6`.
 - Identifiers: `[a-z_][a-z0-9_]*` with dotted segments: `feed.cellulose`,
   `equipment.chp.cepci_base`, `mw.co2`, `row.n`.
-- Arrays: elementwise arithmetic between arrays of equal length or array-and-scalar.
+- Arrays: `[a, b, c]` builds one (nested arrays flatten); elementwise arithmetic between arrays of equal length or array-and-scalar. No string or object literals exist.
 - Booleans are 1/0.
 
 Built-ins:

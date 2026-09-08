@@ -137,6 +137,14 @@
     var lo = s.lo === undefined ? 0 : s.lo;
     var hi = s.hi === undefined ? 1e9 : s.hi;
     var root = Fns.brent(f, lo, hi, 1e-9 * Math.max(1, Math.abs(hi - lo)), 300);
+    // A declared bracket that misses the root is the commonest authoring slip; widen it
+    // geometrically a few times before giving up.
+    var tries = 0;
+    while (root === null && tries++ < 8) {
+      var span = Math.max(Math.abs(hi - lo), 1);
+      lo = lo - span; hi = hi + span * 4;
+      root = Fns.brent(f, lo, hi, 1e-9 * Math.max(1, Math.abs(hi - lo)), 300);
+    }
     values[n.id] = root;
     return root;
   };
